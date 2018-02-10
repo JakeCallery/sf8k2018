@@ -3,6 +3,7 @@ import VerboseLevel from 'jac/logger/VerboseLevel';
 import LogLevel from 'jac/logger/LogLevel';
 import ConsoleTarget from 'jac/logger/ConsoleTarget';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
+import BrowserUtils from 'jac/utils/BrowserUtils';
 
 //Import through loaders
 import '../css/normalize.css';
