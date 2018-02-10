@@ -3,38 +3,31 @@
  * User: Jake
  */
 
-define([],
-function(){
-    return (function(){
-        var AudioUtils ={};
+export default {
+	getContext: () => {
+		let audioContext = null;
 
-	    AudioUtils.getContext = function(){
-		    var context = null;
+		try {
+            window.audioContext = window.AudioContext || window.webkitAudioContext;
+            audioContext = new AudioContext();
+		} catch ($err) {
+			throw new Error('Web Audio API is not supported in this browser');
+		}
 
-		    if(typeof AudioContext !== 'undefined'){
-				context = new AudioContext();
-		    } else if(typeof webkitAudioContext !== 'undefined'){
-				context = new webkitAudioContext();
-		    } else {
-			    context = null;
-		    }
+		return audioContext;
+	},
 
-		    return context;
-	    };
+	createSoundSource: ($audioContext, $audioData, $makeMono) => {
+		let soundSource = $audioContext.createBufferSource();
+		soundSource.buffer = $audioContext.createBuffer($audioData, $makeMono);
+		return soundSource;
+	},
 
-	    AudioUtils.createSoundSource = function($audioContext, $audioData, $makeMono){
-		    var soundSource = $audioContext.createBufferSource();
-		    soundSource.buffer = $audioContext.createBuffer($audioData, $makeMono);
-			return soundSource;
-	    };
+	createSoundSourceWithBuffer: ($audioContext, $buffer) => {
+		let soundSource = $audioContext.createBufferSource();
+		soundSource.buffer = $buffer;
+		return soundSource;
+	}
 
-	    AudioUtils.createSoundSourceWithBuffer = function($audioContext, $buffer){
-		    var soundSource = $audioContext.createBufferSource();
-		    soundSource.buffer = $buffer;
-		    return soundSource;
-	    };
 
-        //Return constructor
-        return AudioUtils;
-    })();
-});
+};
