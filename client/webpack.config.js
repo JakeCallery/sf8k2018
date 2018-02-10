@@ -3,7 +3,7 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-//const WebpackAutoInject = require('./forWebPack/webpack-auto-inject-version');
+const WebpackAutoInject = require('./forWebPack/webpack-auto-inject-version');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 console.log('DIRNAME: ' + __dirname);
@@ -77,11 +77,11 @@ module.exports = {
             ]
         }),
 
-        // new WebpackAutoInject({
-        //     autoIncrease: true,
-        //     injectByTag: true,
-        //     injectAsComment: true
-        // }),
+        new WebpackAutoInject({
+            autoIncrease: true,
+            injectByTag: true,
+            injectAsComment: true
+        }),
 
         function() {
             this.plugin('watch-run', function(watching, callback) {

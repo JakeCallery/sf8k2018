@@ -1,0 +1,61 @@
+html {
+    height: 100%;
+}
+
+html, body {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: #333333;
+}
+
+body {
+    box-sizing: border-box;
+}
+
+.displayNone {
+    display: none;
+}
+
+.is-invisible {
+    opacity: 0;
+}
+
+.is-hidden {
+    display: none
+}
+
+/*************************
+*** Buttons
+***************************/
+
+button {
+    cursor: pointer;
+}
+
+.simpleButton {
+    width:100px;
+    height:40px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bolder;
+    font-size: 10pt;
+    color: #000000;
+    text-align: center;
+    text-decoration: none;
+    background: #bcc2c6;
+    border: 0;
+    border-radius: 7px;
+    outline: none;
+}
+
+.simpleButton:hover {
+    color: #222222;
+    background: #e0e6ea;
+}
+
+.simpleButton:disabled {
+    color: #949494;
+    background: #454545;
+    pointer-events: none;
+    cursor: default;
+}

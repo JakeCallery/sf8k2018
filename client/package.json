@@ -1,15 +1,15 @@
 {
-  "name": "Fabric2018",
+  "name": "sf8k2018",
   "version": "0.0.1",
-  "description": "Fabric Project",
+  "description": "sf8k 2018",
   "main": "index.js",
   "scripts": {
     "watch": "webpack --env.patch --colors --progress --watch"
   },
   "keywords": [
-    "fabric",
-    "game",
-    "websockets"
+    "sf8k",
+    "audio",
+    "effects"
   ],
   "author": "Jake Callery",
   "devDependencies": {
