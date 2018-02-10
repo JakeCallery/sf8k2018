@@ -1,0 +1,20 @@
+{
+  "name": "webpack-auto-inject-version",
+  "version": "0.2.0",
+  "repository": "radswiat/webpack-auto-inject-version",
+  "description": "Webpack plugin for auto inject version from package.json",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -w"
+  },
+  "author": "Radoslaw Swiat",
+  "license": "ISC",
+  "devDependencies": {
+    "typings": "^1.4.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "semver": "^5.3.0",
+    "chalk": "^1.1.3"
+  }
+}
