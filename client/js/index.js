@@ -6,6 +6,7 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import BrowserUtils from 'jac/utils/BrowserUtils';
 import FeatureVerifier from 'FeatureVerifier';
 import AudioManager from 'AudioManager';
+import UIManager from 'UIManager';
 
 //Import through loaders
 import '../css/normalize.css';
@@ -37,6 +38,9 @@ if(fvResponse.length !== 0) {
 } else {
     l.debug('All features Verified');
 }
+
+//Setup UI
+let um = new UIManager(document);
 
 //Set up audio
 let am = new AudioManager(window);

@@ -11,13 +11,21 @@ export default class AudioManager extends EventDispatcher {
 
         let self = this;
         this.window = $window;
+        this.geb = new GlobalEventBus();
 
         this.audioContext = null;
         this.audioSource = null;
 
+        this.currentTime = 0;
+        this.hasPlayedOnce = false;
+
         //Delegates
+        this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
+        this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
 
         //Events
+        this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
+        this.geb.addEventListener('requestPause', this.requestPauseDelegate);
 
     }
 
@@ -34,11 +42,16 @@ export default class AudioManager extends EventDispatcher {
             //Set up source
             try {
                 this.audioSource = AudioUtils.createSoundSourceWithBuffer(this.audioContext);
+                if(!this.audioSource.start){
+                    l.warn('Source.start note defined, using noteOn');
+                    this.audioSource.start = this.audioSource.noteOn;
+                }
             } catch ($err) {
                 l.error('Failed to create audio source: ', $err);
                 reject($err);
             }
 
+            //Continue
             resolve();
         });
 
@@ -46,7 +59,7 @@ export default class AudioManager extends EventDispatcher {
 
     loadSound($url) {
         return new Promise((resolve, reject) => {
-            fetch($url, {
+           return fetch($url, {
                 method: 'GET',
                 headers: new Headers({
                 })
@@ -74,5 +87,44 @@ export default class AudioManager extends EventDispatcher {
                 l.error('Load Sound Error: ', $error);
             })
         });
+    }
+
+    handleRequestPlay($evt) {
+        l.debug('Caught Play Request');
+        l.debug('CurrentState: ', this.audioContext.state);
+        if(this.audioContext.state === 'suspended'){
+            l.debug('Resuming');
+            this.audioContext.resume()
+                .then(() => {
+                   l.debug('Resumed');
+                })
+                .catch(($err) => {
+                   l.error('Resume Error: ', $err);
+                });
+        } else if(this.hasPlayedOnce === false) {
+            l.debug('Playing First Time');
+            this.audioSource.start(this.currentTime);
+            this.hasPlayedOnce = true;
+        } else {
+            l.warn('audiocontext not in a paused state, so will not try playing');
+        }
+
+    }
+
+    handleRequestPause($evt) {
+        l.debug('Caught Pause Request: ', this.audioContext.state);
+        this.currentTime = this.audioContext.currentTime;
+        if(this.audioContext.state === 'running' && this.hasPlayedOnce === true){
+            this.audioContext.suspend()
+                .then(() => {
+                    l.debug('Audio Context Suspended');
+                })
+                .catch(($err) => {
+                    l.error('Pause Error: ', $error);
+                });
+        } else {
+            l.warn('AudioContextState is not running or has not been played onces ', this.audioContext.state, this.hasPlayedOnce);
+        }
+
     }
 }
