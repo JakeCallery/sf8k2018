@@ -81,6 +81,8 @@ export default class AudioManager extends EventDispatcher {
                         this.audioSource.connect(this.scriptProcessor);
                         this.scriptProcessor.connect(this.audioContext.destination);
                         l.debug('Sound finished decoding');
+                        l.debug('Num Channels: ', this.audioSource.buffer.numberOfChannels);
+                        l.debug('Num Samples: ', this.audioSource.buffer.length);
                         resolve();
                     });
                 });
