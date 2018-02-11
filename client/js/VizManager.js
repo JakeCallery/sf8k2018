@@ -13,9 +13,11 @@ export default class VizManager extends EventDispatcher {
         this.doc = $document;
         this.geb = new GlobalEventBus();
         this.rafId = null;
+        this.audioManager = null;
         this.audioSource = null;
         this.audioContext = null;
         this.baseImageData = null;
+        this.samplesPerLine = null;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -45,22 +47,23 @@ export default class VizManager extends EventDispatcher {
     }
 
     handleSoundLoaded($evt) {
-        l.debug('Viz Caught Sound Loaded');
+        l.debug('Viz Caught Sound Loaded: ', $evt);
 
         //Save references
+        this.audioManager = $evt.data.audioManager;
         this.audioSource = $evt.data.audioSource;
         this.audioContext = $evt.data.audioContext;
 
         //Determine how many samples to average to generate the line
         let totalSamples = this.audioSource.buffer.length;
-        let samplesPerLine = Math.floor(totalSamples / this.soundCanvas.width);
+        this.samplesPerLine = Math.floor(totalSamples / this.soundCanvas.width);
         let horizon = Math.round(this.soundCanvas.height/2);
         let lBuffer = this.audioSource.buffer.getChannelData(0);
         let rBuffer = this.audioSource.buffer.getChannelData(1);
 
         l.debug('lBuffer Length: ', lBuffer.length);
         l.debug('rBuffer Length: ', rBuffer.length);
-        l.debug('Num Samples Per Line: ', samplesPerLine);
+        l.debug('Num Samples Per Line: ', this.samplesPerLine);
 
         //Clear canvas
         this.soundCanvasContext.fillStyle = '#340d14';
@@ -83,12 +86,12 @@ export default class VizManager extends EventDispatcher {
             let total = 0;
 
             //Inner loop, averages all samples to generate line height
-            for(let j = 0; j < samplesPerLine; j++){
-                total += lBuffer[(i*samplesPerLine)+j];
+            for(let j = 0; j < this.samplesPerLine; j++){
+                total += lBuffer[(i*this.samplesPerLine)+j];
             }
 
             //Calc Sample height Avg and Save avg Height
-            avg = total / samplesPerLine;
+            avg = total / this.samplesPerLine;
             sampleHeights.push(avg);
 
             if(avg > sampleAvgMax){
@@ -116,9 +119,6 @@ export default class VizManager extends EventDispatcher {
             this.soundCanvasContext.fillRect(x, y, 1, height);
         }
 
-
-        //Right Channel
-
         //Save Canvas
         this.baseImageData = this.soundCanvasContext.getImageData(0,0,this.soundCanvas.width,this.soundCanvas.height);
 
@@ -129,7 +129,15 @@ export default class VizManager extends EventDispatcher {
 
     handleRequestAnimationFrame($evt) {
         this.stats.begin();
+
+        //Clear Canvas
         this.clearCanvas();
+
+        //Draw current sample line:
+        this.soundCanvasContext.fillStyle = '#ffffff';
+        let x = Math.floor(this.audioManager.currentSampleIndex / this.samplesPerLine);
+        this.soundCanvasContext.fillRect(x, 0, 1, this.soundCanvas.height);
+
         this.stats.end();
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
@@ -139,6 +147,9 @@ export default class VizManager extends EventDispatcher {
         // this.soundCanvasContext.fillStyle = '#340d14';
         // this.soundCanvasContext.fillRect(0,0,this.soundCanvas.width,this.soundCanvas.height);
 
+        //TODO: Faster copy of data:
+        //https://stackoverflow.com/questions/48013380/faster-way-to-copy-array-values-into-canvas-pixel-data
+        //https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/
         this.soundCanvasContext.putImageData(this.baseImageData,0,0);
 
     }

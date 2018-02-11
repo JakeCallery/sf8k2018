@@ -113,6 +113,7 @@ export default class AudioManager extends EventDispatcher {
 
                         this.geb.dispatchEvent(new JacEvent('soundLoaded',
                             {
+                                audioManager:this,
                                 audioSource:this.audioSource,
                                 audioContext:this.audioContext
                             })
