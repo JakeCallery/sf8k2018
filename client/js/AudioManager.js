@@ -19,9 +19,12 @@ export default class AudioManager extends EventDispatcher {
         this.currentTime = 0;
         this.hasPlayedOnce = false;
 
+        this.scriptProcessor = null;
+
         //Delegates
         this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
         this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
+        this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
@@ -34,6 +37,8 @@ export default class AudioManager extends EventDispatcher {
             //Set up context
             try {
                 this.audioContext = AudioUtils.getContext();
+                this.scriptProcessor = this.audioContext.createScriptProcessor(4096,1,1);
+                this.scriptProcessor.addEventListener('audioprocess', this.audioProcessDelegate);
             } catch($err) {
                 l.error('Failed to create audio context: ', $err);
                 reject($err);
@@ -73,7 +78,8 @@ export default class AudioManager extends EventDispatcher {
                 return new Promise((resolve, reject) => {
                     this.audioContext.decodeAudioData($buffer, ($decodedData) => {
                         this.audioSource.buffer = $decodedData;
-                        this.audioSource.connect(this.audioContext.destination);
+                        this.audioSource.connect(this.scriptProcessor);
+                        this.scriptProcessor.connect(this.audioContext.destination);
                         l.debug('Sound finished decoding');
                         resolve();
                     });
@@ -81,6 +87,7 @@ export default class AudioManager extends EventDispatcher {
             })
             .then(() => {
                 l.debug('After Sound Finished Decoding');
+
                 resolve();
             })
             .catch(($error) => {
@@ -125,6 +132,20 @@ export default class AudioManager extends EventDispatcher {
         } else {
             l.warn('AudioContextState is not running or has not been played onces ', this.audioContext.state, this.hasPlayedOnce);
         }
+    }
 
+    handleAudioProcess($evt){
+        let inputBuffer = $evt.inputBuffer;
+        let outputBuffer = $evt.outputBuffer;
+
+        for(let channel = 0; channel < outputBuffer.numberOfChannels; channel++){
+            let inputData = inputBuffer.getChannelData(channel);
+            let outputData = outputBuffer.getChannelData(channel);
+
+            //Loop through each sample (in 4096 blocks)
+            for(let sample = 0; sample < inputBuffer.length; sample++){
+                outputData[sample] = inputData[sample];
+            }
+        }
     }
 }
