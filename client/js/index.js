@@ -7,10 +7,12 @@ import BrowserUtils from 'jac/utils/BrowserUtils';
 import FeatureVerifier from 'FeatureVerifier';
 import AudioManager from 'AudioManager';
 import UIManager from 'UIManager';
+import VizManager from 'VizManager';
 
 //Import through loaders
 import '../css/normalize.css';
 import '../css/main.css';
+
 
 l.addLogTarget(new ConsoleTarget());
 l.verboseFilter = (VerboseLevel.NORMAL | VerboseLevel.TIME | VerboseLevel.LEVEL);
@@ -41,6 +43,7 @@ if(fvResponse.length !== 0) {
 
 //Setup UI
 let um = new UIManager(document);
+let vm = new VizManager(document);
 
 //Set up audio
 let am = new AudioManager(window);

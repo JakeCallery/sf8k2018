@@ -94,6 +94,13 @@ export default class AudioManager extends EventDispatcher {
                         l.debug('Num Channels: ', this.audioSource.buffer.numberOfChannels);
                         l.debug('Num Samples: ', this.audioSource.buffer.length);
                         l.debug('Duration: ', this.audioSource.buffer.duration);
+
+                        this.geb.dispatchEvent(new JacEvent('soundLoaded',
+                            {
+                                audioSource:this.audioSource,
+                                audioContext:this.audioContext
+                            })
+                        );
                         resolve();
                     });
                 });

@@ -27,6 +27,12 @@ export default class FeatureVerifier extends EventDispatcher {
             notVerifiedList.push('Promise');
         }
 
+        //RequestAnimationFrame
+        if(!(window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+             window.webkitRequestAnimationFrame || window.msRequestAnimationFrame)){
+            notVerifiedList.push('requestAnimationFrame');
+        }
+
         return notVerifiedList;
     }
 }
