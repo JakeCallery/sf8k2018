@@ -2,7 +2,8 @@ import l from 'jac/logger/Logger';
 import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
-import JacEvent from './jac/events/JacEvent';
+import JacEvent from 'jac/events/JacEvent';
+import Stats from 'mrdoob/Stats';
 
 export default class VizManager extends EventDispatcher {
     constructor($document){
@@ -24,6 +25,11 @@ export default class VizManager extends EventDispatcher {
 
     init() {
         let self = this;
+
+        //Stats
+        this.stats = new Stats();
+        this.stats.showPanel(1);
+        this.doc.body.appendChild(this.stats.dom);
 
         //Elements
         this.soundCanvas = this.doc.getElementById('soundCanvas');
@@ -47,7 +53,7 @@ export default class VizManager extends EventDispatcher {
 
         //Determine how many samples to average to generate the line
         let totalSamples = this.audioSource.buffer.length;
-        let samplesPerLine = Math.ceil(totalSamples / this.soundCanvas.width);
+        let samplesPerLine = Math.floor(totalSamples / this.soundCanvas.width);
         let horizon = Math.round(this.soundCanvas.height/2);
         let lBuffer = this.audioSource.buffer.getChannelData(0);
         let rBuffer = this.audioSource.buffer.getChannelData(1);
@@ -56,8 +62,11 @@ export default class VizManager extends EventDispatcher {
         l.debug('rBuffer Length: ', rBuffer.length);
         l.debug('Num Samples Per Line: ', samplesPerLine);
 
-        //Draw Sound & Make base copy
-        this.clearCanvas();
+        //Clear canvas
+        this.soundCanvasContext.fillStyle = '#340d14';
+        this.soundCanvasContext.fillRect(0,0,this.soundCanvas.width,this.soundCanvas.height);
+
+        //Set color for line drawing
         this.soundCanvasContext.fillStyle = '#ad131a';
 
         //Setup Heights
@@ -66,6 +75,7 @@ export default class VizManager extends EventDispatcher {
         let sampleAvgMin = null;
         let sampleAvgRange = null;
         let sampleHeights = [];
+
         //Outer loop, once per line
         //Left Channel
         for(let i = 0; i < this.soundCanvas.width; i++){
@@ -77,7 +87,7 @@ export default class VizManager extends EventDispatcher {
                 total += lBuffer[(i*samplesPerLine)+j];
             }
 
-            //Draw Line
+            //Calc Sample height Avg and Save avg Height
             avg = total / samplesPerLine;
             sampleHeights.push(avg);
 
@@ -112,17 +122,16 @@ export default class VizManager extends EventDispatcher {
         //Save Canvas
         this.baseImageData = this.soundCanvasContext.getImageData(0,0,this.soundCanvas.width,this.soundCanvas.height);
 
-        //TEMP
-        this.soundCanvasContext.fillRect(50,50,100,100);
-        //////////////
-
         //Start Animation
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
 
     }
 
     handleRequestAnimationFrame($evt) {
+        this.stats.begin();
         this.clearCanvas();
+        this.stats.end();
+        this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 
     clearCanvas() {
@@ -131,6 +140,6 @@ export default class VizManager extends EventDispatcher {
         // this.soundCanvasContext.fillRect(0,0,this.soundCanvas.width,this.soundCanvas.height);
 
         this.soundCanvasContext.putImageData(this.baseImageData,0,0);
-        this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+
     }
 }

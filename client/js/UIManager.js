@@ -2,7 +2,7 @@ import l from 'jac/logger/Logger';
 import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
-import JacEvent from "./jac/events/JacEvent";
+import JacEvent from 'jac/events/JacEvent';
 
 export default class UIManager extends EventDispatcher {
     constructor($doc) {

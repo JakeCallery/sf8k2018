@@ -22,6 +22,16 @@ export default class AudioManager extends EventDispatcher {
         this.scriptProcessorNode = null;
         this.gainNode = null;
 
+        this.totalSamples = null;
+        this.startSampleIndex = null;
+        this.endSampleIndex = null;
+        this.currentSampleIndex = null;
+
+        this.sourceLChannelData = null;
+        this.sourceRChannelData = null;
+
+        this.isPlaying = false;
+
         //Delegates
         this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
         this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
@@ -39,7 +49,7 @@ export default class AudioManager extends EventDispatcher {
             try {
                 this.audioContext = AudioUtils.getContext();
 
-                this.scriptProcessorNode = this.audioContext.createScriptProcessor(4096,1,1);
+                this.scriptProcessorNode = this.audioContext.createScriptProcessor(2048,0,2);
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
 
                 this.gainNode = this.audioContext.createGain();
@@ -84,10 +94,16 @@ export default class AudioManager extends EventDispatcher {
                 return new Promise((resolve, reject) => {
                     this.audioContext.decodeAudioData($buffer, ($decodedData) => {
                         this.audioSource.buffer = $decodedData;
+                        this.sourceLChannelData = this.audioSource.buffer.getChannelData(0);
+                        this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
                         this.audioSource.loop = true;
                         this.audioSource.connect(this.scriptProcessorNode);
                         this.scriptProcessorNode.connect(this.gainNode);
                         this.gainNode.connect(this.audioContext.destination);
+                        this.startSampleIndex = 0;
+                        this.currentSampleIndex = 0;
+                        this.endSampleIndex = this.audioSource.buffer.length - 1;
+                        this.totalSamples = this.audioSource.buffer.length;
 
                         l.debug('Sound finished decoding');
                         l.debug('Samples Per Second: ', this.audioContext.sampleRate);
@@ -118,54 +134,54 @@ export default class AudioManager extends EventDispatcher {
 
     handleRequestPlay($evt) {
         l.debug('Caught Play Request');
-        l.debug('CurrentState: ', this.audioContext.state);
-        if(this.audioContext.state === 'suspended'){
-            l.debug('Resuming');
-            this.audioContext.resume()
-                .then(() => {
-                   l.debug('Resumed');
-                })
-                .catch(($err) => {
-                   l.error('Resume Error: ', $err);
-                });
-        } else if(this.hasPlayedOnce === false) {
-            l.debug('Playing First Time');
-            this.audioSource.start(this.currentTime);
-            this.hasPlayedOnce = true;
-        } else {
-            l.warn('audiocontext not in a paused state, so will not try playing');
+        if(this.isPlaying === false) {
+            this.isPlaying = true;
         }
-
     }
 
     handleRequestPause($evt) {
-        l.debug('Caught Pause Request: ', this.audioContext.state);
-        this.currentTime = this.audioContext.currentTime;
-        if(this.audioContext.state === 'running' && this.hasPlayedOnce === true){
-            this.audioContext.suspend()
-                .then(() => {
-                    l.debug('Audio Context Suspended');
-                })
-                .catch(($err) => {
-                    l.error('Pause Error: ', $error);
-                });
-        } else {
-            l.warn('AudioContextState is not running or has not been played once: ', this.audioContext.state, this.hasPlayedOnce);
+        l.debug('Caught Pause Request');
+        if(this.isPlaying === true) {
+            this.isPlaying = false;
         }
     }
 
     handleAudioProcess($evt){
-        let inputBuffer = $evt.inputBuffer;
         let outputBuffer = $evt.outputBuffer;
+        let lOutputBuffer = outputBuffer.getChannelData(0);
+        let rOutputBuffer = outputBuffer.getChannelData(1);
 
-        for(let channel = 0; channel < outputBuffer.numberOfChannels; channel++){
-            let inputData = inputBuffer.getChannelData(channel);
-            let outputData = outputBuffer.getChannelData(channel);
+        if(this.isPlaying) {
+            let direction = (this.endSampleIndex >= this.startSampleIndex)?1:-1;
 
-            //Loop through each sample (in 4096 blocks)
-            for(let sample = 0; sample < inputBuffer.length; sample++){
-                outputData[sample] = inputData[sample];
+            for(let i = 0; i < lOutputBuffer.length; i++){
+                this.currentSampleIndex += direction;
+
+                if(direction === 1){
+                    if(this.currentSampleIndex > this.endSampleIndex || this.currentSampleIndex > this.totalSamples){
+                        this.currentSampleIndex = this.startSampleIndex;
+                    } else if(this.currentSampleIndex < this.startSampleIndex){
+                        this.currentSampleIndex = this.startSampleIndex;
+                    }
+                } else if(direction === -1) {
+                    if(this.currentSampleIndex < this.endSampleIndex || this.currentSampleIndex > this.totalSamples){
+                        this.currentSampleIndex = this.startSampleIndex;
+                    } else if(this.currentSampleIndex > this.startSampleIndex){
+                        this.currentSampleIndex = this.startSampleIndex;
+                    }
+                }
+
+                lOutputBuffer[i] = this.sourceLChannelData[this.currentSampleIndex];
+                rOutputBuffer[i] = this.sourceRChannelData[this.currentSampleIndex];
+
+            }
+        } else {
+            for(let i = 0; i < lOutputBuffer.length; i++) {
+                lOutputBuffer[i] = 0.0;
+                rOutputBuffer[i] = 0.0;
             }
         }
+
+
     }
 }
