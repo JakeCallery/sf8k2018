@@ -19,7 +19,8 @@ export default class AudioManager extends EventDispatcher {
         this.currentTime = 0;
         this.hasPlayedOnce = false;
 
-        this.scriptProcessor = null;
+        this.scriptProcessorNode = null;
+        this.gainNode = null;
 
         //Delegates
         this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
@@ -37,8 +38,13 @@ export default class AudioManager extends EventDispatcher {
             //Set up context
             try {
                 this.audioContext = AudioUtils.getContext();
-                this.scriptProcessor = this.audioContext.createScriptProcessor(4096,1,1);
-                this.scriptProcessor.addEventListener('audioprocess', this.audioProcessDelegate);
+
+                this.scriptProcessorNode = this.audioContext.createScriptProcessor(4096,1,1);
+                this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
+
+                this.gainNode = this.audioContext.createGain();
+                this.gainNode.gain.setTargetAtTime(0.1, this.audioContext.currentTime, 0)
+
             } catch($err) {
                 l.error('Failed to create audio context: ', $err);
                 reject($err);
@@ -78,8 +84,11 @@ export default class AudioManager extends EventDispatcher {
                 return new Promise((resolve, reject) => {
                     this.audioContext.decodeAudioData($buffer, ($decodedData) => {
                         this.audioSource.buffer = $decodedData;
-                        this.audioSource.connect(this.scriptProcessor);
-                        this.scriptProcessor.connect(this.audioContext.destination);
+                        this.audioSource.loop = true;
+                        this.audioSource.connect(this.scriptProcessorNode);
+                        this.scriptProcessorNode.connect(this.gainNode);
+                        this.gainNode.connect(this.audioContext.destination);
+
                         l.debug('Sound finished decoding');
                         l.debug('Samples Per Second: ', this.audioContext.sampleRate);
                         l.debug('Num Channels: ', this.audioSource.buffer.numberOfChannels);
@@ -134,7 +143,7 @@ export default class AudioManager extends EventDispatcher {
                     l.error('Pause Error: ', $error);
                 });
         } else {
-            l.warn('AudioContextState is not running or has not been played onces ', this.audioContext.state, this.hasPlayedOnce);
+            l.warn('AudioContextState is not running or has not been played once: ', this.audioContext.state, this.hasPlayedOnce);
         }
     }
 
