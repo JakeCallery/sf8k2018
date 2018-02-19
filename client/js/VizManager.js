@@ -60,6 +60,7 @@ export default class VizManager extends EventDispatcher {
         let totalSamples = this.audioSource.buffer.length;
         this.samplesPerLine = Math.floor(totalSamples / this.soundCanvas.width);
         this.markerDO.samplesPerPixel = this.samplesPerLine;
+
         let horizon = Math.round(this.soundCanvas.height/2);
         let lBuffer = this.audioSource.buffer.getChannelData(0);
         let rBuffer = this.audioSource.buffer.getChannelData(1);
@@ -67,6 +68,8 @@ export default class VizManager extends EventDispatcher {
         //set initial start/end markers
         this.markerDO.startMarkerSample = 0;
         this.markerDO.endMarkerSample = totalSamples-1;
+        this.markerDO.loopRect.height = horizon - Math.round(horizon / 2);
+        this.markerDO.loopRect.y = horizon + Math.round(horizon / 2);
 
         l.debug('lBuffer Length: ', lBuffer.length);
         l.debug('rBuffer Length: ', rBuffer.length);
@@ -141,10 +144,15 @@ export default class VizManager extends EventDispatcher {
         //Clear Canvas
         this.clearCanvas();
 
-        //Draw current sample line:
-        this.soundCanvasContext.fillStyle = '#ffffff';
-        let sampleMarkerX = Math.floor(this.audioManager.currentSampleIndex / this.samplesPerLine);
-        this.soundCanvasContext.fillRect(sampleMarkerX, 0, 1, this.soundCanvas.height);
+        //Draw Loop rect
+        //this.soundCanvasContext.fillStyle = '#d6d124';
+        this.soundCanvasContext.fillStyle = 'rgba(214,209,36,0.3)';
+        this.soundCanvasContext.fillRect(
+            this.markerDO.loopRect.x,
+            this.markerDO.loopRect.y,
+            this.markerDO.loopRect.width,
+            this.markerDO.loopRect.height
+        );
 
         //Draw Start Marker
         this.soundCanvasContext.fillStyle = '#00ff00';
@@ -155,6 +163,11 @@ export default class VizManager extends EventDispatcher {
         this.soundCanvasContext.fillStyle = '#ff0000';
         let endMarkerX = Math.floor(this.markerDO.endMarkerSample / this.samplesPerLine);
         this.soundCanvasContext.fillRect(endMarkerX-2, 0, 4, this.soundCanvas.height);
+
+        //Draw current sample line:
+        this.soundCanvasContext.fillStyle = '#ffffff';
+        let sampleMarkerX = Math.floor(this.audioManager.currentSampleIndex / this.samplesPerLine);
+        this.soundCanvasContext.fillRect(sampleMarkerX, 0, 1, this.soundCanvas.height);
 
         //Request next frame
         this.stats.end();
