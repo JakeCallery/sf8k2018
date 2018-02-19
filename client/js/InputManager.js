@@ -91,13 +91,16 @@ export default class InputManager extends EventDispatcher {
         l.debug('Move Diff: ', mouseMoveDiff);
         l.debug('Mouse Down X: ', this.mouseDownX);
 
-        let currentStartX = this.markerDO.startMarkerXOrig;
-        let currentEndX = this.markerDO.endMarkerXOrig;
+        let origStartX = this.markerDO.startMarkerXOrig;
+        let origEndX = this.markerDO.endMarkerXOrig;
 
-        let nextStartX = currentStartX + mouseMoveDiff;
-        let nextEndX = currentEndX + mouseMoveDiff;
+        let currentStartX = this.markerDO.startMarkerX;
+        let currentEndX = this.markerDO.endMarkerX;
 
-        if(currentStartX <= currentEndX){
+        let nextStartX = origStartX + mouseMoveDiff;
+        let nextEndX = origEndX + mouseMoveDiff;
+
+        if(origStartX <= origEndX){
             if(nextStartX <= 0){
                 let diff = currentStartX - 0;
                 nextStartX = currentStartX - diff;
@@ -105,11 +108,11 @@ export default class InputManager extends EventDispatcher {
             } else if(nextEndX > this.soundCanvas.width){
                 let diff = this.soundCanvas.width - currentEndX;
                 nextStartX = currentStartX + diff;
-                nextEndX = currentStartX + diff;
+                nextEndX = currentEndX + diff;
             }
         } else {
             //Reversed
-            if(nextEndX <=0){
+            if(nextEndX <= 0){
                 let diff = currentEndX - 0;
                 nextStartX = currentStartX - diff;
                 nextEndX = currentEndX - diff;
