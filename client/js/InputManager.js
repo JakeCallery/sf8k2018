@@ -28,7 +28,7 @@ export default class InputManager extends EventDispatcher {
         this.soundCanvas = this.doc.getElementById('soundCanvas');
         this.soundCanvasOffsetX = this.soundCanvas.offsetLeft;
         this.soundCanvasOffsetY = this.soundCanvas.offsetTop;
-        this.isDragging = false;
+        this.isDraggingLoopRect = false;
 
         //Delegates
         this.mouseMoveDelegate = EventUtils.bind(self, self.handleMouseMove);
@@ -54,10 +54,8 @@ export default class InputManager extends EventDispatcher {
 
     handleMouseDown($evt) {
         l.debug('Mouse Down:', $evt.buttons);
-
+        this.mouseDownX = $evt.clientX - this.soundCanvasOffsetX;
         this.updateFromButton($evt);
-
-
     }
 
     handleMouseUp($evt) {
@@ -80,5 +78,28 @@ export default class InputManager extends EventDispatcher {
             l.debug('Setting End marker to: ', $evt.clientX - this.soundCanvasOffsetX);
             this.markerDO.endMarkerX = $evt.clientX - this.soundCanvasOffsetX;
         }
+
+        if($evt.buttons === 4) {
+            this.loopRectMouseDownOffsetX =  this.mouseDownX - this.markerDO.loopRect.x;
+            this.handleLoopRectDrag($evt);
+        }
+    }
+
+    handleLoopRectDrag($evt) {
+        let mouseMoveDiff = ($evt.clientX - this.soundCanvasOffsetX) - this.mouseDownX;
+        l.debug('Move Diff: ', mouseMoveDiff);
+        l.debug('Mouse Down X: ', this.mouseDownX);
+
+        let nextX = this.mouseDownX + mouseMoveDiff;
+        l.debug('Next X Before Processing: ', nextX);
+        if(nextX < 0){
+            nextX = 0;
+        } else if(nextX + this.markerDO.loopRect.width > this.soundCanvas.width) {
+            nextX = this.soundCanvas.width - this.markerDO.loopRect.width;
+        }
+
+        let loopRectWidth = this.markerDO.loopRect.width;
+        this.markerDO.startMarkerX = nextX;
+        this.markerDO.endMarkerX = this.markerDO.startMarkerX + loopRectWidth;
     }
 }
