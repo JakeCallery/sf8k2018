@@ -27,6 +27,16 @@ export default class MarkerDataObject extends EventDispatcher {
         this.endMarkerXOrig = this.endMarkerX;
     }
 
+    updateStartSample($sampleIndex) {
+        this.startMarkerSample = $sampleIndex;
+        this.updateLoopRect();
+    }
+
+    updateEndSample($sampleIndex) {
+        this.endMarkerSample = $sampleIndex;
+        this.updateLoopRect();
+    }
+
     get startMarkerX() {
         if(this.samplesPerPixel === null){
             l.error('Trying to set startMarkerX before samplesPerPixelSet');
