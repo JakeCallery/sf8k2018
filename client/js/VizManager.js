@@ -3,6 +3,7 @@ import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
+import MarkerDataObject from 'MarkerDataObject';
 import Stats from 'mrdoob/Stats';
 
 export default class VizManager extends EventDispatcher {
@@ -18,6 +19,7 @@ export default class VizManager extends EventDispatcher {
         this.audioContext = null;
         this.baseImageData = null;
         this.samplesPerLine = null;
+        this.markerDO = new MarkerDataObject();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -57,20 +59,26 @@ export default class VizManager extends EventDispatcher {
         //Determine how many samples to average to generate the line
         let totalSamples = this.audioSource.buffer.length;
         this.samplesPerLine = Math.floor(totalSamples / this.soundCanvas.width);
+        this.markerDO.samplesPerPixel = this.samplesPerLine;
         let horizon = Math.round(this.soundCanvas.height/2);
         let lBuffer = this.audioSource.buffer.getChannelData(0);
         let rBuffer = this.audioSource.buffer.getChannelData(1);
 
+        //set initial start/end markers
+        this.markerDO.startMarkerSample = 0;
+        this.markerDO.endMarkerSample = totalSamples-1;
+
         l.debug('lBuffer Length: ', lBuffer.length);
         l.debug('rBuffer Length: ', rBuffer.length);
         l.debug('Num Samples Per Line: ', this.samplesPerLine);
-
+        l.debug('StartMarker Sample: ', this.markerDO.startMarkerSample);
+        l.debug('EndMarker Sample: ', this.markerDO.endMarkerSample);
         //Clear canvas
-        this.soundCanvasContext.fillStyle = '#340d14';
+        this.soundCanvasContext.fillStyle = '#220c11';
         this.soundCanvasContext.fillRect(0,0,this.soundCanvas.width,this.soundCanvas.height);
 
         //Set color for line drawing
-        this.soundCanvasContext.fillStyle = '#ad131a';
+        this.soundCanvasContext.fillStyle = '#6e0a0c';
 
         //Setup Heights
         let heightScaleFactor = null;
@@ -135,21 +143,32 @@ export default class VizManager extends EventDispatcher {
 
         //Draw current sample line:
         this.soundCanvasContext.fillStyle = '#ffffff';
-        let x = Math.floor(this.audioManager.currentSampleIndex / this.samplesPerLine);
-        this.soundCanvasContext.fillRect(x, 0, 1, this.soundCanvas.height);
+        let sampleMarkerX = Math.floor(this.audioManager.currentSampleIndex / this.samplesPerLine);
+        this.soundCanvasContext.fillRect(sampleMarkerX, 0, 1, this.soundCanvas.height);
 
+        //Draw Start Marker
+        this.soundCanvasContext.fillStyle = '#00ff00';
+        let startMarkerX = Math.floor(this.markerDO.startMarkerSample / this.samplesPerLine);
+        this.soundCanvasContext.fillRect(startMarkerX-2, 0, 4, this.soundCanvas.height);
+
+        //Draw End Marker
+        this.soundCanvasContext.fillStyle = '#ff0000';
+        let endMarkerX = Math.floor(this.markerDO.endMarkerSample / this.samplesPerLine);
+        this.soundCanvasContext.fillRect(endMarkerX-2, 0, 4, this.soundCanvas.height);
+
+        //Request next frame
         this.stats.end();
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 
     clearCanvas() {
         //Clear Canvas
-        // this.soundCanvasContext.fillStyle = '#340d14';
-        // this.soundCanvasContext.fillRect(0,0,this.soundCanvas.width,this.soundCanvas.height);
-
         //TODO: Faster copy of data:
         //https://stackoverflow.com/questions/48013380/faster-way-to-copy-array-values-into-canvas-pixel-data
         //https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/
+
+        //TODO: Or just layer it, leave the underlying waveform, and just position a line over it on a separate layer or something
+
         this.soundCanvasContext.putImageData(this.baseImageData,0,0);
 
     }
