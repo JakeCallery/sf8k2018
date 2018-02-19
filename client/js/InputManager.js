@@ -55,6 +55,7 @@ export default class InputManager extends EventDispatcher {
     handleMouseDown($evt) {
         l.debug('Mouse Down:', $evt.buttons);
         this.mouseDownX = $evt.clientX - this.soundCanvasOffsetX;
+        this.markerDO.saveCurrentLocations();
         this.updateFromButton($evt);
     }
 
@@ -90,16 +91,36 @@ export default class InputManager extends EventDispatcher {
         l.debug('Move Diff: ', mouseMoveDiff);
         l.debug('Mouse Down X: ', this.mouseDownX);
 
-        let nextX = this.mouseDownX + mouseMoveDiff;
-        l.debug('Next X Before Processing: ', nextX);
-        if(nextX < 0){
-            nextX = 0;
-        } else if(nextX + this.markerDO.loopRect.width > this.soundCanvas.width) {
-            nextX = this.soundCanvas.width - this.markerDO.loopRect.width;
+        let currentStartX = this.markerDO.startMarkerXOrig;
+        let currentEndX = this.markerDO.endMarkerXOrig;
+
+        let nextStartX = currentStartX + mouseMoveDiff;
+        let nextEndX = currentEndX + mouseMoveDiff;
+
+        if(currentStartX <= currentEndX){
+            if(nextStartX <= 0){
+                let diff = currentStartX - 0;
+                nextStartX = currentStartX - diff;
+                nextEndX = currentEndX - diff;
+            } else if(nextEndX > this.soundCanvas.width){
+                let diff = this.soundCanvas.width - currentEndX;
+                nextStartX = currentStartX + diff;
+                nextEndX = currentStartX + diff;
+            }
+        } else {
+            //Reversed
+            if(nextEndX <=0){
+                let diff = currentEndX - 0;
+                nextStartX = currentStartX - diff;
+                nextEndX = currentEndX - diff;
+            } else if(nextStartX >= this.soundCanvas.width){
+                let diff = this.soundCanvas.width - currentStartX;
+                nextStartX = currentStartX + diff;
+                nextEndX = currentEndX + diff;
+            }
         }
 
-        let loopRectWidth = this.markerDO.loopRect.width;
-        this.markerDO.startMarkerX = nextX;
-        this.markerDO.endMarkerX = this.markerDO.startMarkerX + loopRectWidth;
+        this.markerDO.startMarkerX = nextStartX;
+        this.markerDO.endMarkerX = nextEndX;
     }
 }

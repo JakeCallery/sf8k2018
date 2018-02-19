@@ -16,7 +16,15 @@ export default class MarkerDataObject extends EventDispatcher {
         this.endMarkerSample = null;
         this.samplesPerPixel = null;
 
+        this.startMarkerXOrig = null;
+        this.endMarkerXOrig = null;
+
         return instance;
+    }
+
+    saveCurrentLocations(){
+        this.startMarkerXOrig = this.startMarkerX;
+        this.endMarkerXOrig = this.endMarkerX;
     }
 
     get startMarkerX() {
