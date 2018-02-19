@@ -4,6 +4,7 @@ import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from './jac/events/JacEvent';
 import AudioUtils from 'jac/utils/AudioUtils';
+import MarkerDataObject from 'MarkerDataObject';
 
 export default class AudioManager extends EventDispatcher {
     constructor($window) {
@@ -31,6 +32,8 @@ export default class AudioManager extends EventDispatcher {
         this.sourceRChannelData = null;
 
         this.isPlaying = false;
+
+        this.markerDO = new MarkerDataObject();
 
         //Delegates
         this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
@@ -151,6 +154,9 @@ export default class AudioManager extends EventDispatcher {
         let outputBuffer = $evt.outputBuffer;
         let lOutputBuffer = outputBuffer.getChannelData(0);
         let rOutputBuffer = outputBuffer.getChannelData(1);
+
+        this.startSampleIndex = this.markerDO.startMarkerSample;
+        this.endSampleIndex = this.markerDO.endMarkerSample;
 
         if(this.isPlaying) {
             let direction = (this.endSampleIndex >= this.startSampleIndex)?1:-1;

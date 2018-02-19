@@ -47,12 +47,7 @@ export default class InputManager extends EventDispatcher {
     }
 
     handleMouseMove($evt) {
-        //.buttons:
-        //0 - no buttons
-        //1 - left button
-        //2 - right button
-        //3 - left & right button
-        //4 - middle button
+        //l.debug('Caught mouse Move: ', $evt.buttons);
         this.updateFromButton($evt);
 
     }
