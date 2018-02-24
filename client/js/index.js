@@ -8,11 +8,13 @@ import FeatureVerifier from 'FeatureVerifier';
 import AudioManager from 'AudioManager';
 import UIManager from 'UIManager';
 import VizManager from 'VizManager';
+import InputManager from 'InputManager';
+import PresetManager from 'PresetManager';
 
 //Import through loaders
 import '../css/normalize.css';
 import '../css/main.css';
-import InputManager from "./InputManager";
+
 
 
 l.addLogTarget(new ConsoleTarget());
@@ -46,6 +48,7 @@ if(fvResponse.length !== 0) {
 let um = new UIManager(document);
 let im = new InputManager(document);
 let vm = new VizManager(document);
+let pm = new PresetManager(document);
 
 //Set up audio
 let am = new AudioManager(window);
