@@ -39,11 +39,13 @@ export default class AudioManager extends EventDispatcher {
         this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
         this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
         this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
+        this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
         this.geb.addEventListener('requestPause', this.requestPauseDelegate);
-
+        this.geb.addEventListener('volchange', this.volChangeDelegate);
+        this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
     }
 
     init() {
@@ -56,7 +58,9 @@ export default class AudioManager extends EventDispatcher {
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
 
                 this.gainNode = this.audioContext.createGain();
-                this.gainNode.gain.setTargetAtTime(0.1, this.audioContext.currentTime, 0)
+
+                //set initial volume as muted
+                this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0)
 
             } catch($err) {
                 l.error('Failed to create audio context: ', $err);
@@ -127,7 +131,7 @@ export default class AudioManager extends EventDispatcher {
             })
             .then(() => {
                 l.debug('After Sound Finished Decoding');
-
+                this.geb.dispatchEvent(new JacEvent('requestInitialVol'));
                 resolve();
             })
             .catch(($error) => {
@@ -148,6 +152,12 @@ export default class AudioManager extends EventDispatcher {
         if(this.isPlaying === true) {
             this.isPlaying = false;
         }
+    }
+
+    handleVolChange($evt) {
+        let vol = ($evt.data / 100);
+        l.debug('caught vol change: ', vol);
+        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0)
     }
 
     handleAudioProcess($evt){
@@ -188,7 +198,6 @@ export default class AudioManager extends EventDispatcher {
                 rOutputBuffer[i] = 0.0;
             }
         }
-
 
     }
 }

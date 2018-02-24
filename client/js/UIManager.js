@@ -39,6 +39,7 @@ export default class UIManager extends EventDispatcher {
         this.ps2Button = this.doc.getElementById('preset2Button');
         this.ps3Button = this.doc.getElementById('preset3Button');
         this.ps4Button = this.doc.getElementById('preset4Button');
+        this.volSlider = this.doc.getElementById('volSlider');
 
         //Delegates
         this.playClickDelegate = EventUtils.bind(self, self.handlePlayClick);
@@ -46,6 +47,8 @@ export default class UIManager extends EventDispatcher {
         this.presetMouseDownDelegate = EventUtils.bind(self, self.handlePresetMouseDown);
         this.presetClickDelegate = EventUtils.bind(self, self.handlePresetClick);
         this.globalMosueUpDelegate = EventUtils.bind(self, self.handleGlobalMouseUp);
+        this.volSliderInputDelegate = EventUtils.bind(self, self.handleVolSliderInput);
+        this.requestInitialVolDelegate = EventUtils.bind(self, self.handleRequestInitialVol);
 
         //Events
         this.playButton.addEventListener('click', this.playClickDelegate);
@@ -60,6 +63,24 @@ export default class UIManager extends EventDispatcher {
         this.ps2Button.addEventListener('mousedown', this.presetMouseDownDelegate);
         this.ps3Button.addEventListener('mousedown', this.presetMouseDownDelegate);
         this.ps4Button.addEventListener('mousedown', this.presetMouseDownDelegate);
+
+        this.volSlider.addEventListener('input', this.volSliderInputDelegate);
+
+        this.geb.addEventListener('requestInitialVol', this.requestInitialVolDelegate);
+
+        //Notifiy of initial vol just incase DOM was ready late:
+        this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
+
+    }
+
+    handleRequestInitialVol($evt){
+        l.debug('Setting Initial Vol');
+        this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
+    }
+
+    handleVolSliderInput($evt) {
+        l.debug('Vol Slider Change: ', $evt.target.value);
+        this.geb.dispatchEvent(new JacEvent('volchange', $evt.target.value))
 
     }
 
