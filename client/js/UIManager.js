@@ -3,6 +3,7 @@ import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
+import screenfull from 'screenfull/screenfull';
 
 export default class UIManager extends EventDispatcher {
     constructor($doc) {
@@ -25,8 +26,10 @@ export default class UIManager extends EventDispatcher {
         let self = this;
 
         //DOM elements
+        this.mainContainerDiv = this.doc.getElementById('mainContainerDiv');
         this.playButton = this.doc.getElementById('playButton');
         this.pauseButton = this.doc.getElementById('pauseButton');
+        this.fullScreenButton = this.doc.getElementById('fullScreenButton');
         this.volSlider = this.doc.getElementById('volSlider');
 
         //Delegates
@@ -34,16 +37,23 @@ export default class UIManager extends EventDispatcher {
         this.pauseClickDelegate = EventUtils.bind(self, self.handlePauseClick);
         this.volSliderInputDelegate = EventUtils.bind(self, self.handleVolSliderInput);
         this.requestInitialVolDelegate = EventUtils.bind(self, self.handleRequestInitialVol);
+        this.fullScreenClickDelegate = EventUtils.bind(self, self.handleFullScreenClick);
 
         //Events
         this.playButton.addEventListener('click', this.playClickDelegate);
         this.pauseButton.addEventListener('click', this.pauseClickDelegate);
+        this.fullScreenButton.addEventListener('click', this.fullScreenClickDelegate);
         this.volSlider.addEventListener('input', this.volSliderInputDelegate);
         this.geb.addEventListener('requestInitialVol', this.requestInitialVolDelegate);
 
         //Notifiy of initial vol just incase DOM was ready late:
         this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
 
+    }
+
+    handleFullScreenClick($evt) {
+        l.debug('caught full screen click');
+        screenfull.request(this.mainContainerDiv);
     }
 
     handleRequestInitialVol($evt){
