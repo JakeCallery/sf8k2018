@@ -104,16 +104,11 @@ export default class Preset extends EventDispatcher {
 
         if(this.currentPSDownDelay > 500){
             l.debug('Set preset');
-            this.startSample = this.markerDO.startMarkerSample;
-            this.endSample = this.markerDO.endMarkerSample;
-            this.isSet = true;
-            this.inUse = true;
+            this.setPreset(this.markerDO.startMarkerSample, this.markerDO.endMarkerSample);
         } else {
             l.debug('Use Preset');
             if(this.isSet){
-                this.markerDO.updateStartSample(this.startSample);
-                this.markerDO.updateEndSample(this.endSample);
-                this.inUse = true;
+                this.usePreset();
             } else {
                 l.debug('Preset not set');
             }
@@ -130,6 +125,19 @@ export default class Preset extends EventDispatcher {
     handleEndMarkerUpdated($evt) {
         this.inUse = false;
         l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
+    }
+
+    setPreset($startSample, $endSample) {
+        this.startSample = $startSample;
+        this.endSample = $endSample;
+        this.isSet = true;
+        this.inUse = true;
+    }
+
+    usePreset() {
+        this.markerDO.updateStartSample(this.startSample);
+        this.markerDO.updateEndSample(this.endSample);
+        this.inUse = true;
     }
 
     static get MODES() {
