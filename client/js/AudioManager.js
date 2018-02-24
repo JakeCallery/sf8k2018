@@ -165,23 +165,32 @@ export default class AudioManager extends EventDispatcher {
         let lOutputBuffer = outputBuffer.getChannelData(0);
         let rOutputBuffer = outputBuffer.getChannelData(1);
 
-        this.startSampleIndex = this.markerDO.startMarkerSample;
-        this.endSampleIndex = this.markerDO.endMarkerSample;
-
         if(this.isPlaying) {
-            let direction = (this.endSampleIndex >= this.startSampleIndex)?1:-1;
-
             for(let i = 0; i < lOutputBuffer.length; i++){
+                //Update sample range on each sample index in case we changed presets
+                this.startSampleIndex = this.markerDO.startMarkerSample;
+                this.endSampleIndex = this.markerDO.endMarkerSample;
+
+                //Update direction with each iteration
+                let direction = (this.endSampleIndex >= this.startSampleIndex)?1:-1;
                 this.currentSampleIndex += direction;
 
                 if(direction === 1){
                     if(this.currentSampleIndex > this.endSampleIndex || this.currentSampleIndex > this.totalSamples){
+                        //Went off end, notify presets
+                        this.geb.dispatchEvent(new JacEvent('exceedingPreset'));
+                        this.startSampleIndex = this.markerDO.startMarkerSample;
+                        this.endSampleIndex = this.markerDO.endMarkerSample;
                         this.currentSampleIndex = this.startSampleIndex;
                     } else if(this.currentSampleIndex < this.startSampleIndex){
                         this.currentSampleIndex = this.startSampleIndex;
                     }
                 } else if(direction === -1) {
-                    if(this.currentSampleIndex < this.endSampleIndex || this.currentSampleIndex > this.totalSamples){
+                    if(this.currentSampleIndex < this.endSampleIndex || this.currentSampleIndex <= 0){
+                        //Went off end, notify presets
+                        this.geb.dispatchEvent(new JacEvent('exceedingPreset'));
+                        this.startSampleIndex = this.markerDO.startMarkerSample;
+                        this.endSampleIndex = this.markerDO.endMarkerSample;
                         this.currentSampleIndex = this.startSampleIndex;
                     } else if(this.currentSampleIndex > this.startSampleIndex){
                         this.currentSampleIndex = this.startSampleIndex;

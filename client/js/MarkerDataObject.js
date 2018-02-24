@@ -31,11 +31,13 @@ export default class MarkerDataObject extends EventDispatcher {
     updateStartSample($sampleIndex) {
         this.startMarkerSample = $sampleIndex;
         this.updateLoopRect();
+        this.dispatchEvent(new JacEvent('startMarkerUpdated', this.startMarkerSample));
     }
 
     updateEndSample($sampleIndex) {
         this.endMarkerSample = $sampleIndex;
         this.updateLoopRect();
+        this.dispatchEvent(new JacEvent('startMarkerUpdated', this.endMarkerSample));
     }
 
     get startMarkerX() {
