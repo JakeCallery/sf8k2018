@@ -60,6 +60,12 @@ button {
     cursor: default;
 }
 
-.volSlider {
+.presetButton {
+    width: 100px;
+    height: 25px;
+}
 
+.modeButton {
+    width: 100px;
+    height: 25px;
 }

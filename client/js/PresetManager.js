@@ -26,11 +26,20 @@ export default class PresetManager extends EventDispatcher {
         this.ps3Button = this.doc.getElementById('preset3Button');
         this.ps4Button = this.doc.getElementById('preset4Button');
 
+        this.mode1Button = this.doc.getElementById('mode1Button');
+        this.mode2Button = this.doc.getElementById('mode2Button');
+        this.mode3Button = this.doc.getElementById('mode3Button');
+        this.mode4Button = this.doc.getElementById('mode4Button');
+
+        //Delegates
+
+        //Events
+
         //Setup presets
-        this.presets.push(new Preset(this.ps1Button));
-        this.presets.push(new Preset(this.ps2Button));
-        this.presets.push(new Preset(this.ps3Button));
-        this.presets.push(new Preset(this.ps4Button));
+        this.presets.push(new Preset(this.ps1Button, this.mode1Button));
+        this.presets.push(new Preset(this.ps2Button, this.mode2Button));
+        this.presets.push(new Preset(this.ps3Button, this.mode3Button));
+        this.presets.push(new Preset(this.ps4Button, this.mode4Button));
 
     }
 

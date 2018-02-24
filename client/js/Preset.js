@@ -37,9 +37,11 @@ export default class Preset extends EventDispatcher {
         this.globalMosueUpDelegate = EventUtils.bind(self, self.handleGlobalMouseUp);
         this.startMarkerUpdatedDelegate = EventUtils.bind(self, self.handleStartMarkerUpdated);
         this.endMarkerUpdatedDelegate = EventUtils.bind(self, self.handleEndMarkerUpdated);
+        this.modeClickDelgate = EventUtils.bind(self, self.handleModeClick);
 
         //Events
         this.presetButtonView.addEventListener('click', this.presetClickDelegate);
+        this.modeButtonView.addEventListener('click', this.modeClickDelgate);
         this.presetButtonView.addEventListener('mousedown', this.presetMouseDownDelegate);
         this.markerDO.addEventListener('startMarkerUpdated', this.startMarkerUpdatedDelegate);
         this.markerDO.addEventListener('endMarkerUpdated', this.endMarkerUpdatedDelegate);
@@ -57,6 +59,43 @@ export default class Preset extends EventDispatcher {
         l.debug('PS Mouse Down');
         this.currentPSDownTime = Date.now();
         this.doc.addEventListener('mouseup', this.globalMosueUpDelegate);
+    }
+
+    handleModeClick($evt) {
+        l.debug('Mode Click: ', this.modeButtonView.id);
+
+       switch(this.mode){
+           case Preset.MODES.LOOP:
+               this.setMode(Preset.MODES.CONTINUE);
+               break;
+
+           case Preset.MODES.CONTINUE:
+               this.setMode(Preset.MODES.LOOP);
+                break;
+
+           default:
+               l.error('Unknown Mode: ', this.mode);
+       }
+
+    }
+
+    setMode($mode) {
+        let oldMode = this.mode;
+        this.mode = $mode;
+
+        switch($mode) {
+            case Preset.MODES.LOOP:
+                this.modeButtonView.innerHTML = 'Loop';
+                break;
+
+            case Preset.MODES.CONTINUE:
+                this.modeButtonView.innerHTML = 'Continue';
+                break;
+
+            default:
+                l.error('Unhandled Mode: ', $mode);
+                this.mode = oldMode;
+        }
     }
 
     handlePresetClick($evt) {
