@@ -19,10 +19,10 @@ export default class Preset extends EventDispatcher {
         this.endSample = null;
         this.mode = Preset.MODES.LOOP;
         this.isSet = false;
+        this.inUse = false;
 
         this.markerDO = new MarkerDataObject();
 
-        this.currentPSDownButton = null;
         this.currentPSDownTime = null;
         this.currentPSDownDelay = null;
 
@@ -35,10 +35,14 @@ export default class Preset extends EventDispatcher {
         this.presetMouseDownDelegate = EventUtils.bind(self, self.handlePresetMouseDown);
         this.presetClickDelegate = EventUtils.bind(self, self.handlePresetClick);
         this.globalMosueUpDelegate = EventUtils.bind(self, self.handleGlobalMouseUp);
+        this.startMarkerUpdatedDelegate = EventUtils.bind(self, self.handleStartMarkerUpdated);
+        this.endMarkerUpdatedDelegate = EventUtils.bind(self, self.handleEndMarkerUpdated);
 
         //Events
         this.presetButtonView.addEventListener('click', this.presetClickDelegate);
         this.presetButtonView.addEventListener('mousedown', this.presetMouseDownDelegate);
+        this.markerDO.addEventListener('startMarkerUpdated', this.startMarkerUpdatedDelegate);
+        this.markerDO.addEventListener('endMarkerUpdated', this.endMarkerUpdatedDelegate);
 
         l.debug('New Preset: ', this.presetButtonView.id);
 
@@ -64,16 +68,29 @@ export default class Preset extends EventDispatcher {
             this.startSample = this.markerDO.startMarkerSample;
             this.endSample = this.markerDO.endMarkerSample;
             this.isSet = true;
+            this.inUse = true;
         } else {
             l.debug('Use Preset');
             if(this.isSet){
                 this.markerDO.updateStartSample(this.startSample);
                 this.markerDO.updateEndSample(this.endSample);
+                this.inUse = true;
             } else {
                 l.debug('Preset not set');
             }
-
         }
+
+        l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
+    }
+
+    handleStartMarkerUpdated($evt) {
+        this.inUse = false;
+        l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
+    }
+
+    handleEndMarkerUpdated($evt) {
+        this.inUse = false;
+        l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
     }
 
     static get MODES() {

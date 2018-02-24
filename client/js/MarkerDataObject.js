@@ -1,5 +1,6 @@
 import l from 'jac/logger/Logger';
 import EventDispatcher from 'jac/events/EventDispatcher';
+import JacEvent from 'jac/events/JacEvent';
 import Rectangle from 'jac/geometry/Rectangle';
 let instance = null;
 
@@ -65,6 +66,8 @@ export default class MarkerDataObject extends EventDispatcher {
 
         this.updateLoopRect();
 
+        this.dispatchEvent(new JacEvent('startMarkerUpdated', this.startMarkerSample));
+
         l.debug('Setting Start Sample to: ', this.startMarkerSample);
     }
 
@@ -77,6 +80,8 @@ export default class MarkerDataObject extends EventDispatcher {
         this.endMarkerSample = Math.round($xVal * this.samplesPerPixel);
 
         this.updateLoopRect();
+
+        this.dispatchEvent(new JacEvent('endMarkerUpdated', this.endMarkerSample));
 
         l.debug('Setting End Marker Sample To: ', this.endMarkerSample);
     }
