@@ -4,11 +4,14 @@
 * viz layer over top of base waveform (for faster clearing)
 * styling
 
+##Future Features
+* clip upload
+  * 10 sec limit? (allow for cropping?)
+* record from mic
+  * 10 sec limit?
+  
 ##Bugs
 * Touch and hold doesn't work for setting presets with touch controls
-
-
-
 
 ##Done
 * Y offset messed up when page is scrolled
