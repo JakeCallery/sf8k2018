@@ -14,9 +14,7 @@ export default class InputManager extends EventDispatcher {
         this.doc = $document;
         this.geb = new GlobalEventBus();
 
-        this.touchStartXDict = {};
-        this.touchStartYDict = {};
-        this.touchStartDict = {};
+        this.lastTouchPosDict = {};
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -29,7 +27,7 @@ export default class InputManager extends EventDispatcher {
         let self = this;
 
         this.startMarkerTouchId = null;
-        this.endMarkerTouchid = null;
+        this.endMarkerTouchId = null;
 
         this.markerDO = new MarkerDataObject();
         this.soundCanvas = this.doc.getElementById('soundCanvas');
@@ -90,13 +88,12 @@ export default class InputManager extends EventDispatcher {
         for(let i = 0; i < $evt.touches.length; i++) {
             let touch = $evt.touches[i];
             let touchId = touch.identifier.toString();
-            if (!(touchId in this.touchStartDict)) {
-                this.touchStartDict[touchId] =
-                    {
-                        x: touch.clientX - this.soundCanvasOffsetX,
-                        y: touch.clientY - this.soundCanvasOffsetY,
-                    };
-
+            if (!(touchId in this.lastTouchPosDict)) {
+                this.lastTouchPosDict[touchId] =
+                {
+                    x: touch.clientX - this.soundCanvasOffsetX,
+                    y: touch.clientY - this.soundCanvasOffsetY,
+                };
             }
         }
 
@@ -116,7 +113,7 @@ export default class InputManager extends EventDispatcher {
         }
         //Find closest touch to End Marker
         let endMarkerTouchDOs = [];
-        if(this.endMarkerTouchid === null) {
+        if(this.endMarkerTouchId === null) {
             for (let i = 0; i < $evt.changedTouches.length; i++) {
                 endMarkerTouchDOs.push(
                     this.createTouchDataObj(
@@ -146,14 +143,14 @@ export default class InputManager extends EventDispatcher {
             this.startMarkerTouchId = startMarkerTouchDOs[0].id.toString();
         }
 
-        if(this.endMarkerTouchid === null && endMarkerTouchDOs.length > 0) {
+        if(this.endMarkerTouchId === null && endMarkerTouchDOs.length > 0) {
             //save end marker touch id
-            this.endMarkerTouchid = endMarkerTouchDOs[0].id.toString();
+            this.endMarkerTouchId = endMarkerTouchDOs[0].id.toString();
         }
 
         //TODO: Draw colored line from marker center to assigned touch point
         l.debug('StartMarker Touch Id: ', this.startMarkerTouchId);
-        l.debug('EndMarker Touch Id: ', this.endMarkerTouchid);
+        l.debug('EndMarker Touch Id: ', this.endMarkerTouchId);
     }
 
     handleTouchEnd($evt) {
@@ -163,28 +160,92 @@ export default class InputManager extends EventDispatcher {
         for(let i = 0; i < $evt.changedTouches.length; i++) {
             let touch = $evt.changedTouches[i];
             let touchId = touch.identifier.toString();
-            if(touchId in this.touchStartDict) {
-                delete this.touchStartDict[touchId];
-                delete this.touchStartDict[touchId];
+            if(touchId in this.lastTouchPosDict) {
+                delete this.lastTouchPosDict[touchId];
+                delete this.lastTouchPosDict[touchId];
             }
 
             if(touchId === this.startMarkerTouchId) {
                 this.startMarkerTouchId = null;
             }
 
-            if(touchId === this.endMarkerTouchid) {
-                this.endMarkerTouchid = null;
+            if(touchId === this.endMarkerTouchId) {
+                this.endMarkerTouchId = null;
             }
         }
 
         //TEMP:
-        for(let key in this.touchStartDict){
-            l.debug('Touch Remaining: ', key, ' : ', this.touchStartDict[key]);
+        for(let key in this.lastTouchPosDict){
+            l.debug('Touch Remaining: ', key, ' : ', this.lastTouchPosDict[key]);
         }
     }
 
     handleTouchMove($evt) {
+        //TODO: refactor to be more DRY
+        for(let i = 0; i < $evt.changedTouches.length; i++) {
+            let touch = $evt.changedTouches[i];
+            let touchId = touch.identifier.toString();
 
+            //Update Start Marker if needed
+            if(touchId === this.startMarkerTouchId) {
+                if(touchId in this.lastTouchPosDict) {
+                    let currentTouchX = touch.clientX - this.soundCanvasOffsetX;
+                    let lastTouchX = this.lastTouchPosDict[touchId].x;
+                    let diff = currentTouchX - lastTouchX;
+                    let newX = this.markerDO.startMarkerX + diff;
+
+                    if(newX < 0) {
+                        l.debug('Capping start marker new X to 0');
+                        newX = 0;
+                    } else if(newX > this.soundCanvas.width) {
+                        l.debug('Capping start marker new X to canvas width: ' + this.soundCanvas.width);
+                        newX = this.soundCanvas.width;
+                    }
+
+                    //Update marker
+                    this.markerDO.startMarkerX = newX;
+
+                    //Update last position dict:
+                    this.lastTouchPosDict[touchId].x = currentTouchX;
+                    this.lastTouchPosDict[touchId].y = touch.clientY - this.soundCanvasOffsetY;
+
+                } else {
+                    //should not be here
+                    l.error('Could not find startMarker touch ' + touchId + ' in lastTouchPosDict');
+                }
+            } else if(touchId === this.endMarkerTouchId) {
+                //update end marker if needed
+                if(touchId in this.lastTouchPosDict) {
+                    let currentTouchX = touch.clientX - this.soundCanvasOffsetX;
+                    let lastTouchX = this.lastTouchPosDict[touchId].x;
+                    let diff = currentTouchX - lastTouchX;
+                    let newX = this.markerDO.endMarkerX + diff;
+
+                    if(newX < 0) {
+                        l.debug('Capping end marker new X to 0');
+                        newX = 0;
+                    } else if(newX > this.soundCanvas.width) {
+                        l.debug('Capping end marker new X to canvas width: ' + this.soundCanvas.width);
+                        newX = this.soundCanvas.width;
+                    }
+
+                    //Update Marker
+                    this.markerDO.endMarkerX = newX;
+
+                    //Update last position dict
+                    this.lastTouchPosDict[touchId].x = currentTouchX;
+                    this.lastTouchPosDict[touchId].y = touch.clientY - this.soundCanvasOffsetY;
+                } else {
+                    //should not be here
+                    l.error('Could not find endMarker touch ' + touchId + ' in lastTouchPosDict');
+                }
+            } else {
+                //This touch isn't being used for markers
+                l.debug('Touch not assigned to start or end marker');
+            }
+
+
+        }
     }
 
     handleMouseMove($evt) {
