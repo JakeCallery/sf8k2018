@@ -2,6 +2,8 @@ import l from 'jac/logger/Logger';
 import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
 import MarkerDataObject from "./MarkerDataObject";
+import JacEvent from "./jac/events/JacEvent";
+import GlobalEventBus from "./jac/events/GlobalEventBus";
 
 const MODES = {
     LOOP: 'loop',
@@ -14,7 +16,7 @@ export default class Preset extends EventDispatcher {
 
         let self = this;
 
-
+        this.geb = new GlobalEventBus();
         this.startSample = null;
         this.endSample = null;
         this.mode = Preset.MODES.LOOP;
@@ -137,6 +139,7 @@ export default class Preset extends EventDispatcher {
     usePreset() {
         this.markerDO.updateStartSample(this.startSample);
         this.markerDO.updateEndSample(this.endSample);
+        this.geb.dispatchEvent(new JacEvent('forceUpdateCurrentSampleIndex', this.startSample));
         this.inUse = true;
     }
 

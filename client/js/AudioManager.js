@@ -40,12 +40,14 @@ export default class AudioManager extends EventDispatcher {
         this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
         this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
         this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
+        this.forceUpdateCurrentSampleIndexDelegate = EventUtils.bind(self, self.handleForceUpdateCurrentSampleIndex);
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
         this.geb.addEventListener('requestPause', this.requestPauseDelegate);
         this.geb.addEventListener('volchange', this.volChangeDelegate);
         this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
+        this.geb.addEventListener('forceUpdateCurrentSampleIndex', this.forceUpdateCurrentSampleIndexDelegate);
     }
 
     init() {
@@ -138,6 +140,11 @@ export default class AudioManager extends EventDispatcher {
                 l.error('Load Sound Error: ', $error);
             })
         });
+    }
+
+    handleForceUpdateCurrentSampleIndex($evt) {
+        l.debug('Caught Force Sample Index Update: ', $evt.data);
+        this.currentSampleIndex = $evt.data;
     }
 
     handleRequestPlay($evt) {
