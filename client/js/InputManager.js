@@ -65,7 +65,7 @@ export default class InputManager extends EventDispatcher {
             let touch = $evt.touches[i];
             let touchId = touch.identifier.toString();
             if(!(touchId in this.touchStartDict)){
-                this.touchStartsDict[touchId] = touch.clientX - this.soundCanvasOffsetX;
+                this.touchStartXDict[touchId] = touch.clientX - this.soundCanvasOffsetX;
                 this.touchStartYDict[touchId] = touch.clientY - this.soundCanvasOffsetY;
             }
         }
