@@ -28,6 +28,9 @@ export default class InputManager extends EventDispatcher {
         l.debug('Input Manager Ready');
         let self = this;
 
+        this.startMarkerTouchId = null;
+        this.endMarkerTouchid = null;
+
         this.markerDO = new MarkerDataObject();
         this.soundCanvas = this.doc.getElementById('soundCanvas');
         this.soundCanvasOffsetX = this.soundCanvas.offsetLeft;
@@ -61,14 +64,59 @@ export default class InputManager extends EventDispatcher {
         l.debug('touch Start');
         $evt.preventDefault();
 
+        //Find closest touch to markers
+        if(this.startMarkerTouchId === null) {
+            let closestDist = null;
+            let closestTouchId = null;
+
+            for(let i = 0; i < $evt.changedTouches.length; i++){
+                let touch = $evt.changedTouches[i];
+                let touchId = touch.identifier.toString();
+                let touchX = touch.clientX - this.soundCanvasOffsetX;
+                let dist = Math.abs(touchX - this.markerDO.startMarkerX);
+                if(closestDist === null || dist < closestDist) {
+                    closestDist = 0;
+                    closestTouchId = touchId;
+                }
+            }
+            this.startMarkerTouchId = closestTouchId.toString();
+        }
+
+        if(this.endMarkerTouchid === null) {
+            let closestDist = null;
+            let closestTouchId = null;
+
+            for(let i = 0; i < $evt.changedTouches.length; i++){
+                let touch = $evt.changedTouches[i];
+                let touchId = touch.identifier.toString();
+                if(touchId !== this.startMarkerTouchId) {
+                    let touchX = touch.clientX - this.soundCanvasOffsetX;
+                    let dist = Math.abs(touchX - this.markerDO.endMarkerX);
+                    if(closestDist === null || dist < closestDist) {
+                        closestDist = 0;
+                        closestTouchId = touchId;
+                    }
+                }
+            }
+            this.endMarkerTouchid = closestTouchId;
+        }
+
         for(let i = 0; i < $evt.touches.length; i++) {
             let touch = $evt.touches[i];
             let touchId = touch.identifier.toString();
+
             if(!(touchId in this.touchStartDict)){
-                this.touchStartXDict[touchId] = touch.clientX - this.soundCanvasOffsetX;
-                this.touchStartYDict[touchId] = touch.clientY - this.soundCanvasOffsetY;
+                this.touchStartDict[touchId] =
+                    {
+                        x: touch.clientX - this.soundCanvasOffsetX,
+                        y: touch.clientY - this.soundCanvasOffsetY,
+                    };
+
             }
         }
+
+        l.debug('StartMarker Touch Id: ', this.startMarkerTouchId);
+        l.debug('EndMarker Touch Id: ', this.endMarkerTouchid);
     }
 
     handleTouchEnd($evt) {
@@ -81,6 +129,14 @@ export default class InputManager extends EventDispatcher {
             if(touchId in this.touchStartXDict) {
                 delete this.touchStartXDict[touchId];
                 delete this.touchStartYDict[touchId];
+            }
+
+            if(touchId === this.startMarkerTouchId) {
+                this.startMarkerTouchId = null;
+            }
+
+            if(touchId === this.endMarkerTouchid) {
+
             }
         }
 
