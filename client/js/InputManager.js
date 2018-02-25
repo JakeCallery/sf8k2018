@@ -1,3 +1,5 @@
+//TODO: Preset "setting" doesn't work with touch
+
 import l from 'jac/logger/Logger';
 import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
@@ -15,6 +17,7 @@ export default class InputManager extends EventDispatcher {
         this.geb = new GlobalEventBus();
 
         this.lastTouchPosDict = {};
+        this.origLoopRectTouchPos = null;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -28,12 +31,12 @@ export default class InputManager extends EventDispatcher {
 
         this.startMarkerTouchId = null;
         this.endMarkerTouchId = null;
+        this.loopRectTouchId = null;
 
         this.markerDO = new MarkerDataObject();
         this.soundCanvas = this.doc.getElementById('soundCanvas');
         this.soundCanvasOffsetX = this.soundCanvas.offsetLeft;
         this.soundCanvasOffsetY = this.soundCanvas.offsetTop;
-        this.isDraggingLoopRect = false;
 
         //Delegates
         this.mouseMoveDelegate = EventUtils.bind(self, self.handleMouseMove);
@@ -58,8 +61,9 @@ export default class InputManager extends EventDispatcher {
 
     }
 
-    createTouchDataObj($touch, $markerX) {
+    createMarkerTouchDataObj($touch, $markerX) {
         let touchX = $touch.clientX - this.soundCanvasOffsetX;
+
         return {
             touch: $touch,
             id: $touch.identifier,
@@ -87,6 +91,7 @@ export default class InputManager extends EventDispatcher {
         //Save touch start points:
         for(let i = 0; i < $evt.touches.length; i++) {
             let touch = $evt.touches[i];
+            let touchY = touch.clientY - this.soundCanvasOffsetY;
             let touchId = touch.identifier.toString();
             if (!(touchId in this.lastTouchPosDict)) {
                 this.lastTouchPosDict[touchId] =
@@ -97,30 +102,52 @@ export default class InputManager extends EventDispatcher {
             }
         }
 
+        //See if we need to start dragging loop rect
+        if(this.loopRectTouchId === null) {
+            for(let i = 0; i < $evt.changedTouches.length; i++) {
+                let touch = $evt.changedTouches[i];
+                let touchY = touch.clientY - this.soundCanvasOffsetY;
+                if(touchY >= this.markerDO.loopRect.y){
+                    this.markerDO.saveCurrentLocations();
+                    this.loopRectTouchId = touch.identifier.toString();
+                    this.origLoopRectTouchPos = touch.clientX - this.soundCanvasOffsetX;
+                }
+            }
+        }
+
         //Find closest touch to Start Marker
         let startMarkerTouchDOs = [];
-
         if(this.startMarkerTouchId === null) {
             for (let i = 0; i < $evt.changedTouches.length; i++) {
-                startMarkerTouchDOs.push(
-                    this.createTouchDataObj(
-                        $evt.changedTouches[i],
-                        this.markerDO.startMarkerX
-                    )
-                );
+                let touchY = $evt.changedTouches[i].clientY - this.soundCanvasOffsetY;
+
+                //Ignore if in the loop rect
+                if(touchY < this.markerDO.loopRect.y) {
+                    startMarkerTouchDOs.push(
+                        this.createMarkerTouchDataObj(
+                            $evt.changedTouches[i],
+                            this.markerDO.startMarkerX
+                        )
+                    );
+                }
             }
             startMarkerTouchDOs.sort(this.sortBySmallestDist);
         }
+
         //Find closest touch to End Marker
         let endMarkerTouchDOs = [];
         if(this.endMarkerTouchId === null) {
             for (let i = 0; i < $evt.changedTouches.length; i++) {
-                endMarkerTouchDOs.push(
-                    this.createTouchDataObj(
-                        $evt.changedTouches[i],
-                        this.markerDO.endMarkerX
-                    )
-                );
+                let touchY = $evt.changedTouches[i].clientY - this.soundCanvasOffsetY;
+                if(touchY < this.markerDO.loopRect.y){
+                    endMarkerTouchDOs.push(
+                        this.createMarkerTouchDataObj(
+                            $evt.changedTouches[i],
+                            this.markerDO.endMarkerX
+                        )
+                    );
+                }
+
             }
             endMarkerTouchDOs.sort(this.sortBySmallestDist);
         }
@@ -172,6 +199,10 @@ export default class InputManager extends EventDispatcher {
             if(touchId === this.endMarkerTouchId) {
                 this.endMarkerTouchId = null;
             }
+
+            if(touchId === this.loopRectTouchId) {
+                this.loopRectTouchId = null;
+            }
         }
 
         //TEMP:
@@ -186,8 +217,13 @@ export default class InputManager extends EventDispatcher {
             let touch = $evt.changedTouches[i];
             let touchId = touch.identifier.toString();
 
-            //Update Start Marker if needed
+            if(touchId === this.loopRectTouchId) {
+                //drag loop rect around
+                let diff = (touch.clientX - this.soundCanvasOffsetX) - this.origLoopRectTouchPos;
+                this.handleLoopRectDrag(diff);
+            }
             if(touchId === this.startMarkerTouchId) {
+                //Update Start Marker if needed
                 if(touchId in this.lastTouchPosDict) {
                     let currentTouchX = touch.clientX - this.soundCanvasOffsetX;
                     let lastTouchX = this.lastTouchPosDict[touchId].x;
@@ -282,13 +318,14 @@ export default class InputManager extends EventDispatcher {
 
         if($evt.buttons === 4) {
             this.loopRectMouseDownOffsetX =  this.mouseDownX - this.markerDO.loopRect.x;
-            this.handleLoopRectDrag($evt);
+            let mouseMoveDiff = ($evt.clientX - this.soundCanvasOffsetX) - this.mouseDownX;
+            this.handleLoopRectDrag(mouseMoveDiff);
         }
     }
 
-    handleLoopRectDrag($evt) {
-        let mouseMoveDiff = ($evt.clientX - this.soundCanvasOffsetX) - this.mouseDownX;
-        l.debug('Move Diff: ', mouseMoveDiff);
+    handleLoopRectDrag($diff) {
+
+        l.debug('Move Diff: ', $diff);
         l.debug('Mouse Down X: ', this.mouseDownX);
 
         let origStartX = this.markerDO.startMarkerXOrig;
@@ -297,8 +334,8 @@ export default class InputManager extends EventDispatcher {
         let currentStartX = this.markerDO.startMarkerX;
         let currentEndX = this.markerDO.endMarkerX;
 
-        let nextStartX = origStartX + mouseMoveDiff;
-        let nextEndX = origEndX + mouseMoveDiff;
+        let nextStartX = origStartX + $diff;
+        let nextEndX = origEndX + $diff;
 
         if(origStartX <= origEndX){
             if(nextStartX <= 0){
