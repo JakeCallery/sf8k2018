@@ -116,7 +116,6 @@ export default class InputManager extends EventDispatcher {
                 let touch = $evt.changedTouches[i];
                 let touchY = touch.pageY - this.soundCanvasOffsetY;
                 if(touchY >= this.markerDO.loopRect.y){
-                    this.markerDO.saveCurrentLocations();
                     this.loopRectTouchId = touch.identifier.toString();
                     this.lastLoopRectTouchPos = touch.pageX - this.soundCanvasOffsetX;
                 }
@@ -300,7 +299,6 @@ export default class InputManager extends EventDispatcher {
     handleMouseDown($evt) {
         l.debug('Mouse Down:', $evt.buttons);
         this.lastMouseDownX = $evt.pageX - this.soundCanvasOffsetX;
-        this.markerDO.saveCurrentLocations();
         this.updateFromButton($evt);
     }
 
