@@ -14,6 +14,10 @@ export default class InputManager extends EventDispatcher {
         this.doc = $document;
         this.geb = new GlobalEventBus();
 
+        this.touchStartXDict = {};
+        this.touchStartYDict = {};
+        this.touchStartDict = {};
+
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
             this.init();
@@ -35,14 +39,58 @@ export default class InputManager extends EventDispatcher {
         this.mouseDownDelegate = EventUtils.bind(self, self.handleMouseDown);
         this.mouseUpDelegate = EventUtils.bind(self, self.handleMouseUp);
         this.contextMenuDelegate = EventUtils.bind(self, self.handleContextMenu);
+        this.touchStartDelegate = EventUtils.bind(self, self.handleTouchStart);
+        this.touchMoveDelegate = EventUtils.bind(self, self.handleTouchMove);
+        this.touchEndDelegate = EventUtils.bind(self, self.handleTouchEnd);
 
         //Events
+        this.soundCanvas.addEventListener('touchstart', this.touchStartDelegate);
+        this.soundCanvas.addEventListener('touchmove', this.touchMoveDelegate);
+        this.soundCanvas.addEventListener('touchend', this.touchEndDelegate);
         this.soundCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
         this.soundCanvas.addEventListener('mouseup', this.mouseUpDelegate);
         this.soundCanvas.addEventListener('mousedown', this.mouseDownDelegate);
         this.soundCanvas.addEventListener('contextmenu', this.contextMenuDelegate);
 
+
         l.debug('Input Manager Sound CanvasOffset: ', this.soundCanvasOffsetX, this.soundCanvasOffsetY);
+
+    }
+
+    handleTouchStart($evt) {
+        l.debug('touch Start');
+        $evt.preventDefault();
+
+        for(let i = 0; i < $evt.touches.length; i++) {
+            let touch = $evt.touches[i];
+            let touchId = touch.identifier.toString();
+            if(!(touchId in this.touchStartDict)){
+                this.touchStartsDict[touchId] = touch.clientX - this.soundCanvasOffsetX;
+                this.touchStartYDict[touchId] = touch.clientY - this.soundCanvasOffsetY;
+            }
+        }
+    }
+
+    handleTouchEnd($evt) {
+        l.debug('touch end');
+        $evt.preventDefault();
+
+        for(let i = 0; i < $evt.changedTouches.length; i++) {
+            let touch = $evt.changedTouches[i];
+            let touchId = touch.identifier.toString();
+            if(touchId in this.touchStartXDict) {
+                delete this.touchStartXDict[touchId];
+                delete this.touchStartYDict[touchId];
+            }
+        }
+
+        //TEMP:
+        for(let key in this.touchStartXDict){
+            l.debug('Touch Remaining: ', key, ' : ', this.touchStartXDict[key]);
+        }
+    }
+
+    handleTouchMove($evt) {
 
     }
 

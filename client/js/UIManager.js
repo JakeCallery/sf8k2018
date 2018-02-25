@@ -53,7 +53,8 @@ export default class UIManager extends EventDispatcher {
 
     handleFullScreenClick($evt) {
         l.debug('caught full screen click');
-        screenfull.request(this.mainContainerDiv);
+        //screenfull.request(this.mainContainerDiv);
+        screenfull.request();
     }
 
     handleRequestInitialVol($evt){
