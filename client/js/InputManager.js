@@ -298,6 +298,7 @@ export default class InputManager extends EventDispatcher {
 
     handleMouseDown($evt) {
         l.debug('Mouse Down:', $evt.buttons);
+        $evt.preventDefault();
         this.lastMouseDownX = $evt.pageX - this.soundCanvasOffsetX;
         this.updateFromButton($evt);
     }
