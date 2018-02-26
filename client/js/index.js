@@ -15,8 +15,6 @@ import PresetManager from 'PresetManager';
 import '../css/normalize.css';
 import '../css/main.css';
 
-
-
 l.addLogTarget(new ConsoleTarget());
 l.verboseFilter = (VerboseLevel.NORMAL | VerboseLevel.TIME | VerboseLevel.LEVEL);
 l.levelFilter = (LogLevel.DEBUG | LogLevel.INFO | LogLevel.WARNING | LogLevel.ERROR);
@@ -36,10 +34,11 @@ l.debug('New Index Page');
 let fv = new FeatureVerifier();
 let fvResponse = fv.verify();
 if(fvResponse.length !== 0) {
-    l.error('Features not verified: ');
+    l.error('********** FEATURES NOT VERIFIED ***********');
     for(let i = 0; i < fvResponse.length; i++){
         l.error(fvResponse[i]);
     }
+    l.error('********************************************')
 } else {
     l.debug('All features Verified');
 }

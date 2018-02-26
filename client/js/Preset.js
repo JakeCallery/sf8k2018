@@ -28,6 +28,8 @@ export default class Preset extends EventDispatcher {
         this.currentPSDownTime = null;
         this.currentPSDownDelay = null;
 
+        this.presetTouchId = null;
+
         //DOM
         this.presetButtonView = $presetButtonView;
         this.modeButtonView = $modeButtonView;
@@ -40,16 +42,52 @@ export default class Preset extends EventDispatcher {
         this.startMarkerUpdatedDelegate = EventUtils.bind(self, self.handleStartMarkerUpdated);
         this.endMarkerUpdatedDelegate = EventUtils.bind(self, self.handleEndMarkerUpdated);
         this.modeClickDelgate = EventUtils.bind(self, self.handleModeClick);
+        this.presetTouchStartDelegate = EventUtils.bind(self, self.handlePresetTouchStart);
+        this.touchEndDelegate = EventUtils.bind(self, self.handleTouchEnd);
 
         //Events
         this.presetButtonView.addEventListener('click', this.presetClickDelegate);
         this.modeButtonView.addEventListener('click', this.modeClickDelgate);
         this.presetButtonView.addEventListener('mousedown', this.presetMouseDownDelegate);
+        this.presetButtonView.addEventListener('touchstart', this.presetTouchStartDelegate);
+        this.presetButtonView.addEventListener('touchend', this.touchEndDelegate);
         this.markerDO.addEventListener('startMarkerUpdated', this.startMarkerUpdatedDelegate);
         this.markerDO.addEventListener('endMarkerUpdated', this.endMarkerUpdatedDelegate);
 
         l.debug('New Preset: ', this.presetButtonView.id);
 
+    }
+
+    handlePresetTouchStart($evt) {
+        $evt.preventDefault();
+        if(this.presetTouchId === null) {
+            let touch = $evt.changedTouches[0];
+            l.debug('Preset Touch ID: ', touch.identifier);
+            this.presetTouchId = touch.identifier.toString();
+            this.currentPSDownTime = Date.now();
+        }
+    }
+
+    handleTouchEnd($evt) {
+        l.debug('----- Preset Touch End Target: ', $evt.target.id);
+
+        for(let i = 0; i < $evt.changedTouches.length; i++) {
+            let touch = $evt.changedTouches[i];
+            let touchId = touch.identifier.toString();
+            let el = this.doc.elementFromPoint(touch.clientX, touch.clientY);
+            l.debug('EL From Point: ', el.id);
+
+            if(el === this.presetButtonView && this.presetTouchId === touchId) {
+                this.handlePresetClick();
+            }
+
+            if(this.presetTouchId === touchId) {
+                this.presetTouchId = null;
+                this.currentPSDownTime = null;
+                this.currentPSDownDelay = null;
+            }
+
+        }
     }
 
     handleGlobalMouseUp($evt){
@@ -100,7 +138,7 @@ export default class Preset extends EventDispatcher {
         }
     }
 
-    handlePresetClick($evt) {
+    handlePresetClick() {
         this.currentPSDownDelay = Date.now() - this.currentPSDownTime;
         l.debug('Delay: ', this.currentPSDownDelay);
 
@@ -116,17 +154,17 @@ export default class Preset extends EventDispatcher {
             }
         }
 
-        l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
+        //l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
     }
 
     handleStartMarkerUpdated($evt) {
         this.inUse = false;
-        l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
+        //l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
     }
 
     handleEndMarkerUpdated($evt) {
         this.inUse = false;
-        l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
+        //l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
     }
 
     setPreset($startSample, $endSample) {

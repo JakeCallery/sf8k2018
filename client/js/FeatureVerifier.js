@@ -33,6 +33,11 @@ export default class FeatureVerifier extends EventDispatcher {
             notVerifiedList.push('requestAnimationFrame');
         }
 
+        //ElementFromPoint
+        if(!window.document.elementFromPoint) {
+            notVerifiedList.push('elementFromPoint');
+        }
+
         return notVerifiedList;
     }
 }
