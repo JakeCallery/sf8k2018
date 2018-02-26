@@ -1,8 +1,8 @@
 ##Up Next
 * Mute button
-* Bug fixes
 * viz layer over top of base waveform (for faster clearing)
 * styling
+* Bug fixes
 
 ##Future Features
 * passive event listeners?
