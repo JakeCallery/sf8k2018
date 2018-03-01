@@ -41,6 +41,8 @@ export default class AudioManager extends EventDispatcher {
         this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
         this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
         this.forceUpdateCurrentSampleIndexDelegate = EventUtils.bind(self, self.handleForceUpdateCurrentSampleIndex);
+        this.momentaryMuteDelegate = EventUtils.bind(self, self.handleMomentaryMute);
+        this.unmuteDelegate = EventUtils.bind(self, self.handleUnmute);
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
@@ -48,6 +50,8 @@ export default class AudioManager extends EventDispatcher {
         this.geb.addEventListener('volchange', this.volChangeDelegate);
         this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
         this.geb.addEventListener('forceUpdateCurrentSampleIndex', this.forceUpdateCurrentSampleIndexDelegate);
+        this.geb.addEventListener('momentaryMute', this.momentaryMuteDelegate);
+        this.geb.addEventListener('unmute', this.unmuteDelegate);
     }
 
     init() {
@@ -85,6 +89,17 @@ export default class AudioManager extends EventDispatcher {
             resolve();
         });
 
+    }
+
+    handleMomentaryMute($evt) {
+        l.debug('Caught Momentary Mute');
+        this.gainNode.gain.setTargetAtTime(0, this.audioContext.currentTime, 0);
+    }
+
+    handleUnmute($evt) {
+        l.debug('Caught Unmute: ', $evt.data);
+        let vol = ($evt.data / 100);
+        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0);
     }
 
     loadSound($url) {
