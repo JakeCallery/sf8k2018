@@ -70,3 +70,27 @@ button {
     height: 25px;
 }
 
+.controlsDiv {
+    margin-top: 5px;
+}
+
+.canvasDiv {
+    position: relative;
+    height: 300px;
+}
+
+.waveCanvas {
+    position: absolute;
+    z-index: 0;
+    left: 0;
+    top: 0;
+}
+
+.soundCanvas {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+}
+
+

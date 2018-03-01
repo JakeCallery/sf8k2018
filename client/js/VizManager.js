@@ -36,9 +36,11 @@ export default class VizManager extends EventDispatcher {
         this.doc.body.appendChild(this.stats.dom);
 
         //Elements
+        this.waveCanvas = this.doc.getElementById('waveCanvas');
+        this.waveCanvasContext = this.waveCanvas.getContext('2d');
+
         this.soundCanvas = this.doc.getElementById('soundCanvas');
         this.soundCanvasContext = this.soundCanvas.getContext('2d');
-        this.baseImageData = this.soundCanvasContext.createImageData(this.soundCanvas.width, this.soundCanvas.height);
 
         //Delegates
         this.soundLoadedDelgate = EventUtils.bind(self, self.handleSoundLoaded);
@@ -58,10 +60,10 @@ export default class VizManager extends EventDispatcher {
 
         //Determine how many samples to average to generate the line
         let totalSamples = this.audioSource.buffer.length;
-        this.samplesPerLine = Math.floor(totalSamples / this.soundCanvas.width);
+        this.samplesPerLine = Math.floor(totalSamples / this.waveCanvas.width);
         this.markerDO.samplesPerPixel = this.samplesPerLine;
 
-        let horizon = Math.round(this.soundCanvas.height/2);
+        let horizon = Math.round(this.waveCanvas.height/2);
         let lBuffer = this.audioSource.buffer.getChannelData(0);
         let rBuffer = this.audioSource.buffer.getChannelData(1);
 
@@ -76,12 +78,13 @@ export default class VizManager extends EventDispatcher {
         l.debug('Num Samples Per Line: ', this.samplesPerLine);
         l.debug('StartMarker Sample: ', this.markerDO.startMarkerSample);
         l.debug('EndMarker Sample: ', this.markerDO.endMarkerSample);
+
         //Clear canvas
-        this.soundCanvasContext.fillStyle = '#220c11';
-        this.soundCanvasContext.fillRect(0,0,this.soundCanvas.width,this.soundCanvas.height);
+        this.waveCanvasContext.fillStyle = '#130909';
+        this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
 
         //Set color for line drawing
-        this.soundCanvasContext.fillStyle = '#6e0a0c';
+        this.waveCanvasContext.fillStyle = '#6e0a0c';
 
         //Setup Heights
         let heightScaleFactor = null;
@@ -92,7 +95,7 @@ export default class VizManager extends EventDispatcher {
 
         //Outer loop, once per line
         //Left Channel
-        for(let i = 0; i < this.soundCanvas.width; i++){
+        for(let i = 0; i < this.waveCanvas.width; i++){
             let avg = null;
             let total = 0;
 
@@ -114,7 +117,7 @@ export default class VizManager extends EventDispatcher {
         }
 
         sampleAvgRange = Math.abs(sampleAvgMax - sampleAvgMin);
-        heightScaleFactor = (this.soundCanvas.height / 2) / sampleAvgRange;
+        heightScaleFactor = (this.waveCanvas.height / 2) / sampleAvgRange;
         l.debug('Sample Avg Range: ', sampleAvgRange);
         l.debug('Height Scale Factor: ', heightScaleFactor);
 
@@ -127,11 +130,8 @@ export default class VizManager extends EventDispatcher {
             }
 
             let height = sampleHeights[x] * heightScaleFactor * 2;
-            this.soundCanvasContext.fillRect(x, y, 1, height);
+            this.waveCanvasContext.fillRect(x, y, 1, height);
         }
-
-        //Save Canvas
-        this.baseImageData = this.soundCanvasContext.getImageData(0,0,this.soundCanvas.width,this.soundCanvas.height);
 
         //Start Animation
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
@@ -142,7 +142,7 @@ export default class VizManager extends EventDispatcher {
         this.stats.begin();
 
         //Clear Canvas
-        this.clearCanvas();
+        this.clearSoundCanvas();
 
         //Draw Loop rect
         //this.soundCanvasContext.fillStyle = '#d6d124';
@@ -174,15 +174,8 @@ export default class VizManager extends EventDispatcher {
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 
-    clearCanvas() {
-        //Clear Canvas
-        //TODO: Faster copy of data:
-        //https://stackoverflow.com/questions/48013380/faster-way-to-copy-array-values-into-canvas-pixel-data
-        //https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/
-
-        //TODO: Or just layer it, leave the underlying waveform, and just position a line over it on a separate layer or something
-
-        this.soundCanvasContext.putImageData(this.baseImageData,0,0);
-
+    clearSoundCanvas() {
+        this.soundCanvasContext.clearRect(0, 0, this.soundCanvas.width, this.soundCanvas.height);
     }
+
 }

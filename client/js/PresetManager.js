@@ -58,7 +58,7 @@ export default class PresetManager extends EventDispatcher {
                 this.useNextPreset(currentPresetIndex);
             }
         } else {
-            l.debug('no preset active, not taking action');
+            //l.debug('no preset active, not taking action');
         }
     }
 
