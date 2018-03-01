@@ -41,17 +41,14 @@ export default class AudioManager extends EventDispatcher {
         this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
         this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
         this.forceUpdateCurrentSampleIndexDelegate = EventUtils.bind(self, self.handleForceUpdateCurrentSampleIndex);
-        this.momentaryMuteDelegate = EventUtils.bind(self, self.handleMomentaryMute);
-        this.unmuteDelegate = EventUtils.bind(self, self.handleUnmute);
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
         this.geb.addEventListener('requestPause', this.requestPauseDelegate);
-        this.geb.addEventListener('volchange', this.volChangeDelegate);
+        this.geb.addEventListener('volChange', this.volChangeDelegate);
         this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
         this.geb.addEventListener('forceUpdateCurrentSampleIndex', this.forceUpdateCurrentSampleIndexDelegate);
-        this.geb.addEventListener('momentaryMute', this.momentaryMuteDelegate);
-        this.geb.addEventListener('unmute', this.unmuteDelegate);
+
     }
 
     init() {

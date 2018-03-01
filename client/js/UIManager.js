@@ -73,17 +73,15 @@ export default class UIManager extends EventDispatcher {
             this.doc.addEventListener('mouseup', this.globalMuteReleaseDelegate);
         }
 
-        this.geb.dispatchEvent(new JacEvent('momentaryMute'));
+        this.geb.dispatchEvent(new JacEvent('volChange', 0));
 
     }
 
     handleGlobalMuteRelease($evt) {
         l.debug('Caught Mute Button Release');
 
-        //Workaround for GainNode values not updating quick enough
-        //for rapid mute and unmute
+        //Unmute to slider vol
         let sliderVol = this.volSlider.value;
-
         if('changedTouches' in $evt) {
             l.debug('Touch Release');
             $evt.preventDefault();
@@ -92,7 +90,7 @@ export default class UIManager extends EventDispatcher {
                     l.debug('Mute button no longer pressed');
                     this.muteButtonTouchId = null;
                     this.doc.removeEventListener('touchend', this.globalMuteReleaseDelegate);
-                    this.geb.dispatchEvent(new JacEvent('unmute', sliderVol));
+                    this.geb.dispatchEvent(new JacEvent('volChange', sliderVol));
                 }
             }
         } else {
@@ -100,7 +98,7 @@ export default class UIManager extends EventDispatcher {
             l.debug('Mouse Global release');
             l.debug('Mute button no longer pressed');
             this.doc.removeEventListener('mouseup', this.globalMuteReleaseDelegate);
-            this.geb.dispatchEvent(new JacEvent('unmute', sliderVol));
+            this.geb.dispatchEvent(new JacEvent('volChange', sliderVol));
         }
     }
 
@@ -117,7 +115,7 @@ export default class UIManager extends EventDispatcher {
 
     handleVolSliderInput($evt) {
         l.debug('Vol Slider Change: ', $evt.target.value);
-        this.geb.dispatchEvent(new JacEvent('volchange', $evt.target.value))
+        this.geb.dispatchEvent(new JacEvent('volChange', $evt.target.value))
 
     }
 
