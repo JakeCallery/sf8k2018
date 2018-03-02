@@ -1,4 +1,8 @@
 ##Up Next
+* Layout Manager (initial layout to start)
+  * force into landscape?
+    * at least landscape detection / show warning
+* Handle Window Resizes
 * styling
 * Bug fixes
 
