@@ -7,55 +7,40 @@
 </head>
 <body>
     <div id="mainContainerDiv" class="mainContainerDiv">
-        <div id="canvasDiv" class="canvasDiv">
+        <div id="leftControlsDiv" class="leftControlsDiv">
+            <button id="muteButton">MUTE</button>
+            <div id="volSliderDiv">
+                <input class="volSlider" id="volSlider" type="range" value="50" min="0" max="100" orient="vertical">
+            </div>
+        </div>
+
+        <div id="canvasContainerDiv" class="canvasContainerDiv">
             <canvas id="waveCanvas" width="800" height="300" class="waveCanvas"></canvas>
             <canvas id="soundCanvas" width="800" height="300" class="soundCanvas"></canvas>
         </div>
-        <div id="controlsDiv" class="controlsDiv">
-            <div id="presetDiv">
-                <button id="preset1Button" class="presetButton">Preset1</button>
-                <button id="preset2Button" class="presetButton">Preset2</button>
-                <button id="preset3Button" class="presetButton">Preset3</button>
-                <button id="preset4Button" class="presetButton">Preset4</button>
-            </div>
-            <br/>
+
+        <div id="rightControlsDiv" class="rightControlsDiv">
             <div id="modeDiv">
                 <button id="mode1Button" class="modeButton">Loop</button>
                 <button id="mode2Button" class="modeButton">Loop</button>
                 <button id="mode3Button" class="modeButton">Loop</button>
                 <button id="mode4Button" class="modeButton">Loop</button>
             </div>
-            <div id="sliderContainerDiv">
-                <div id="volSliderDiv">
-                    <input id="volSlider" type="range" value="50" min="0" max="100">
-                </div>
-            </div>
-            <br/>
-            <div id="buttonDiv">
-                <button id="muteButton">MUTE</button>
-                <button id="playButton">Play</button>
-                <button id="pauseButton">Pause</button>
-                <button id="fullScreenButton">FullScreen</button>
-            </div>
-            <div id="instructionsDiv">
-                <p>
-                    Left mouse button to set loop start
-                </p>
-                <p>
-                    Right Mouse Button to set loop end
-                </p>
-                <p>
-                    Middle mouse button to slide loop gate
-                </p>
-                <p>
-                    Click Preset Button To USE preset
-                </p>
-                <p>
-                    Click and Hold Preset Button to SET preset
-                </p>
+            <div id="presetDiv">
+                <button id="preset1Button" class="presetButton">Preset1</button>
+                <button id="preset2Button" class="presetButton">Preset2</button>
+                <button id="preset3Button" class="presetButton">Preset3</button>
+                <button id="preset4Button" class="presetButton">Preset4</button>
             </div>
         </div>
+    </div>
 
+    <div class="bottomControlsDiv">
+        <div id="buttonDiv">
+            <button id="playButton">Play</button>
+            <button id="pauseButton">Pause</button>
+            <button id="fullScreenButton">FullScreen</button>
+        </div>
     </div>
 </body>
 </html>

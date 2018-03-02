@@ -32,8 +32,10 @@ export default class VizManager extends EventDispatcher {
 
         //Stats
         this.stats = new Stats();
-        this.stats.showPanel(1);
+        this.stats.showPanel(0);
         this.doc.body.appendChild(this.stats.dom);
+        this.stats.dom.style.top = null;
+        this.stats.dom.style.bottom = '0';
 
         //Elements
         this.waveCanvas = this.doc.getElementById('waveCanvas');

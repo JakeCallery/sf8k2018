@@ -13,6 +13,11 @@ body {
     box-sizing: border-box;
 }
 
+div {
+    margin: 0;
+    padding: 0;
+}
+
 .displayNone {
     display: none;
 }
@@ -60,23 +65,44 @@ button {
     cursor: default;
 }
 
+.mainContainerDiv {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.rightControlsDiv {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.presetDiv {
+
+}
+
+
 .presetButton {
-    width: 100px;
-    height: 25px;
+    display: block;
+}
+
+.modeDiv {
+
 }
 
 .modeButton {
-    width: 100px;
-    height: 25px;
+    display: block;
 }
 
-.controlsDiv {
-    margin-top: 5px;
+
+.bottomControlsDiv {
+
 }
 
-.canvasDiv {
+.canvasContainerDiv {
     position: relative;
     height: 300px;
+    width: 800px;
 }
 
 .waveCanvas {
@@ -93,4 +119,12 @@ button {
     top: 0;
 }
 
+.leftControlsDiv {
+    display: flex;
+    flex-direction: column;
+}
 
+.volSlider {
+    -webkit-appearance: slider-vertical;
+    writing-mode: bt-lr;
+}
