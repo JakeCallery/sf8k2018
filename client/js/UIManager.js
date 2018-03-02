@@ -4,6 +4,7 @@ import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
 import screenfull from 'screenfull/screenfull';
+import verge from 'verge/verge';
 
 export default class UIManager extends EventDispatcher {
     constructor($doc) {
@@ -27,6 +28,14 @@ export default class UIManager extends EventDispatcher {
         l.debug('DOM Ready');
         let self = this;
 
+        l.debug('Absolute Screen Width: ' + window.screen.width);
+        l.debug('Absolute Screen Height: ' + window.screen.height);
+
+        l.debug('Available Screen Width: ' + window.screen.availWidth);
+        l.debug('Available Screen Width: ' + window.screen.availHeight);
+
+        l.debug('Viewport Width: ', verge.viewportW());
+
         //DOM elements
         this.mainContainerDiv = this.doc.getElementById('mainContainerDiv');
         this.playButton = this.doc.getElementById('playButton');
@@ -34,6 +43,26 @@ export default class UIManager extends EventDispatcher {
         this.fullScreenButton = this.doc.getElementById('fullScreenButton');
         this.volSlider = this.doc.getElementById('volSlider');
         this.muteButton = this.doc.getElementById('muteButton');
+
+        //Adjust canvas size based on screensize
+        this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
+        this.waveCanvas = this.doc.getElementById('waveCanvas');
+        this.soundCanvas = this.doc.getElementById('soundCanvas');
+        this.leftControlsDiv = this.doc.getElementById('leftControlsDiv');
+        this.rightControlsDiv = this.doc.getElementById('rightControlsDiv');
+
+        let viewportWidth = verge.viewportW();
+        let canvasWidth = Math.round(0.70 * viewportWidth);
+        let leftControlsWidth = Math.round(0.1 * viewportWidth);
+        let rightControlsWidth = Math.round(0.2 * viewportWidth);
+
+        this.leftControlsDiv.style.width = leftControlsWidth + 'px';
+        this.rightControlsDiv.style.width = rightControlsWidth + 'px';
+        this.waveCanvas.width = canvasWidth;
+        this.soundCanvas.width = canvasWidth;
+        this.waveCanvas.style.width = canvasWidth + 'px';
+        this.soundCanvas.style.width = canvasWidth + 'px';
+        this.canvasContainerDiv.style.width = canvasWidth + 'px';
 
         //Delegates
         this.playClickDelegate = EventUtils.bind(self, self.handlePlayClick);

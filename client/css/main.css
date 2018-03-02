@@ -64,17 +64,64 @@ button {
     pointer-events: none;
     cursor: default;
 }
-
+/*********************************/
 .mainContainerDiv {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
 }
 
+/*********************************/
+/* LEFT CONTROLS */
+/*********************************/
+.leftControlsDiv {
+    display: flex;
+    flex-direction: column;
+    background: yellow;
+}
+
+.volSlider {
+    -webkit-appearance: slider-vertical;
+    writing-mode: bt-lr;
+}
+
+.muteButton {
+
+}
+
+/*********************************/
+/* CENTER CANVAS */
+/*********************************/
+.canvasContainerDiv {
+    position: relative;
+    height: 300px;
+    width: 800px;
+}
+
+.waveCanvas {
+    position: absolute;
+    z-index: 0;
+    left: 0;
+    top: 0;
+}
+
+.soundCanvas {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+}
+
+/*********************************/
+/* RIGHT CONTROLS */
+/*********************************/
+
 .rightControlsDiv {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    align-content: flex-end;
+    background: green;
 }
 
 .presetDiv {
@@ -99,32 +146,5 @@ button {
 
 }
 
-.canvasContainerDiv {
-    position: relative;
-    height: 300px;
-    width: 800px;
-}
 
-.waveCanvas {
-    position: absolute;
-    z-index: 0;
-    left: 0;
-    top: 0;
-}
 
-.soundCanvas {
-    position: absolute;
-    z-index: 1;
-    left: 0;
-    top: 0;
-}
-
-.leftControlsDiv {
-    display: flex;
-    flex-direction: column;
-}
-
-.volSlider {
-    -webkit-appearance: slider-vertical;
-    writing-mode: bt-lr;
-}
