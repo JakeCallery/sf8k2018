@@ -32,6 +32,14 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.(png|jp(e*)g|svg)$/,
+                loader: 'file-loader',
+                options: {
+                    name: 'images/[hash]-[name].[ext]'
+                },
+                exclude: /node_modules/
+            },
+            {
                 test: /\.html$/,
                 loader: 'html-loader',
                 exclude: /node_modules/

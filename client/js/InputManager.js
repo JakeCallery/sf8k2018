@@ -35,6 +35,8 @@ export default class InputManager extends EventDispatcher {
 
         this.markerDO = new MarkerDataObject();
         this.soundCanvas = this.doc.getElementById('soundCanvas');
+
+        //TODO: this will need reset on page width change
         this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
         this.soundCanvasOffsetX = this.canvasContainerDiv.offsetLeft;
         this.soundCanvasOffsetY = this.canvasContainerDiv.offsetTop;
