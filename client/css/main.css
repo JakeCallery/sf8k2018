@@ -151,7 +151,7 @@ button {
 }
 
 .modeButton {
-    background-image: url('./loop.svg');
+    background-image: url('../images/loop.svg');
     display: block;
     padding: 0;
     border-radius: 10px;
