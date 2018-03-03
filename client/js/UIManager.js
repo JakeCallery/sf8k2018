@@ -44,25 +44,6 @@ export default class UIManager extends EventDispatcher {
         this.volSlider = this.doc.getElementById('volSlider');
         this.muteButton = this.doc.getElementById('muteButton');
 
-        //Adjust canvas size based on screensize
-        this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
-        this.waveCanvas = this.doc.getElementById('waveCanvas');
-        this.soundCanvas = this.doc.getElementById('soundCanvas');
-        this.leftControlsDiv = this.doc.getElementById('leftControlsDiv');
-        this.rightControlsDiv = this.doc.getElementById('rightControlsDiv');
-
-        let viewportWidth = verge.viewportW();
-        let canvasWidth = Math.round(0.70 * viewportWidth);
-        let leftControlsWidth = Math.round(0.1 * viewportWidth);
-        let rightControlsWidth = Math.round(0.2 * viewportWidth);
-
-        this.leftControlsDiv.style.width = leftControlsWidth + 'px';
-        this.rightControlsDiv.style.width = rightControlsWidth + 'px';
-        this.waveCanvas.width = canvasWidth;
-        this.soundCanvas.width = canvasWidth;
-        this.waveCanvas.style.width = canvasWidth + 'px';
-        this.soundCanvas.style.width = canvasWidth + 'px';
-        this.canvasContainerDiv.style.width = canvasWidth + 'px';
 
         //Delegates
         this.playClickDelegate = EventUtils.bind(self, self.handlePlayClick);
