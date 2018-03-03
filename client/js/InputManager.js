@@ -35,8 +35,9 @@ export default class InputManager extends EventDispatcher {
 
         this.markerDO = new MarkerDataObject();
         this.soundCanvas = this.doc.getElementById('soundCanvas');
-        this.soundCanvasOffsetX = this.soundCanvas.offsetLeft;
-        this.soundCanvasOffsetY = this.soundCanvas.offsetTop;
+        this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
+        this.soundCanvasOffsetX = this.canvasContainerDiv.offsetLeft;
+        this.soundCanvasOffsetY = this.canvasContainerDiv.offsetTop;
 
         //Delegates
         this.mouseMoveDelegate = EventUtils.bind(self, self.handleMouseMove);
