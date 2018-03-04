@@ -55,6 +55,9 @@ export default class LayoutManager extends EventDispatcher {
         this.soundCanvas.style.width = canvasWidth + 'px';
 
 
+        //Button horizontal margins
+        let buttonLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
+
         //Preset Button Sizing
         this.presetDiv.style.height = this.soundCanvas.height + 'px';
         let presetButtonWidth = Math.round(rightControlsWidth * 0.48);
@@ -67,7 +70,7 @@ export default class LayoutManager extends EventDispatcher {
             presetButton.style.height = presetButtonHeight + 'px';
             presetButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
             presetButton.style['margin-bottom'] = presetButtonVerticalMargin + 'px';
-            presetButton.style['margin-left'] = '0';
+            presetButton.style['margin-left'] = buttonLeftMargin + 'px';
             presetButton.style['margin-right'] = '0';
         }
 
@@ -83,7 +86,7 @@ export default class LayoutManager extends EventDispatcher {
             modeButton.style.height = modeButtonHeight + 'px';
             modeButton.style['margin-top'] = modeButtonVerticalMargin + 'px';
             modeButton.style['margin-bottom'] = modeButtonVerticalMargin + 'px';
-            modeButton.style['margin-left'] = '0';
+            modeButton.style['margin-left'] = buttonLeftMargin + 'px';
             modeButton.style['margin-right'] = '0';
         }
 

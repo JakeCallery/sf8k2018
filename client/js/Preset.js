@@ -4,6 +4,7 @@ import EventDispatcher from 'jac/events/EventDispatcher';
 import MarkerDataObject from "./MarkerDataObject";
 import JacEvent from "./jac/events/JacEvent";
 import GlobalEventBus from "./jac/events/GlobalEventBus";
+import DOMUtils from './jac/utils/DOMUtils';
 
 const MODES = {
     LOOP: 'loop',
@@ -125,11 +126,13 @@ export default class Preset extends EventDispatcher {
 
         switch($mode) {
             case Preset.MODES.LOOP:
-                this.modeButtonView.innerHTML = 'Loop';
+                DOMUtils.removeClass(this.modeButtonView, 'modeButtonContinue');
+                DOMUtils.addClass(this.modeButtonView, 'modeButtonLoop');
                 break;
 
             case Preset.MODES.CONTINUE:
-                this.modeButtonView.innerHTML = 'Continue';
+                DOMUtils.removeClass(this.modeButtonView, 'modeButtonLoop');
+                DOMUtils.addClass(this.modeButtonView, 'modeButtonContinue');
                 break;
 
             default:

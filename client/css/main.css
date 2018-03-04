@@ -162,6 +162,13 @@ button {
     outline: none;
 }
 
+.modeButtonLoop {
+    background-image: url('../images/loop.svg');
+}
+
+.modeButtonContinue {
+    background-image: url('../images/continue.svg');
+}
 
 .bottomControlsDiv {
     }
