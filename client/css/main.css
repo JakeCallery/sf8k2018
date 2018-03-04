@@ -84,6 +84,11 @@ button {
     flex-direction: column;
 }
 
+.leftControlsTopRowDiv {
+    display: flex;
+    flex-direction: row;
+}
+
 .playButton {
     border-radius: 5px;
     border: 0;

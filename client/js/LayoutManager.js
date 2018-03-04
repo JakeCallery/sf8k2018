@@ -42,8 +42,8 @@ export default class LayoutManager extends EventDispatcher {
 
     adjustLayout() {
         let viewportWidth = verge.viewportW();
-        let canvasWidth = Math.round(0.70 * viewportWidth);
-        let leftControlsWidth = Math.round(0.1 * viewportWidth);
+        let canvasWidth = Math.round(0.60 * viewportWidth);
+        let leftControlsWidth = Math.round(0.2 * viewportWidth);
         let rightControlsWidth = Math.round(0.2 * viewportWidth);
 
         this.leftControlsDiv.style['width'] = leftControlsWidth + 'px';
@@ -57,25 +57,28 @@ export default class LayoutManager extends EventDispatcher {
         this.waveCanvas.style['width'] = canvasWidth + 'px';
         this.soundCanvas.style['width'] = canvasWidth + 'px';
 
+        //Left Controls button horizontal margins
+        let leftButtonsLeftMargin = Math.round((leftControlsWidth * 0.02) / 1.5);
+
         //Play Button
-        let playButtonWidth = Math.round(leftControlsWidth * 0.9);
-        let playButtonHeight = Math.round(leftControlsWidth * 0.9);
+        let playButtonWidth = Math.round(leftControlsWidth * 0.48);
+        let playButtonHeight = Math.round(leftControlsWidth * 0.48);
         let playButtonMargin = Math.round((leftControlsWidth * 0.1) / 2);
         this.playButton.style['width'] = playButtonWidth + 'px';
         this.playButton.style['height'] = playButtonHeight + 'px';
-        this.playButton.style['margin'] = playButtonMargin + 'px';
+        this.playButton.style['margin-left'] = leftButtonsLeftMargin + 'px';
         this.playButton.style['background-size'] = playButtonWidth + 'px' + ' ' + playButtonHeight + 'px';
 
         //Mute Button
-        let muteButtonWidth = Math.round(leftControlsWidth * 0.9);
-        let muteButtonHeight = Math.round(leftControlsWidth * 0.9);
+        let muteButtonWidth = Math.round(leftControlsWidth * 0.48);
+        let muteButtonHeight = Math.round(leftControlsWidth * 0.48);
         let muteButtonMargin = Math.round((leftControlsWidth * 0.1) / 2);
         this.muteButton.style['width'] = muteButtonWidth + 'px';
         this.muteButton.style['height'] = muteButtonHeight + 'px';
-        this.muteButton.style['margin'] = muteButtonMargin + 'px';
+        this.muteButton.style['margin-left'] = leftButtonsLeftMargin + 'px';
 
         //Right Controls Button horizontal margins
-        let buttonLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
+        let rightButtonsLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
 
         //Preset Button Sizing
         this.presetDiv.style['height'] = this.soundCanvas.height + 'px';
@@ -89,7 +92,7 @@ export default class LayoutManager extends EventDispatcher {
             presetButton.style['height'] = presetButtonHeight + 'px';
             presetButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
             presetButton.style['margin-bottom'] = presetButtonVerticalMargin + 'px';
-            presetButton.style['margin-left'] = buttonLeftMargin + 'px';
+            presetButton.style['margin-left'] = rightButtonsLeftMargin + 'px';
             presetButton.style['margin-right'] = '0';
         }
 
@@ -105,9 +108,13 @@ export default class LayoutManager extends EventDispatcher {
             modeButton.style['height'] = modeButtonHeight + 'px';
             modeButton.style['margin-top'] = modeButtonVerticalMargin + 'px';
             modeButton.style['margin-bottom'] = modeButtonVerticalMargin + 'px';
-            modeButton.style['margin-left'] = buttonLeftMargin + 'px';
+            modeButton.style['margin-left'] = rightButtonsLeftMargin + 'px';
             modeButton.style['margin-right'] = '0';
         }
+
+        //change left controls top margin to be same as right
+        this.playButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
+        this.muteButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
 
 
     }
