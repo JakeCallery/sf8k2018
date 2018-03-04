@@ -41,13 +41,12 @@ export default class UIManager extends EventDispatcher {
         this.mainContainerDiv = this.doc.getElementById('mainContainerDiv');
         this.playButton = this.doc.getElementById('playButton');
         this.fullScreenButton = this.doc.getElementById('fullScreenButton');
-        this.volSlider = this.doc.getElementById('volSlider');
         this.muteButton = this.doc.getElementById('muteButton');
-
+        this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
+        this.volPanTouchPadCanvasContext = this.volPanTouchPadCanvas.getContext('2d');
 
         //Delegates
         this.playClickDelegate = EventUtils.bind(self, self.handlePlayClick);
-        this.volSliderInputDelegate = EventUtils.bind(self, self.handleVolSliderInput);
         this.requestInitialVolDelegate = EventUtils.bind(self, self.handleRequestInitialVol);
         this.fullScreenClickDelegate = EventUtils.bind(self, self.handleFullScreenClick);
         this.muteButtonPressDelegate = EventUtils.bind(self, self.handleMuteButtonPress);
@@ -57,14 +56,14 @@ export default class UIManager extends EventDispatcher {
         //Events
         this.playButton.addEventListener('click', this.playClickDelegate);
         this.fullScreenButton.addEventListener('click', this.fullScreenClickDelegate);
-        this.volSlider.addEventListener('input', this.volSliderInputDelegate);
         this.geb.addEventListener('requestInitialVol', this.requestInitialVolDelegate);
         this.muteButton.addEventListener('mousedown', this.muteButtonPressDelegate);
         this.muteButton.addEventListener('touchstart', this.muteButtonPressDelegate);
         this.geb.addEventListener('playStateChanged', this.playStateChangedDelegate);
 
-        //Notifiy of initial vol just incase DOM was ready late:
-        this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
+        //Notify of initial vol just in case DOM was ready late:
+        this.geb.dispatchEvent(new JacEvent('setInitialVol', 50));
+        this.geb.dispatchEvent(new JacEvent('setInitialPan', 0));
 
     }
 
@@ -91,8 +90,10 @@ export default class UIManager extends EventDispatcher {
     handleGlobalMuteRelease($evt) {
         l.debug('Caught Mute Button Release');
 
-        //Unmute to slider vol
-        let sliderVol = this.volSlider.value;
+        //Unmute to vol input vol
+        //TODO: hook this up to new UI
+        let sliderVol = 50;
+
         if('changedTouches' in $evt) {
             l.debug('Touch Release');
             $evt.preventDefault();
@@ -117,13 +118,13 @@ export default class UIManager extends EventDispatcher {
 
     handleFullScreenClick($evt) {
         l.debug('caught full screen click');
-        //screenfull.request(this.mainContainerDiv);
         screenfull.request();
     }
 
     handleRequestInitialVol($evt){
         l.debug('Setting Initial Vol');
-        this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
+        //TODO: update this to new UI
+        //this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
     }
 
     handleVolSliderInput($evt) {

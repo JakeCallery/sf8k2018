@@ -110,6 +110,7 @@ button {
     border-radius: 5px;
     border: 0;
     outline: none;
+    margin-top: 0;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url('../images/mute.svg');

@@ -15,6 +15,7 @@ import PresetManager from 'PresetManager';
 import '../css/normalize.css';
 import '../css/main.css';
 import LayoutManager from "./LayoutManager";
+import VolPanTouchPadUI from "./VolPanTouchPadUI";
 
 l.addLogTarget(new ConsoleTarget());
 l.verboseFilter = (VerboseLevel.NORMAL | VerboseLevel.TIME | VerboseLevel.LEVEL);
@@ -45,9 +46,10 @@ if(fvResponse.length !== 0) {
 }
 
 //Setup UI
-let lm = new LayoutManager(document);
+let lm = new LayoutManager(document, window);
 let um = new UIManager(document);
 let im = new InputManager(document);
+let vp = new VolPanTouchPadUI(document);
 let vm = new VizManager(document);
 let pm = new PresetManager(document);
 

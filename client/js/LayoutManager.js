@@ -6,10 +6,11 @@ import JacEvent from './jac/events/JacEvent';
 import verge from "./verge/verge";
 
 export default class LayoutManager extends EventDispatcher {
-    constructor($document) {
+    constructor($document, $window) {
         super();
         let self = this;
         this.doc = $document;
+        this.window = $window;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -27,6 +28,7 @@ export default class LayoutManager extends EventDispatcher {
         this.leftControlsDiv = this.doc.getElementById('leftControlsDiv');
         this.rightControlsDiv = this.doc.getElementById('rightControlsDiv');
 
+        this.leftControlsTopRowDiv = this.doc.getElementById('leftControlsTopRowDiv');
         this.muteButton = this.doc.getElementById('muteButton');
         this.playButton = this.doc.getElementById('playButton');
 
@@ -35,6 +37,8 @@ export default class LayoutManager extends EventDispatcher {
 
         this.modeDiv = this.doc.getElementById('modeDiv');
         this.modeButtons = this.doc.getElementsByClassName('modeButton');
+
+        this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
 
         this.adjustLayout();
 
@@ -76,6 +80,10 @@ export default class LayoutManager extends EventDispatcher {
         this.muteButton.style['width'] = muteButtonWidth + 'px';
         this.muteButton.style['height'] = muteButtonHeight + 'px';
         this.muteButton.style['margin-left'] = leftButtonsLeftMargin + 'px';
+
+        //VolPanTouchPad
+        this.volPanTouchPadCanvas.height = Math.ceil(this.soundCanvas.height - this.leftControlsTopRowDiv.offsetHeight - 5);
+        this.volPanTouchPadCanvas.width = leftControlsWidth;
 
         //Right Controls Button horizontal margins
         let rightButtonsLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
