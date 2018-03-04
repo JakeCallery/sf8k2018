@@ -10,12 +10,13 @@ import UIManager from 'UIManager';
 import VizManager from 'VizManager';
 import InputManager from 'InputManager';
 import PresetManager from 'PresetManager';
+import LayoutManager from "./LayoutManager";
+import VolPanTouchPadUI from "./VolPanTouchPadUI";
 
 //Import through loaders
 import '../css/normalize.css';
 import '../css/main.css';
-import LayoutManager from "./LayoutManager";
-import VolPanTouchPadUI from "./VolPanTouchPadUI";
+
 
 l.addLogTarget(new ConsoleTarget());
 l.verboseFilter = (VerboseLevel.NORMAL | VerboseLevel.TIME | VerboseLevel.LEVEL);
@@ -56,12 +57,12 @@ let pm = new PresetManager(document);
 //Set up audio
 let am = new AudioManager(window);
 am.init()
-    .then(() => {
-        return am.loadSound('drinkalone.ogg');
-    })
-    .then(() => {
-        l.debug('Sound Loaded!');
-    })
-    .catch(($err) => {
-        l.error('AM Init and Load Error: ', $err);
-    });
+.then(() => {
+    return am.loadSound('drinkalone.ogg');
+})
+.then(() => {
+    l.debug('Sound Loaded!');
+})
+.catch(($err) => {
+    l.error('AM Init and Load Error: ', $err);
+});
