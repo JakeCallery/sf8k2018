@@ -1,4 +1,5 @@
 ##Up Next
+* replace range slider with "touch pad" controlling vol and pan?
 * Layout Manager (initial layout to start)
   * force into landscape?
     * at least landscape detection / show warning
