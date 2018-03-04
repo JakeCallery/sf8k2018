@@ -22,6 +22,7 @@ export default class AudioManager extends EventDispatcher {
 
         this.scriptProcessorNode = null;
         this.gainNode = null;
+        this.panNode = null;
 
         this.totalSamples = null;
         this.startSampleIndex = null;
@@ -41,6 +42,7 @@ export default class AudioManager extends EventDispatcher {
         this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
         this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
         this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
+        this.panChangeDelegate = EventUtils.bind(self, self.handlePanChange);
         this.forceUpdateCurrentSampleIndexDelegate = EventUtils.bind(self, self.handleForceUpdateCurrentSampleIndex);
 
         //Events
@@ -48,6 +50,7 @@ export default class AudioManager extends EventDispatcher {
         this.geb.addEventListener('requestPlayToggle', this.requestPlayToggleDelegate);
         this.geb.addEventListener('requestPause', this.requestPauseDelegate);
         this.geb.addEventListener('volChange', this.volChangeDelegate);
+        this.geb.addEventListener('panChange', this.panChangeDelegate);
         this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
         this.geb.addEventListener('forceUpdateCurrentSampleIndex', this.forceUpdateCurrentSampleIndexDelegate);
 
@@ -63,6 +66,7 @@ export default class AudioManager extends EventDispatcher {
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
 
                 this.gainNode = this.audioContext.createGain();
+                this.panNode = this.audioContext.createStereoPanner();
 
                 //set initial volume as muted
                 this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0)
@@ -121,7 +125,8 @@ export default class AudioManager extends EventDispatcher {
                         this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
                         this.audioSource.loop = true;
                         this.audioSource.connect(this.scriptProcessorNode);
-                        this.scriptProcessorNode.connect(this.gainNode);
+                        this.scriptProcessorNode.connect(this.panNode);
+                        this.panNode.connect(this.gainNode);
                         this.gainNode.connect(this.audioContext.destination);
                         this.startSampleIndex = 0;
                         this.currentSampleIndex = 0;
@@ -185,6 +190,12 @@ export default class AudioManager extends EventDispatcher {
         let vol = ($evt.data / 100);
         l.debug('caught vol change: ', vol);
         this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0)
+    }
+
+    handlePanChange($evt) {
+        let pan = ($evt.data / 100);
+        l.debug('Pan change: ', pan);
+        this.panNode.pan.value = pan;
     }
 
     handleAudioProcess($evt){
