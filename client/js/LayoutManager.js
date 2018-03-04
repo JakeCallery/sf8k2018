@@ -38,6 +38,7 @@ export default class LayoutManager extends EventDispatcher {
         this.modeDiv = this.doc.getElementById('modeDiv');
         this.modeButtons = this.doc.getElementsByClassName('modeButton');
 
+        this.volPanTouchPadDiv = this.doc.getElementById('volPanTouchPadDiv');
         this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
 
         this.adjustLayout();
@@ -81,10 +82,6 @@ export default class LayoutManager extends EventDispatcher {
         this.muteButton.style['height'] = muteButtonHeight + 'px';
         this.muteButton.style['margin-left'] = leftButtonsLeftMargin + 'px';
 
-        //VolPanTouchPad
-        this.volPanTouchPadCanvas.height = Math.ceil(this.soundCanvas.height - this.leftControlsTopRowDiv.offsetHeight - 5);
-        this.volPanTouchPadCanvas.width = leftControlsWidth;
-
         //Right Controls Button horizontal margins
         let rightButtonsLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
 
@@ -123,6 +120,15 @@ export default class LayoutManager extends EventDispatcher {
         //change left controls top margin to be same as right
         this.playButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
         this.muteButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
+
+        //VolPanTouchPad
+        this.volPanTouchPadDiv.style['margin-top'] = Math.round(muteButtonMargin /2) + 'px';
+
+        let soundCanvasRect = this.soundCanvas.getBoundingClientRect();
+        let volPanTouchPadCanvasRect = this.volPanTouchPadCanvas.getBoundingClientRect();
+        let yDiff = volPanTouchPadCanvasRect.top - soundCanvasRect.top;
+        this.volPanTouchPadCanvas.height = Math.round(this.soundCanvas.height - yDiff);
+        this.volPanTouchPadCanvas.width = leftControlsWidth;
 
 
     }
