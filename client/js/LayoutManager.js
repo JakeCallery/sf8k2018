@@ -42,8 +42,8 @@ export default class LayoutManager extends EventDispatcher {
 
     adjustLayout() {
         let viewportWidth = verge.viewportW();
-        let canvasWidth = Math.round(0.60 * viewportWidth);
-        let leftControlsWidth = Math.round(0.2 * viewportWidth);
+        let canvasWidth = Math.round(0.65 * viewportWidth);
+        let leftControlsWidth = Math.round(0.15 * viewportWidth);
         let rightControlsWidth = Math.round(0.2 * viewportWidth);
 
         this.leftControlsDiv.style['width'] = leftControlsWidth + 'px';
