@@ -10,9 +10,10 @@
   * max size (or just max height) on mute button
   * scale sound canvas height
 * Bug fixes
+* Add Feature Check for StereoPannerNode
+* Preloader
 
 ##Future Features
-* Preloader
 * passive event listeners?
 * Sequenced and Non Sequenced Presets
   * 4 presets that can be used in a sequence (loop or continue)

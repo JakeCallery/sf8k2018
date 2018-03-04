@@ -12,6 +12,8 @@ export default class FeatureVerifier extends EventDispatcher {
     verify() {
         let notVerifiedList = [];
 
+        //TODO: Add check for StereoPannerNode
+
         //Audio Context
         if(!(window.AudioContext || window.webkitAudioContext)){
             notVerifiedList.push('AudioContext');
