@@ -84,6 +84,19 @@ button {
     flex-direction: column;
 }
 
+.playButton {
+    border-radius: 5px;
+    border: 0;
+    outline: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('../images/play.svg');
+}
+
+.playButtonPause {
+    background-image: url('../images/pause.svg');
+}
+
 .volSlider {
     -webkit-appearance: slider-vertical;
 }

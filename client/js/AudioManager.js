@@ -37,6 +37,7 @@ export default class AudioManager extends EventDispatcher {
 
         //Delegates
         this.requestPlayDelegate = EventUtils.bind(self, self.handleRequestPlay);
+        this.requestPlayToggleDelegate = EventUtils.bind(self, self.handleRequestPlayToggle);
         this.requestPauseDelegate = EventUtils.bind(self, self.handleRequestPause);
         this.audioProcessDelegate = EventUtils.bind(self, self.handleAudioProcess);
         this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
@@ -44,6 +45,7 @@ export default class AudioManager extends EventDispatcher {
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
+        this.geb.addEventListener('requestPlayToggle', this.requestPlayToggleDelegate);
         this.geb.addEventListener('requestPause', this.requestPauseDelegate);
         this.geb.addEventListener('volChange', this.volChangeDelegate);
         this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
@@ -157,6 +159,12 @@ export default class AudioManager extends EventDispatcher {
     handleForceUpdateCurrentSampleIndex($evt) {
         l.debug('Caught Force Sample Index Update: ', $evt.data);
         this.currentSampleIndex = $evt.data;
+    }
+
+    handleRequestPlayToggle($evt) {
+        l.debug('Toggle Play/Pause');
+        this.isPlaying = !this.isPlaying;
+        this.geb.dispatchEvent(new JacEvent('playStateChanged', this.isPlaying));
     }
 
     handleRequestPlay($evt) {

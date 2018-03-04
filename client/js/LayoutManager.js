@@ -28,6 +28,7 @@ export default class LayoutManager extends EventDispatcher {
         this.rightControlsDiv = this.doc.getElementById('rightControlsDiv');
 
         this.muteButton = this.doc.getElementById('muteButton');
+        this.playButton = this.doc.getElementById('playButton');
 
         this.presetDiv = this.doc.getElementById('presetDiv');
         this.presetButtons = this.doc.getElementsByClassName('presetButton');
@@ -55,6 +56,15 @@ export default class LayoutManager extends EventDispatcher {
 
         this.waveCanvas.style['width'] = canvasWidth + 'px';
         this.soundCanvas.style['width'] = canvasWidth + 'px';
+
+        //Play Button
+        let playButtonWidth = Math.round(leftControlsWidth * 0.9);
+        let playButtonHeight = Math.round(leftControlsWidth * 0.9);
+        let playButtonMargin = Math.round((leftControlsWidth * 0.1) / 2);
+        this.playButton.style['width'] = playButtonWidth + 'px';
+        this.playButton.style['height'] = playButtonHeight + 'px';
+        this.playButton.style['margin'] = playButtonMargin + 'px';
+        this.playButton.style['background-size'] = playButtonWidth + 'px' + ' ' + playButtonHeight + 'px';
 
         //Mute Button
         let muteButtonWidth = Math.round(leftControlsWidth * 0.9);

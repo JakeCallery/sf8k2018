@@ -4,6 +4,8 @@
     * at least landscape detection / show warning
 * Handle Window Resizes
 * styling
+  * max size (or just max height) on mute button
+  * scale sound canvas height
 * Bug fixes
 
 ##Future Features

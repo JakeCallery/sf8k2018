@@ -40,7 +40,6 @@ export default class UIManager extends EventDispatcher {
         //DOM elements
         this.mainContainerDiv = this.doc.getElementById('mainContainerDiv');
         this.playButton = this.doc.getElementById('playButton');
-        this.pauseButton = this.doc.getElementById('pauseButton');
         this.fullScreenButton = this.doc.getElementById('fullScreenButton');
         this.volSlider = this.doc.getElementById('volSlider');
         this.muteButton = this.doc.getElementById('muteButton');
@@ -48,21 +47,21 @@ export default class UIManager extends EventDispatcher {
 
         //Delegates
         this.playClickDelegate = EventUtils.bind(self, self.handlePlayClick);
-        this.pauseClickDelegate = EventUtils.bind(self, self.handlePauseClick);
         this.volSliderInputDelegate = EventUtils.bind(self, self.handleVolSliderInput);
         this.requestInitialVolDelegate = EventUtils.bind(self, self.handleRequestInitialVol);
         this.fullScreenClickDelegate = EventUtils.bind(self, self.handleFullScreenClick);
         this.muteButtonPressDelegate = EventUtils.bind(self, self.handleMuteButtonPress);
         this.globalMuteReleaseDelegate = EventUtils.bind(self, self.handleGlobalMuteRelease);
+        this.playStateChangedDelegate = EventUtils.bind(self, self.handlePlayStateChanged);
 
         //Events
         this.playButton.addEventListener('click', this.playClickDelegate);
-        this.pauseButton.addEventListener('click', this.pauseClickDelegate);
         this.fullScreenButton.addEventListener('click', this.fullScreenClickDelegate);
         this.volSlider.addEventListener('input', this.volSliderInputDelegate);
         this.geb.addEventListener('requestInitialVol', this.requestInitialVolDelegate);
         this.muteButton.addEventListener('mousedown', this.muteButtonPressDelegate);
         this.muteButton.addEventListener('touchstart', this.muteButtonPressDelegate);
+        this.geb.addEventListener('playStateChanged', this.playStateChangedDelegate);
 
         //Notifiy of initial vol just incase DOM was ready late:
         this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
@@ -135,12 +134,18 @@ export default class UIManager extends EventDispatcher {
 
     handlePlayClick($evt) {
         l.debug('Caught Play Click');
-        this.geb.dispatchEvent(new JacEvent('requestPlay'));
+        this.geb.dispatchEvent(new JacEvent('requestPlayToggle'));
     }
 
-    handlePauseClick($evt) {
-        l.debug('Caught Pause Click');
-        this.geb.dispatchEvent(new JacEvent('requestPause'));
+    handlePlayStateChanged($evt) {
+        l.debug('Caught Play State Changed: ', $evt.data);
+
+        let isPlaying = $evt.data;
+        if(isPlaying) {
+            DOMUtils.addClass(this.playButton, 'playButtonPause');
+        } else {
+            DOMUtils.removeClass(this.playButton, 'playButtonPause');
+        }
     }
 
 }
