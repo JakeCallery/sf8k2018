@@ -1,5 +1,7 @@
 ##Up Next
 * replace range slider with "touch pad" controlling vol and pan?
+  * may need to add a "lock pan" button
+    * or 2 toggle buttons / lock pan and lock vol
 * Layout Manager (initial layout to start)
   * force into landscape?
     * at least landscape detection / show warning
@@ -10,6 +12,7 @@
 * Bug fixes
 
 ##Future Features
+* Preloader
 * passive event listeners?
 * Sequenced and Non Sequenced Presets
   * 4 presets that can be used in a sequence (loop or continue)
