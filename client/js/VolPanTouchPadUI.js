@@ -69,11 +69,16 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
     handleMouseDown($evt) {
         $evt.preventDefault();
+        l.debug('Down Delegate: ', this.mouseMoveDelegate);
         this.volPanTouchPadCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
+        this.doc.addEventListener('mouseup', this.mouseUpDelegate);
     }
 
     handleMouseUp($evt) {
+        $evt.preventDefault();
+        l.debug('Delegate: ', this.mouseMoveDelegate);
         this.volPanTouchPadCanvas.removeEventListener('mousemove', this.mouseMoveDelegate);
+        this.doc.removeEventListener('mouseup', this.mouseMoveDelegate);
     }
 
     handleMouseMove($evt) {

@@ -189,13 +189,13 @@ export default class AudioManager extends EventDispatcher {
     handleVolChange($evt) {
         let vol = ($evt.data / 100);
         l.debug('caught vol change: ', vol);
-        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0)
+        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0);
     }
 
     handlePanChange($evt) {
         let pan = ($evt.data / 100);
         l.debug('Pan change: ', pan);
-        this.panNode.pan.value = pan;
+        this.panNode.pan.setTargetAtTime(pan, this.audioContext.currentTime, 0);
     }
 
     handleAudioProcess($evt){

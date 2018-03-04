@@ -54,8 +54,6 @@ export default class InputManager extends EventDispatcher {
         this.soundCanvas.addEventListener('touchstart', this.touchStartDelegate);
         this.soundCanvas.addEventListener('touchmove', this.touchMoveDelegate);
         this.soundCanvas.addEventListener('touchend', this.touchEndDelegate);
-        this.soundCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
-        this.soundCanvas.addEventListener('mouseup', this.mouseUpDelegate);
         this.soundCanvas.addEventListener('mousedown', this.mouseDownDelegate);
         this.soundCanvas.addEventListener('contextmenu', this.contextMenuDelegate);
 
@@ -303,13 +301,16 @@ export default class InputManager extends EventDispatcher {
     handleMouseDown($evt) {
         l.debug('Mouse Down:', $evt.buttons);
         $evt.preventDefault();
+        this.soundCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
+        this.doc.addEventListener('mouseup', this.mouseUpDelegate);
         this.lastMouseDownX = $evt.pageX - this.soundCanvasOffsetX;
         this.updateFromButton($evt);
     }
 
     handleMouseUp($evt) {
         l.debug('Mouse up: ', $evt.buttons);
-
+        this.soundCanvas.removeEventListener('mousemove', this.mouseMoveDelegate);
+        this.doc.removeEventListener('mouseup', this.mouseUpDelegate);
     }
 
     handleContextMenu($evt){

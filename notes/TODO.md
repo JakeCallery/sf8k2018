@@ -1,11 +1,8 @@
 ##Up Next
-* replace range slider with "touch pad" controlling vol and pan?
-  * may need to add a "lock pan" button
-    * or 2 toggle buttons / lock pan and lock vol
 * Layout Manager (initial layout to start)
   * force into landscape?
     * at least landscape detection / show warning
-* Handle Window Resizes
+  * Handle Window Resizes
 * styling
   * max size (or just max height) on mute button
   * scale sound canvas height
@@ -15,6 +12,7 @@
 
 ##Future Features
 * passive event listeners?
+* pan lock / vol lock (for use wtih touch pad)
 * Sequenced and Non Sequenced Presets
   * 4 presets that can be used in a sequence (loop or continue)
   * 4 presets that are loop or pause on end
@@ -26,7 +24,6 @@
 ##Bugs
 * while holding mute button down, can't switch preset modes
   * multi-touch issue
-* can accidentally change markers if mouse is down and dragging over soundcanvas even if mouse wasn't down on canvas to start with
 
 ##Done
 * Y offset messed up when page is scrolled
@@ -37,3 +34,5 @@
 * Touch and hold doesn't work for setting presets with touch controls
 * Mute button
 * viz layer over top of base waveform (for faster clearing)
+* replace range slider with "touch pad" controlling vol and pan?
+* can accidentally change markers if mouse is down and dragging over soundcanvas even if mouse wasn't down on canvas to start with
