@@ -12,8 +12,8 @@ export default class VolPanDataObject extends EventDispatcher {
         }
 
         this._geb = new GlobalEventBus();
-        this._currentVolume = 50;
-        this._currentPan = 0;
+        this._currentVolume = 50;   //0 -> 100
+        this._currentPan = 0;       //-100 -> 100
 
         return instance;
     }

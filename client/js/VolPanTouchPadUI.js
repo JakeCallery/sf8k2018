@@ -12,6 +12,9 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.doc = $document;
         this.volPanDO = new VolPanDataObject();
 
+        this.volPanTouchId = null;
+        this.isMouseDown = false;
+
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
             this.init();
@@ -27,11 +30,74 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
         //Delegates
         this.requestAnimationFrameDelegate = EventUtils.bind(self, self.handleRequestAnimationFrame);
+        this.mouseDownDelegate = EventUtils.bind(self, self.handleMouseDown);
+        this.mouseUpDelegate = EventUtils.bind(self, self.handleMouseUp);
+        this.mouseMoveDelegate = EventUtils.bind(self, self.handleMouseMove);
+        this.touchStartDelegate = EventUtils.bind(self, self.handleTouchStart);
+        this.touchEndDelegate = EventUtils.bind(self, self.handleTouchEnd);
+        this.touchMoveDelegate = EventUtils.bind(self, self.handleTouchMove);
 
         //Events
+        this.volPanTouchPadCanvas.addEventListener('mousedown', this.mouseDownDelegate);
+        this.volPanTouchPadCanvas.addEventListener('touchstart', this.touchStartDelegate);
+
 
         //Kick off rendering
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+    }
+
+    yCoordToVolPercent($y) {
+        let diff = this.volPanTouchPadCanvas.height - $y;
+        let percent = diff / this.volPanTouchPadCanvas.height;
+        return percent;
+    }
+
+    xCoordToPanPercent($x) {
+        let halfWidth = this.volPanTouchPadCanvas.width / 2;
+        let percent = null;
+
+        if($x <= halfWidth) {
+            let diff = halfWidth - $x;
+            percent = diff / halfWidth * -1;
+        } else {
+            let diff = $x - halfWidth;
+            percent = diff / halfWidth;
+        }
+
+        return percent;
+
+    }
+
+    handleMouseDown($evt) {
+        $evt.preventDefault();
+        this.volPanTouchPadCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
+    }
+
+    handleMouseUp($evt) {
+        this.volPanTouchPadCanvas.removeEventListener('mousemove', this.mouseMoveDelegate);
+    }
+
+    handleMouseMove($evt) {
+        if($evt.buttons === 1) {
+            let x = $evt.pageX - this.volPanTouchPadCanvas.offsetLeft;
+            let y = $evt.pageY - this.volPanTouchPadCanvas.offsetTop;
+
+            this.volPanDO.currentPan = this.xCoordToPanPercent(x) * 100;
+            this.volPanDO.currentVolume = this.yCoordToVolPercent(y) * 100;
+
+        }
+    }
+
+    handleTouchStart($evt) {
+
+    }
+
+    handleTouchEnd($evt) {
+
+    }
+
+    handleTouchMove($evt) {
+
     }
 
     handleRequestAnimationFrame($evt) {
@@ -44,7 +110,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         let padHeight = this.volPanTouchPadCanvas.height;
 
         let padWidthCenter = padWidth/2;
-        let thumbX = (this.volPanDO.currentPan / 100) * (padWidthCenter) + padWidthCenter;
+        let thumbX = ((this.volPanDO.currentPan / 100) * (padWidthCenter)) + padWidthCenter;
         let thumbY = padHeight - ((this.volPanDO.currentVolume / 100) * (padHeight));
 
         this.volPanTouchPadCanvasContext.beginPath();

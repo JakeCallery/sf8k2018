@@ -26,6 +26,7 @@
 ##Bugs
 * while holding mute button down, can't switch preset modes
   * multi-touch issue
+* can accidentally change markers if mouse is down and dragging over soundcanvas even if mouse wasn't down on canvas to start with
 
 ##Done
 * Y offset messed up when page is scrolled
