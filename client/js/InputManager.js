@@ -91,6 +91,7 @@ export default class InputManager extends EventDispatcher {
         l.debug('touch Start');
         $evt.preventDefault();
 
+        //TODO: Should "touches" be "changedTouches" here?
         //Save touch start points:
         for(let i = 0; i < $evt.touches.length; i++) {
 

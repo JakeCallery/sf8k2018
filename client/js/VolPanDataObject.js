@@ -23,6 +23,14 @@ export default class VolPanDataObject extends EventDispatcher {
     }
 
     set currentVolume($val) {
+        //Set Limit
+        if($val > 100) {
+            $val = 100;
+        }
+        if($val < 0) {
+            $val = 0;
+        }
+
         this._currentVolume = $val;
         this._geb.dispatchEvent(new JacEvent('volChange', this._currentVolume));
     }
@@ -32,6 +40,13 @@ export default class VolPanDataObject extends EventDispatcher {
     }
 
     set currentPan($val) {
+        if($val > 100) {
+            $val = 100;
+        }
+        if($val < -100) {
+            $val = -100;
+        }
+
         this._currentPan = $val;
         this._geb.dispatchEvent(new JacEvent('panChange', this._currentPan));
     }

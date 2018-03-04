@@ -13,7 +13,6 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanDO = new VolPanDataObject();
 
         this.volPanTouchId = null;
-        this.isMouseDown = false;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -40,7 +39,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         //Events
         this.volPanTouchPadCanvas.addEventListener('mousedown', this.mouseDownDelegate);
         this.volPanTouchPadCanvas.addEventListener('touchstart', this.touchStartDelegate);
-
+        this.doc.addEventListener('touchend', this.touchEndDelegate);
 
         //Kick off rendering
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
@@ -79,25 +78,49 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
     handleMouseMove($evt) {
         if($evt.buttons === 1) {
-            let x = $evt.pageX - this.volPanTouchPadCanvas.offsetLeft;
-            let y = $evt.pageY - this.volPanTouchPadCanvas.offsetTop;
-
-            this.volPanDO.currentPan = this.xCoordToPanPercent(x) * 100;
-            this.volPanDO.currentVolume = this.yCoordToVolPercent(y) * 100;
-
+            this.changeVolPanFromPageLocation($evt.pageX, $evt.pageY);
         }
     }
 
     handleTouchStart($evt) {
+        $evt.preventDefault();
+
+        if(this.volPanTouchId === null) {
+            this.volPanTouchId = $evt.changedTouches[0].identifier.toString();
+            this.volPanTouchPadCanvas.addEventListener('touchmove', this.touchMoveDelegate);
+            this.handleTouchMove($evt)
+        }
 
     }
 
     handleTouchEnd($evt) {
-
+        l.debug('TouchPad Touch End');
+        for(let i = 0; i < $evt.changedTouches.length; i++) {
+            let touch = $evt.changedTouches[i];
+            if(touch.identifier.toString() === this.volPanTouchId) {
+                this.volPanTouchId = null;
+                this.volPanTouchPadCanvas.removeEventListener('touchmove', this.touchMoveDelegate);
+                break;
+            }
+        }
     }
 
     handleTouchMove($evt) {
+         for(let i = 0; i < $evt.changedTouches.length; i++) {
+             let touch = $evt.changedTouches[i];
+             if(touch.identifier.toString() === this.volPanTouchId) {
+                 this.changeVolPanFromPageLocation(touch.pageX, touch.pageY);
+                 break;
+             }
+         }
+    }
 
+    changeVolPanFromPageLocation($pageX, $pageY) {
+        let x = $pageX - this.volPanTouchPadCanvas.offsetLeft;
+        let y = $pageY - this.volPanTouchPadCanvas.offsetTop;
+
+        this.volPanDO.currentPan = this.xCoordToPanPercent(x) * 100;
+        this.volPanDO.currentVolume = this.yCoordToVolPercent(y) * 100;
     }
 
     handleRequestAnimationFrame($evt) {
