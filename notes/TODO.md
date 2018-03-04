@@ -17,7 +17,8 @@
   * 10 sec limit?
   
 ##Bugs
-
+* while holding mute button down, can't switch preset modes
+  * multi-touch issue
 
 ##Done
 * Y offset messed up when page is scrolled

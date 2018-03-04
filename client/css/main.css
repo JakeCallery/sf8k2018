@@ -86,7 +86,6 @@ button {
 
 .volSlider {
     -webkit-appearance: slider-vertical;
-    writing-mode: bt-lr;
 }
 
 .muteButton {
@@ -95,9 +94,6 @@ button {
     outline: none;
     background-repeat: no-repeat;
     background-position: center;
-}
-
-.muteButtonMute {
     background-image: url('../images/mute.svg');
 }
 
@@ -171,10 +167,6 @@ button {
     text-decoration: none;
     border: 0;
     outline: none;
-}
-
-.modeButtonLoop {
-    background-image: url('../images/loop.svg');
 }
 
 .modeButtonContinue {

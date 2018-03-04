@@ -5,6 +5,7 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
 import screenfull from 'screenfull/screenfull';
 import verge from 'verge/verge';
+import DOMUtils from "./jac/utils/DOMUtils";
 
 export default class UIManager extends EventDispatcher {
     constructor($doc) {
@@ -83,6 +84,7 @@ export default class UIManager extends EventDispatcher {
             this.doc.addEventListener('mouseup', this.globalMuteReleaseDelegate);
         }
 
+        DOMUtils.toggleClass(this.muteButton, 'muteButtonUnmute');
         this.geb.dispatchEvent(new JacEvent('volChange', 0));
 
     }
@@ -100,6 +102,7 @@ export default class UIManager extends EventDispatcher {
                     l.debug('Mute button no longer pressed');
                     this.muteButtonTouchId = null;
                     this.doc.removeEventListener('touchend', this.globalMuteReleaseDelegate);
+                    DOMUtils.toggleClass(this.muteButton, 'muteButtonUnmute');
                     this.geb.dispatchEvent(new JacEvent('volChange', sliderVol));
                 }
             }
@@ -108,6 +111,7 @@ export default class UIManager extends EventDispatcher {
             l.debug('Mouse Global release');
             l.debug('Mute button no longer pressed');
             this.doc.removeEventListener('mouseup', this.globalMuteReleaseDelegate);
+            DOMUtils.toggleClass(this.muteButton, 'muteButtonUnmute');
             this.geb.dispatchEvent(new JacEvent('volChange', sliderVol));
         }
     }

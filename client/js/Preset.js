@@ -126,13 +126,11 @@ export default class Preset extends EventDispatcher {
 
         switch($mode) {
             case Preset.MODES.LOOP:
-                DOMUtils.removeClass(this.modeButtonView, 'modeButtonContinue');
-                DOMUtils.addClass(this.modeButtonView, 'modeButtonLoop');
+                DOMUtils.toggleClass(this.modeButtonView, 'modeButtonContinue');
                 break;
 
             case Preset.MODES.CONTINUE:
-                DOMUtils.removeClass(this.modeButtonView, 'modeButtonLoop');
-                DOMUtils.addClass(this.modeButtonView, 'modeButtonContinue');
+                DOMUtils.toggleClass(this.modeButtonView, 'modeButtonContinue');
                 break;
 
             default:
