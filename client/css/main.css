@@ -82,7 +82,6 @@ button {
 .leftControlsDiv {
     display: flex;
     flex-direction: column;
-    background: yellow;
 }
 
 .volSlider {
@@ -91,7 +90,19 @@ button {
 }
 
 .muteButton {
+    border-radius: 5px;
+    border: 0;
+    outline: none;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 
+.muteButtonMute {
+    background-image: url('../images/mute.svg');
+}
+
+.muteButtonUnmute {
+    background-image: url('../images/unmute.svg');
 }
 
 /*********************************/
@@ -171,7 +182,7 @@ button {
 }
 
 .bottomControlsDiv {
-    }
+}
 
 
 
