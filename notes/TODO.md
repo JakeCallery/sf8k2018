@@ -1,8 +1,4 @@
 ##Up Next
-* Layout Manager (initial layout to start)
-  * force into landscape?
-    * at least landscape detection / show warning
-  * Handle Window Resizes
 * styling
   * max size (or just max height) on mute button
   * scale sound canvas height
@@ -11,6 +7,7 @@
 * Preloader
 
 ##Future Features
+* warn if width is too narrow
 * passive event listeners?
 * pan lock / vol lock (for use wtih touch pad)
 * Sequenced and Non Sequenced Presets
@@ -36,3 +33,5 @@
 * viz layer over top of base waveform (for faster clearing)
 * replace range slider with "touch pad" controlling vol and pan?
 * can accidentally change markers if mouse is down and dragging over soundcanvas even if mouse wasn't down on canvas to start with
+* Layout Manager (initial layout to start)
+  * Handle Window Resizes
