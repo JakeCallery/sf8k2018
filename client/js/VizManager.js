@@ -17,8 +17,11 @@ export default class VizManager extends EventDispatcher {
         this.audioManager = null;
         this.audioSource = null;
         this.audioContext = null;
-        this.baseImageData = null;
         this.samplesPerLine = null;
+        this.totalSamples = null;
+        this.horizon = null;
+        this.lBuffer = null;
+        this.rBuffer = null;
         this.markerDO = new MarkerDataObject();
 
         //Wait for the DOM to be ready
@@ -64,6 +67,22 @@ export default class VizManager extends EventDispatcher {
         this.audioSource = $evt.data.audioSource;
         this.audioContext = $evt.data.audioContext;
 
+        this.totalSamples = this.audioSource.buffer.length;
+        this.horizon = Math.round(this.waveCanvas.height/2);
+        this.lBuffer = this.audioSource.buffer.getChannelData(0);
+        this.rBuffer = this.audioSource.buffer.getChannelData(1);
+
+        //set initial start/end markers
+        this.markerDO.startMarkerSample = 0;
+        this.markerDO.endMarkerSample = this.totalSamples-1;
+        this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
+        this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
+
+        l.debug('lBuffer Length: ', this.lBuffer.length);
+        l.debug('rBuffer Length: ', this.rBuffer.length);
+        l.debug('Num Samples Per Line: ', this.samplesPerLine);
+        l.debug('StartMarker Sample: ', this.markerDO.startMarkerSample);
+        l.debug('EndMarker Sample: ', this.markerDO.endMarkerSample);
         this.layoutVis();
 
         //Start Animation
@@ -86,25 +105,8 @@ export default class VizManager extends EventDispatcher {
 
     layoutVis() {
         //Determine how many samples to average to generate the line
-        let totalSamples = this.audioSource.buffer.length;
-        this.samplesPerLine = Math.floor(totalSamples / this.waveCanvas.width);
+        this.samplesPerLine = Math.floor(this.totalSamples / this.waveCanvas.width);
         this.markerDO.samplesPerPixel = this.samplesPerLine;
-
-        let horizon = Math.round(this.waveCanvas.height/2);
-        let lBuffer = this.audioSource.buffer.getChannelData(0);
-        let rBuffer = this.audioSource.buffer.getChannelData(1);
-
-        //set initial start/end markers
-        this.markerDO.startMarkerSample = 0;
-        this.markerDO.endMarkerSample = totalSamples-1;
-        this.markerDO.loopRect.height = horizon - Math.round(horizon / 2);
-        this.markerDO.loopRect.y = horizon + Math.round(horizon / 2);
-
-        l.debug('lBuffer Length: ', lBuffer.length);
-        l.debug('rBuffer Length: ', rBuffer.length);
-        l.debug('Num Samples Per Line: ', this.samplesPerLine);
-        l.debug('StartMarker Sample: ', this.markerDO.startMarkerSample);
-        l.debug('EndMarker Sample: ', this.markerDO.endMarkerSample);
 
         //Clear canvas
         this.waveCanvasContext.fillStyle = '#130909';
@@ -128,7 +130,7 @@ export default class VizManager extends EventDispatcher {
 
             //Inner loop, averages all samples to generate line height
             for(let j = 0; j < this.samplesPerLine; j++){
-                total += lBuffer[(i*this.samplesPerLine)+j];
+                total += this.lBuffer[(i*this.samplesPerLine)+j];
             }
 
             //Calc Sample height Avg and Save avg Height
@@ -151,9 +153,9 @@ export default class VizManager extends EventDispatcher {
         for(let x = 0; x < sampleHeights.length; x++){
             let y = null;
             if(sampleHeights[x] >= 0){
-                y = horizon - sampleHeights[x];
+                y = this.horizon - sampleHeights[x];
             } else {
-                y = horizon;
+                y = this.horizon;
             }
 
             let height = sampleHeights[x] * heightScaleFactor * 2;
@@ -182,6 +184,7 @@ export default class VizManager extends EventDispatcher {
         //Draw Start Marker
         this.soundCanvasContext.fillStyle = '#00ff00';
         let startMarkerX = Math.floor(this.markerDO.startMarkerSample / this.samplesPerLine);
+        //l.debug('StartMarkerX: ', startMarkerX , '/', this.markerDO.startMarkerSample, this.samplesPerLine);
         this.soundCanvasContext.fillRect(startMarkerX-2, 0, 4, this.soundCanvas.height);
 
         //Draw End Marker

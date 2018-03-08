@@ -15,7 +15,7 @@ export default class MarkerDataObject extends EventDispatcher {
 
         this.startMarkerSample = null;
         this.endMarkerSample = null;
-        this.samplesPerPixel = null;
+        this._samplesPerPixel = null;
 
         return instance;
     }
@@ -23,6 +23,7 @@ export default class MarkerDataObject extends EventDispatcher {
     updateStartSample($sampleIndex) {
         this.startMarkerSample = $sampleIndex;
         this.updateLoopRect();
+        l.debug('---------------- Updatged Start Marker Sample: ', $sampleIndex);
         this.dispatchEvent(new JacEvent('startMarkerUpdated', this.startMarkerSample));
     }
 
@@ -32,31 +33,45 @@ export default class MarkerDataObject extends EventDispatcher {
         this.dispatchEvent(new JacEvent('startMarkerUpdated', this.endMarkerSample));
     }
 
-    get startMarkerX() {
-        if(this.samplesPerPixel === null){
+    get samplesPerPixel() {
+        if(this._samplesPerPixel === null){
             l.error('Trying to set startMarkerX before samplesPerPixelSet');
             return null;
         }
 
-        return Math.round(this.startMarkerSample / this.samplesPerPixel);
+        return this._samplesPerPixel;
+    }
+
+    set samplesPerPixel($val) {
+        this._samplesPerPixel = $val;
+        this.updateLoopRect();
+    }
+
+    get startMarkerX() {
+        if(this._samplesPerPixel === null){
+            l.error('Trying to set startMarkerX before samplesPerPixelSet');
+            return null;
+        }
+
+        return Math.round(this.startMarkerSample / this._samplesPerPixel);
     }
 
     get endMarkerX(){
-        if(this.samplesPerPixel === null){
+        if(this._samplesPerPixel === null){
             l.error('Trying to set startMarkerX before samplesPerPixelSet');
             return null;
         }
 
-        return Math.round(this.endMarkerSample / this.samplesPerPixel);
+        return Math.round(this.endMarkerSample / this._samplesPerPixel);
     }
 
     set startMarkerX($xVal){
         l.debug('xVal: ', $xVal);
-        if(this.samplesPerPixel === null){
+        if(this._samplesPerPixel === null){
             l.error('Trying to set startMarkerX before samplesPerPixelSet');
             return;
         }
-        this.startMarkerSample = Math.round($xVal * this.samplesPerPixel);
+        this.startMarkerSample = Math.round($xVal * this._samplesPerPixel);
 
         this.updateLoopRect();
 
@@ -66,12 +81,12 @@ export default class MarkerDataObject extends EventDispatcher {
     }
 
     set endMarkerX($xVal){
-        if(this.samplesPerPixel === null){
+        if(this._samplesPerPixel === null){
             l.error('Trying to set endMarkerX before samplesPerPixelSet');
             return;
         }
 
-        this.endMarkerSample = Math.round($xVal * this.samplesPerPixel);
+        this.endMarkerSample = Math.round($xVal * this._samplesPerPixel);
 
         this.updateLoopRect();
 
