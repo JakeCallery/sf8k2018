@@ -6,14 +6,16 @@ import JacEvent from 'jac/events/JacEvent';
 import screenfull from 'screenfull/screenfull';
 import verge from 'verge/verge';
 import DOMUtils from "./jac/utils/DOMUtils";
+import LimitUtils from "./jac/utils/LimitUtils";
 
 export default class UIManager extends EventDispatcher {
-    constructor($doc) {
+    constructor($window) {
         super();
 
         l.debug('New UI Manager');
 
-        this.doc = $doc;
+        this.window = $window;
+        this.doc = $window.document;
         this.geb = new GlobalEventBus();
 
         this.muteButtonTouchId = null;
@@ -52,8 +54,13 @@ export default class UIManager extends EventDispatcher {
         this.muteButtonPressDelegate = EventUtils.bind(self, self.handleMuteButtonPress);
         this.globalMuteReleaseDelegate = EventUtils.bind(self, self.handleGlobalMuteRelease);
         this.playStateChangedDelegate = EventUtils.bind(self, self.handlePlayStateChanged);
+        this.resizeDelegagte = EventUtils.bind(self, LimitUtils.debounce(1000, self.resizeEnd, self.resizeStart));
+        this.orientationChangeDelegate = EventUtils.bind(self, self.handleOrientationChange);
 
         //Events
+        this.window.addEventListener('resize', this.resizeDelegagte);
+        this.window.addEventListener('orientationchange', this.orientationChangeDelegate);
+
         this.playButton.addEventListener('click', this.playClickDelegate);
         this.fullScreenButton.addEventListener('click', this.fullScreenClickDelegate);
         this.geb.addEventListener('requestInitialVol', this.requestInitialVolDelegate);
@@ -65,6 +72,22 @@ export default class UIManager extends EventDispatcher {
         this.geb.dispatchEvent(new JacEvent('setInitialVol', 50));
         this.geb.dispatchEvent(new JacEvent('setInitialPan', 0));
 
+    }
+
+    resizeStart($evt) {
+        l.debug('Resize Start: ', $evt);
+    }
+
+    resizeEnd($evt) {
+        l.debug('Resize End', $evt);
+    }
+
+    handleResize($evt) {
+        l.debug('Caught Resize: ', $evt);
+    }
+
+    handleOrientationChange($evt) {
+        l.debug('Caught Orientation Change: ', screen.orientation.angle);
     }
 
     handleMuteButtonPress($evt) {

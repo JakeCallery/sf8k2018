@@ -48,7 +48,7 @@ if(fvResponse.length !== 0) {
 
 //Setup UI
 let lm = new LayoutManager(document, window);
-let um = new UIManager(document);
+let um = new UIManager(window);
 let im = new InputManager(document);
 let vp = new VolPanTouchPadUI(document);
 let vm = new VizManager(document);
