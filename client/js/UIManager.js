@@ -148,11 +148,6 @@ export default class UIManager extends EventDispatcher {
         //this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
     }
 
-    handleVolSliderInput($evt) {
-        l.debug('Vol Slider Change: ', $evt.target.value);
-        this.geb.dispatchEvent(new JacEvent('volChange', $evt.target.value))
-
-    }
 
     handlePlayClick($evt) {
         l.debug('Caught Play Click');
