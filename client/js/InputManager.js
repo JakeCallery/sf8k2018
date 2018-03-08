@@ -36,10 +36,8 @@ export default class InputManager extends EventDispatcher {
         this.markerDO = new MarkerDataObject();
         this.soundCanvas = this.doc.getElementById('soundCanvas');
 
-        //TODO: this will need reset on page width change
         this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
-        this.soundCanvasOffsetX = this.canvasContainerDiv.offsetLeft;
-        this.soundCanvasOffsetY = this.canvasContainerDiv.offsetTop;
+        this.updateCanvasOffsets();
 
         //Delegates
         this.mouseMoveDelegate = EventUtils.bind(self, self.handleMouseMove);
@@ -49,6 +47,7 @@ export default class InputManager extends EventDispatcher {
         this.touchStartDelegate = EventUtils.bind(self, self.handleTouchStart);
         this.touchMoveDelegate = EventUtils.bind(self, self.handleTouchMove);
         this.touchEndDelegate = EventUtils.bind(self, self.handleTouchEnd);
+        this.vizLayoutChangedDelegate = EventUtils.bind(self, self.handleVizLayoutChanged);
 
         //Events
         this.soundCanvas.addEventListener('touchstart', this.touchStartDelegate);
@@ -56,10 +55,20 @@ export default class InputManager extends EventDispatcher {
         this.soundCanvas.addEventListener('touchend', this.touchEndDelegate);
         this.soundCanvas.addEventListener('mousedown', this.mouseDownDelegate);
         this.soundCanvas.addEventListener('contextmenu', this.contextMenuDelegate);
-
+        this.geb.addEventListener('vizLayoutChanged', this.vizLayoutChangedDelegate);
 
         l.debug('Input Manager Sound CanvasOffset: ', this.soundCanvasOffsetX, this.soundCanvasOffsetY);
 
+    }
+
+    updateCanvasOffsets() {
+        this.soundCanvasOffsetX = this.canvasContainerDiv.offsetLeft;
+        this.soundCanvasOffsetY = this.canvasContainerDiv.offsetTop;
+    }
+
+    handleVizLayoutChanged($evt) {
+        l.debug('InputManager caught vizlayout changed');
+        this.updateCanvasOffsets();
     }
 
     createMarkerTouchDataObj($touch, $markerX) {

@@ -47,8 +47,12 @@ export default class VizManager extends EventDispatcher {
         //Delegates
         this.soundLoadedDelgate = EventUtils.bind(self, self.handleSoundLoaded);
         this.requestAnimationFrameDelegate = EventUtils.bind(self, self.handleRequestAnimationFrame);
+        this.resizeStartedDelegate = EventUtils.bind(self, self.handleResizeStarted);
+        this.resizeEndedDelegate = EventUtils.bind(self, self.handleResizeEnded);
 
         //Events
+        this.geb.addEventListener('resizeStarted', this.resizeStartedDelegate);
+        this.geb.addEventListener('resizeEnded', this.resizeEndedDelegate);
         this.geb.addEventListener('soundLoaded', this.soundLoadedDelgate);
     }
 
@@ -60,6 +64,27 @@ export default class VizManager extends EventDispatcher {
         this.audioSource = $evt.data.audioSource;
         this.audioContext = $evt.data.audioContext;
 
+        this.layoutVis();
+
+        //Start Animation
+        this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+
+    }
+
+    handleResizeStarted($evt) {
+        l.debug('VizManager caught resize started');
+        cancelAnimationFrame(this.rafId);
+        this.waveCanvasContext.fillStyle = '#0000FF';
+        this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width, this.waveCanvas.height);
+    }
+
+    handleResizeEnded($evt) {
+        l.debug('VizManager caught resize ended');
+        this.layoutVis();
+        this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+    }
+
+    layoutVis() {
         //Determine how many samples to average to generate the line
         let totalSamples = this.audioSource.buffer.length;
         this.samplesPerLine = Math.floor(totalSamples / this.waveCanvas.width);
@@ -135,9 +160,7 @@ export default class VizManager extends EventDispatcher {
             this.waveCanvasContext.fillRect(x, y, 1, height);
         }
 
-        //Start Animation
-        this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
-
+        this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
     }
 
     handleRequestAnimationFrame($evt) {
