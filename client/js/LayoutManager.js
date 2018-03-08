@@ -11,6 +11,7 @@ export default class LayoutManager extends EventDispatcher {
         let self = this;
         this.doc = $document;
         this.window = $window;
+        this.geb = new GlobalEventBus();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +21,8 @@ export default class LayoutManager extends EventDispatcher {
     }
 
     init() {
+        let self = this;
+
         //Adjust canvas size based on screensize
         this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
         this.waveCanvas = this.doc.getElementById('waveCanvas');
@@ -41,8 +44,25 @@ export default class LayoutManager extends EventDispatcher {
         this.volPanTouchPadDiv = this.doc.getElementById('volPanTouchPadDiv');
         this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
 
+        //Delegates
+        this.resizeStartDelegate = EventUtils.bind(self, self.handleResizeStart);
+        this.resizeEndDelegate = EventUtils.bind(self, self.handleResizeEnd);
+
+        //Events
+        this.geb.addEventListener('resizeStarted', this.resizeStartDelegate);
+        this.geb.addEventListener('resizeEnded', this.resizeEndDelegate);
+
         this.adjustLayout();
 
+    }
+
+    handleResizeStart($evt) {
+        l.debug('Layout Manager Caught Resize Start');
+    }
+
+    handleResizeEnd($evt) {
+        l.debug('Layout Manager Caught Resize End');
+        this.adjustLayout();
     }
 
     adjustLayout() {

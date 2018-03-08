@@ -33,6 +33,7 @@ export default class AudioManager extends EventDispatcher {
         this.sourceRChannelData = null;
 
         this.isPlaying = false;
+        this.wasPlaying = false;
 
         this.markerDO = new MarkerDataObject();
 
@@ -44,6 +45,8 @@ export default class AudioManager extends EventDispatcher {
         this.volChangeDelegate = EventUtils.bind(self, self.handleVolChange);
         this.panChangeDelegate = EventUtils.bind(self, self.handlePanChange);
         this.forceUpdateCurrentSampleIndexDelegate = EventUtils.bind(self, self.handleForceUpdateCurrentSampleIndex);
+        this.resizeStartedDelegate = EventUtils.bind(self, self.handleResizeStarted);
+        this.resizeEndedDelegate = EventUtils.bind(self, self.handleResizeEnded);
 
         //Events
         this.geb.addEventListener('requestPlay', this.requestPlayDelegate);
@@ -53,6 +56,8 @@ export default class AudioManager extends EventDispatcher {
         this.geb.addEventListener('panChange', this.panChangeDelegate);
         this.geb.addEventListener('setInitialVol', this.volChangeDelegate);
         this.geb.addEventListener('forceUpdateCurrentSampleIndex', this.forceUpdateCurrentSampleIndexDelegate);
+        this.geb.addEventListener('resizeStarted', this.resizeStartedDelegate);
+        this.geb.addEventListener('resizeEnded', this.resizeEndedDelegate);
 
     }
 
@@ -176,6 +181,7 @@ export default class AudioManager extends EventDispatcher {
         l.debug('Caught Play Request');
         if(this.isPlaying === false) {
             this.isPlaying = true;
+            this.geb.dispatchEvent(new JacEvent('playStateChanged', this.isPlaying));
         }
     }
 
@@ -183,6 +189,7 @@ export default class AudioManager extends EventDispatcher {
         l.debug('Caught Pause Request');
         if(this.isPlaying === true) {
             this.isPlaying = false;
+            this.geb.dispatchEvent(new JacEvent('playStateChanged', this.isPlaying));
         }
     }
 
@@ -245,6 +252,20 @@ export default class AudioManager extends EventDispatcher {
                 rOutputBuffer[i] = 0.0;
             }
         }
+    }
 
+    handleResizeStarted($evt) {
+        l.debug('AudioManager caught ResizeStarted');
+        l.debug('IsPlaying: ', this.isPlaying);
+        this.wasPlaying = this.isPlaying;
+        this.geb.dispatchEvent(new JacEvent('requestPause'));
+    }
+
+    handleResizeEnded($evt) {
+        l.debug('AudioManager caught ResizeEnded');
+        l.debug('WasPlaying: ', this.wasPlaying);
+        if(this.wasPlaying === true) {
+            this.geb.dispatchEvent(new JacEvent('requestPlay'));
+        }
     }
 }

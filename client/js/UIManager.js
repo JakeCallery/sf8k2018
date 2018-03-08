@@ -54,7 +54,7 @@ export default class UIManager extends EventDispatcher {
         this.muteButtonPressDelegate = EventUtils.bind(self, self.handleMuteButtonPress);
         this.globalMuteReleaseDelegate = EventUtils.bind(self, self.handleGlobalMuteRelease);
         this.playStateChangedDelegate = EventUtils.bind(self, self.handlePlayStateChanged);
-        this.resizeDelegagte = EventUtils.bind(self, LimitUtils.debounce(1000, self.resizeEnd, self.resizeStart));
+        this.resizeDelegagte = EventUtils.bind(self, LimitUtils.debounce(500, self.resizeEnd, self.resizeStart));
         this.orientationChangeDelegate = EventUtils.bind(self, self.handleOrientationChange);
 
         //Events
@@ -76,14 +76,12 @@ export default class UIManager extends EventDispatcher {
 
     resizeStart($evt) {
         l.debug('Resize Start: ', $evt);
+        this.geb.dispatchEvent(new JacEvent('resizeStarted'));
     }
 
     resizeEnd($evt) {
         l.debug('Resize End', $evt);
-    }
-
-    handleResize($evt) {
-        l.debug('Caught Resize: ', $evt);
+        this.geb.dispatchEvent(new JacEvent('resizeEnded'));
     }
 
     handleOrientationChange($evt) {

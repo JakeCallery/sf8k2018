@@ -6,6 +6,7 @@ export default {
         return function() {
             let args = Array.from(arguments);
             let fn = () => {
+                immediateFired = false;
                 $finalFunc.apply(this, args);
             };
 
