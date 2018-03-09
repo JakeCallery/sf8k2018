@@ -2,6 +2,7 @@
 * styling
  * fix vertical spacing on controls
  * figure out what to do about a full screen button
+ * switch button fonts to svg for better sizing control
 * Bug fixes
 * Add Feature Check for StereoPannerNode
 * Preloader

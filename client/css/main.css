@@ -166,14 +166,14 @@ button {
     display: block;
     font-family: 'Black Ops One';
     font-weight: normal;
-    font-size: 10vw;
+    font-size: 15vmin;
     padding: 0;
     border-radius: 10px;
     text-align: center;
     text-decoration: none;
     border: 0;
     outline: none;
-    line-height: 11vw;
+    line-height: 15vmin;
 }
 
 .modeDiv {
