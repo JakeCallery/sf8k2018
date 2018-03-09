@@ -68,16 +68,12 @@ export default class VizManager extends EventDispatcher {
         this.audioContext = $evt.data.audioContext;
 
         this.totalSamples = this.audioSource.buffer.length;
-        this.horizon = Math.round(this.waveCanvas.height/2);
         this.lBuffer = this.audioSource.buffer.getChannelData(0);
         this.rBuffer = this.audioSource.buffer.getChannelData(1);
 
         //set initial start/end markers
         this.markerDO.startMarkerSample = 0;
         this.markerDO.endMarkerSample = this.totalSamples-1;
-        this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
-        this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
-
         l.debug('lBuffer Length: ', this.lBuffer.length);
         l.debug('rBuffer Length: ', this.rBuffer.length);
         l.debug('Num Samples Per Line: ', this.samplesPerLine);
@@ -104,6 +100,11 @@ export default class VizManager extends EventDispatcher {
     }
 
     layoutVis() {
+        //Handle horizon
+        this.horizon = Math.round(this.waveCanvas.height/2);
+        this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
+        this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
+
         //Determine how many samples to average to generate the line
         this.samplesPerLine = Math.floor(this.totalSamples / this.waveCanvas.width);
         this.markerDO.samplesPerPixel = this.samplesPerLine;

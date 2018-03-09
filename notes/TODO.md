@@ -1,7 +1,7 @@
 ##Up Next
 * styling
-  * max size (or just max height) on mute button
-  * scale sound canvas height
+ * fix vertical spacing on controls
+ * figure out what to do about a full screen button
 * Bug fixes
 * Add Feature Check for StereoPannerNode
 * Preloader
@@ -35,3 +35,5 @@
 * can accidentally change markers if mouse is down and dragging over soundcanvas even if mouse wasn't down on canvas to start with
 * Layout Manager (initial layout to start)
   * Handle Window Resizes
+* max size (or just max height) on mute button
+* scale sound canvas height
