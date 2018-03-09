@@ -46,6 +46,9 @@ export default class LayoutManager extends EventDispatcher {
         this.volPanTouchPadDiv = this.doc.getElementById('volPanTouchPadDiv');
         this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
 
+        this.recordButton = this.doc.getElementById('recordButton');
+        this.fullscreenButton = this.doc.getElementById('fullScreenButton');
+
         //Delegates
         this.resizeStartDelegate = EventUtils.bind(self, self.handleResizeStart);
         this.resizeEndDelegate = EventUtils.bind(self, self.handleResizeEnd);
@@ -129,36 +132,64 @@ export default class LayoutManager extends EventDispatcher {
         //Right Controls Button horizontal margins
         let rightButtonsLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
 
+        //Record Button Sizing
+        let recordButtonHeight = Math.round(this.soundCanvas.height * 0.20);
+        let recordButtonWidth = Math.round(rightControlsWidth * 0.48);
+        let recordButtonVerticalMargin = Math.round(((this.soundCanvas.height * 0.1) / this.presetButtons.length) / 2);
+        this.recordButton.style['width'] = recordButtonWidth + 'px';
+        this.recordButton.style['height'] = recordButtonHeight + 'px';
+/*
+        this.recordButton.style['margin-top'] = recordButtonVerticalMargin + 'px';
+        this.recordButton.style['margin-bottom'] = recordButtonVerticalMargin + 'px';
+        this.recordButton.style['margin-left'] = rightButtonsLeftMargin + 'px';
+        this.recordButton.style['margin-right'] = '0';
+*/
+        //Fullscreen Button Sizing
+        let fullscreenButtonHeight = Math.round(this.soundCanvas.height * 0.20);
+        let fullscreenButtonWidth = Math.round(rightControlsWidth * 0.48);
+        let fullscreenButtonVerticalMargin = Math.round(((this.soundCanvas.height * 0.1) / this.presetButtons.length) / 2);
+        this.fullscreenButton.style['width'] = fullscreenButtonWidth + 'px';
+        this.fullscreenButton.style['height'] = fullscreenButtonHeight+ 'px';
+/*
+        this.fullscreenButton.style['margin-top'] = fullscreenButtonVerticalMargin + 'px';
+        this.fullscreenButton.style['margin-bottom'] = fullscreenButtonVerticalMargin + 'px';
+        this.fullscreenButton.style['margin-left'] = rightButtonsLeftMargin + 'px';
+        this.fullscreenButton.style['margin-right'] = '0';
+*/
         //Preset Button Sizing
-        this.presetDiv.style['height'] = this.soundCanvas.height + 'px';
+        //this.presetDiv.style['height'] = this.soundCanvas.height + 'px';
         let presetButtonWidth = Math.round(rightControlsWidth * 0.48);
-        let presetButtonHeight = Math.round((this.soundCanvas.height * 0.90) / this.presetButtons.length);
+        let presetButtonHeight = Math.round((this.soundCanvas.height * 0.80) / this.presetButtons.length);
         let presetButtonVerticalMargin = Math.round(((this.soundCanvas.height * 0.1) / this.presetButtons.length) / 2);
         presetButtonVerticalMargin += Math.round(presetButtonVerticalMargin / (this.presetButtons.length + 1));
 
         for(let presetButton of this.presetButtons) {
             presetButton.style['width'] = presetButtonWidth + 'px';
             presetButton.style['height'] = presetButtonHeight + 'px';
+/*
             presetButton.style['margin-top'] = presetButtonVerticalMargin + 'px';
             presetButton.style['margin-bottom'] = presetButtonVerticalMargin + 'px';
             presetButton.style['margin-left'] = rightButtonsLeftMargin + 'px';
             presetButton.style['margin-right'] = '0';
+*/
         }
 
         //Mode Button Sizing
-        this.modeDiv.style['height'] = this.soundCanvas.height + 'px';
+        //this.modeDiv.style['height'] = this.soundCanvas.height + 'px';
         let modeButtonWidth = Math.round(rightControlsWidth * 0.48);
-        let modeButtonHeight = Math.round((this.soundCanvas.height * 0.90) / this.modeButtons.length);
+        let modeButtonHeight = Math.round((this.soundCanvas.height * 0.80) / this.modeButtons.length);
         let modeButtonVerticalMargin = Math.round(((this.soundCanvas.height * 0.1) / this.modeButtons.length) / 2);
         modeButtonVerticalMargin += Math.round(modeButtonVerticalMargin / (this.modeButtons.length + 1));
 
         for(let modeButton of this.modeButtons) {
             modeButton.style['width'] = modeButtonWidth + 'px';
             modeButton.style['height'] = modeButtonHeight + 'px';
+/*
             modeButton.style['margin-top'] = modeButtonVerticalMargin + 'px';
             modeButton.style['margin-bottom'] = modeButtonVerticalMargin + 'px';
             modeButton.style['margin-left'] = rightButtonsLeftMargin + 'px';
             modeButton.style['margin-right'] = '0';
+*/
         }
 
         //change left controls top margin to be same as right

@@ -153,17 +153,53 @@ button {
 
 .rightControlsDiv {
     display: flex;
+    flex-direction: column;
+}
+
+.rightControlsRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.fullScreenRecDiv {
+    display: flex;
+    flex-direction: row;
+}
+
+.fullScreenButton {
+    flex: 1;
+    font-family: 'Black Ops One';
+    font-weight: normal;
+    font-size: 20px;
+    padding: 0;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    border: 0;
+    outline: none;
+}
+
+.recordButton {
+    flex: 1;
+    font-family: 'Black Ops One';
+    font-weight: normal;
+    font-size: 20px;
+    padding: 0;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    border: 0;
+    outline: none;
+}
+.presetDiv {
+    display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
 }
 
-.presetDiv {
-
-}
-
 
 .presetButton {
-    display: block;
+    flex: 1;
     font-family: 'Black Ops One';
     font-weight: normal;
     font-size: 15vmin;
@@ -177,14 +213,16 @@ button {
 }
 
 .modeDiv {
-
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
 .modeButton {
+    flex: 1;
     background-image: url('../images/loop.svg');
     background-repeat: no-repeat;
     background-position: center;
-    display: block;
     padding: 0;
     border-radius: 10px;
     text-decoration: none;
@@ -195,9 +233,4 @@ button {
 .modeButtonContinue {
     background-image: url('../images/continue.svg');
 }
-
-.bottomControlsDiv {
-}
-
-
 
