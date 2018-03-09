@@ -13,6 +13,8 @@ export default class LayoutManager extends EventDispatcher {
         this.window = $window;
         this.geb = new GlobalEventBus();
 
+        this.canvasSizeMaxRatio = 0.6;
+
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
             this.init();
@@ -67,7 +69,22 @@ export default class LayoutManager extends EventDispatcher {
 
     adjustLayout() {
         let viewportWidth = verge.viewportW();
+        let viewportHeight = verge.viewportH();
+
+        l.debug('ViewPort: ', viewportWidth, viewportHeight);
+
         let canvasWidth = Math.round(0.65 * viewportWidth);
+        let canvasHeight = viewportHeight;
+
+        //limit height by ratio
+        let maxHeightByRatio = Math.round(canvasWidth * this.canvasSizeMaxRatio);
+        l.debug('MaxHeightByRatio: ', maxHeightByRatio);
+        if(canvasHeight > maxHeightByRatio) {
+            canvasHeight = maxHeightByRatio;
+        }
+
+        l.debug('Final Canvas Size: ', canvasWidth, canvasHeight);
+
         let leftControlsWidth = Math.round(0.15 * viewportWidth);
         let rightControlsWidth = Math.round(0.2 * viewportWidth);
 
@@ -75,12 +92,19 @@ export default class LayoutManager extends EventDispatcher {
         this.rightControlsDiv.style['width'] = rightControlsWidth + 'px';
 
         this.canvasContainerDiv.style['width'] = canvasWidth + 'px';
+        this.canvasContainerDiv.style['height'] = canvasHeight + 'px';
 
         this.waveCanvas.width = canvasWidth;
+        this.waveCanvas.height = canvasHeight;
+
         this.soundCanvas.width = canvasWidth;
+        this.soundCanvas.height = canvasHeight;
 
         this.waveCanvas.style['width'] = canvasWidth + 'px';
+        this.waveCanvas.style['height'] = canvasHeight + 'px';
+
         this.soundCanvas.style['width'] = canvasWidth + 'px';
+        this.soundCanvas.style['height'] = canvasHeight + 'px';
 
         //Left Controls button horizontal margins
         let leftButtonsLeftMargin = Math.round((leftControlsWidth * 0.02) / 1.5);
