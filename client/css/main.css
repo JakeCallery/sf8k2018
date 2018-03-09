@@ -159,37 +159,35 @@ button {
 .rightControlsRow {
     display: flex;
     flex-direction: row;
-}
-
-.fullScreenRecDiv {
-    display: flex;
-    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
 .fullScreenButton {
     flex: 1;
     font-family: 'Black Ops One';
     font-weight: normal;
-    font-size: 20px;
+    font-size: 5vmin;
     padding: 0;
     border-radius: 10px;
     text-align: center;
     text-decoration: none;
     border: 0;
     outline: none;
+    line-height: 5vmin;
 }
 
 .recordButton {
     flex: 1;
     font-family: 'Black Ops One';
     font-weight: normal;
-    font-size: 20px;
+    font-size: 5vmin;
     padding: 0;
     border-radius: 10px;
     text-align: center;
     text-decoration: none;
     border: 0;
     outline: none;
+    line-height: 5vmin;
 }
 .presetDiv {
     display: flex;
