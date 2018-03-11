@@ -33,7 +33,6 @@
     },
     "dependencies": {
         "babel-polyfill": "6.26.0",
-        "html2canvas": "1.0.0-alpha.10",
         "shortid": "2.2.8",
         "whatwg-fetch": "2.0.3",
         "when-dom-ready": "1.2.12"

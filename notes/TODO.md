@@ -1,7 +1,6 @@
 ##Up Next
 * styling
  * switch button fonts to svg for better sizing control
- * blur when resizing
 * Bug fixes
 * Add Feature Check for StereoPannerNode
 * Preloader
@@ -41,3 +40,4 @@
 * figure out what to do about a full screen button
 * double click/tap to recenter vol/pan
 * crosshair for touchpad
+* blur when resizing

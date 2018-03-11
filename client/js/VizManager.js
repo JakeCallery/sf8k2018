@@ -23,6 +23,7 @@ export default class VizManager extends EventDispatcher {
         this.lBuffer = null;
         this.rBuffer = null;
         this.markerDO = new MarkerDataObject();
+        this.isResizing = false;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -51,10 +52,12 @@ export default class VizManager extends EventDispatcher {
         this.soundLoadedDelgate = EventUtils.bind(self, self.handleSoundLoaded);
         this.requestAnimationFrameDelegate = EventUtils.bind(self, self.handleRequestAnimationFrame);
         this.resizeStartedDelegate = EventUtils.bind(self, self.handleResizeStarted);
+        this.resizingDelegate = EventUtils.bind(self, self.handleResizing);
         this.resizeEndedDelegate = EventUtils.bind(self, self.handleResizeEnded);
 
         //Events
         this.geb.addEventListener('resizeStarted', this.resizeStartedDelegate);
+        this.geb.addEventListener('resizing', this.resizingDelegate);
         this.geb.addEventListener('resizeEnded', this.resizeEndedDelegate);
         this.geb.addEventListener('soundLoaded', this.soundLoadedDelgate);
     }
@@ -89,81 +92,98 @@ export default class VizManager extends EventDispatcher {
     handleResizeStarted($evt) {
         l.debug('VizManager caught resize started');
         cancelAnimationFrame(this.rafId);
-        this.waveCanvasContext.fillStyle = '#0000FF';
-        this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width, this.waveCanvas.height);
+        this.isResizing = true;
+    }
+
+    handleResizing($evt) {
+        this.layoutVis();
     }
 
     handleResizeEnded($evt) {
         l.debug('VizManager caught resize ended');
+        this.isResizing = false;
         this.layoutVis();
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 
     layoutVis() {
-        //Handle horizon
-        this.horizon = Math.round(this.waveCanvas.height/2);
-        this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
-        this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
 
-        //Determine how many samples to average to generate the line
-        this.samplesPerLine = Math.floor(this.totalSamples / this.waveCanvas.width);
-        this.markerDO.samplesPerPixel = this.samplesPerLine;
+        if(!this.isResizing) {
+            //Clear canvas
+            this.waveCanvasContext.fillStyle = '#130909';
+            this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
 
-        //Clear canvas
-        this.waveCanvasContext.fillStyle = '#130909';
-        this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
+            //Handle horizon
+            this.horizon = Math.round(this.waveCanvas.height/2);
+            this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
+            this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
 
-        //Set color for line drawing
-        this.waveCanvasContext.fillStyle = '#6e0a0c';
+            //Determine how many samples to average to generate the line
+            this.samplesPerLine = Math.floor(this.totalSamples / this.waveCanvas.width);
+            this.markerDO.samplesPerPixel = this.samplesPerLine;
 
-        //Setup Heights
-        let heightScaleFactor = null;
-        let sampleAvgMax = null;
-        let sampleAvgMin = null;
-        let sampleAvgRange = null;
-        let sampleHeights = [];
+            //Set color for line drawing
+            this.waveCanvasContext.fillStyle = '#6e0a0c';
 
-        //Outer loop, once per line
-        //Left Channel
-        for(let i = 0; i < this.waveCanvas.width; i++){
-            let avg = null;
-            let total = 0;
+            //Setup Heights
+            let heightScaleFactor = null;
+            let sampleAvgMax = null;
+            let sampleAvgMin = null;
+            let sampleAvgRange = null;
+            let sampleHeights = [];
 
-            //Inner loop, averages all samples to generate line height
-            for(let j = 0; j < this.samplesPerLine; j++){
-                total += this.lBuffer[(i*this.samplesPerLine)+j];
+            //Outer loop, once per line
+            //Left Channel
+            for(let i = 0; i < this.waveCanvas.width; i++){
+                let avg = null;
+                let total = 0;
+
+                //Inner loop, averages all samples to generate line height
+                for(let j = 0; j < this.samplesPerLine; j++){
+                    total += this.lBuffer[(i*this.samplesPerLine)+j];
+                }
+
+                //Calc Sample height Avg and Save avg Height
+                avg = total / this.samplesPerLine;
+                sampleHeights.push(avg);
+
+                if(avg > sampleAvgMax){
+                    sampleAvgMax = avg;
+                } else if(avg < sampleAvgMin){
+                    sampleAvgMin = avg;
+                }
+
             }
 
-            //Calc Sample height Avg and Save avg Height
-            avg = total / this.samplesPerLine;
-            sampleHeights.push(avg);
+            sampleAvgRange = Math.abs(sampleAvgMax - sampleAvgMin);
+            heightScaleFactor = (this.waveCanvas.height / 2) / sampleAvgRange;
+            l.debug('Sample Avg Range: ', sampleAvgRange);
+            l.debug('Height Scale Factor: ', heightScaleFactor);
 
-            if(avg > sampleAvgMax){
-                sampleAvgMax = avg;
-            } else if(avg < sampleAvgMin){
-                sampleAvgMin = avg;
+            for(let x = 0; x < sampleHeights.length; x++){
+                let y = null;
+                if(sampleHeights[x] >= 0){
+                    y = this.horizon - sampleHeights[x];
+                } else {
+                    y = this.horizon;
+                }
+
+                let height = sampleHeights[x] * heightScaleFactor * 2;
+                this.waveCanvasContext.fillRect(x, y, 1, height);
             }
 
+            this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
+        } else {
+            let gradient = this.waveCanvasContext.createLinearGradient(0,0,0,this.waveCanvas.height);
+            gradient.addColorStop(0.0, '#130909');
+            gradient.addColorStop(0.5, '#400a0c');
+            gradient.addColorStop(1.0, '#130909');
+
+            this.waveCanvasContext.fillStyle = gradient;
+            this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
         }
 
-        sampleAvgRange = Math.abs(sampleAvgMax - sampleAvgMin);
-        heightScaleFactor = (this.waveCanvas.height / 2) / sampleAvgRange;
-        l.debug('Sample Avg Range: ', sampleAvgRange);
-        l.debug('Height Scale Factor: ', heightScaleFactor);
 
-        for(let x = 0; x < sampleHeights.length; x++){
-            let y = null;
-            if(sampleHeights[x] >= 0){
-                y = this.horizon - sampleHeights[x];
-            } else {
-                y = this.horizon;
-            }
-
-            let height = sampleHeights[x] * heightScaleFactor * 2;
-            this.waveCanvasContext.fillRect(x, y, 1, height);
-        }
-
-        this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
     }
 
     handleRequestAnimationFrame($evt) {

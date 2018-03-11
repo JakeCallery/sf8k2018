@@ -5,7 +5,6 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from './jac/events/JacEvent';
 import verge from "./verge/verge";
 import DOMUtils from "./jac/utils/DOMUtils";
-import html2canvas from 'html2canvas';
 
 export default class LayoutManager extends EventDispatcher {
     constructor($document, $window) {
@@ -58,9 +57,11 @@ export default class LayoutManager extends EventDispatcher {
         //Delegates
         this.resizeStartDelegate = EventUtils.bind(self, self.handleResizeStart);
         this.resizeEndDelegate = EventUtils.bind(self, self.handleResizeEnd);
+        this.resizingDelegate = EventUtils.bind(self, self.handleResizing);
 
         //Events
         this.geb.addEventListener('resizeStarted', this.resizeStartDelegate);
+        this.geb.addEventListener('resizing', this.resizingDelegate);
         this.geb.addEventListener('resizeEnded', this.resizeEndDelegate);
 
         this.adjustLayout();
@@ -69,21 +70,16 @@ export default class LayoutManager extends EventDispatcher {
 
     handleResizeStart($evt) {
         l.debug('Layout Manager Caught Resize Start');
-        let viewportWidth = verge.viewportW();
-        let viewportHeight = verge.viewportH();
-        html2canvas(this.mainDiv).then(($canvas) => {
-            l.debug('***************************');
-            l.debug('Canvas Size: ', $canvas.width, $canvas.height);
-            this.mainContainerDiv.appendChild($canvas);
-            this.blurCanvas = $canvas;
-        });
-        this.mainDiv.style['display'] = 'none';
+        this.mainDiv.style['filter'] = 'blur(20px)';
+    }
+
+    handleResizing($evt) {
+        this.adjustLayout();
     }
 
     handleResizeEnd($evt) {
         l.debug('Layout Manager Caught Resize End');
-        this.mainDiv.style['display'] = 'flex';
-        this.mainContainerDiv.removeChild(this.blurCanvas);
+        this.mainDiv.style['filter'] = null;
         this.adjustLayout();
     }
 
@@ -91,19 +87,15 @@ export default class LayoutManager extends EventDispatcher {
         let viewportWidth = verge.viewportW();
         let viewportHeight = verge.viewportH();
 
-        l.debug('ViewPort: ', viewportWidth, viewportHeight);
-
         let canvasWidth = Math.round(0.65 * viewportWidth);
         let canvasHeight = viewportHeight;
 
         //limit height by ratio
         let maxHeightByRatio = Math.round(canvasWidth * this.canvasSizeMaxRatio);
-        l.debug('MaxHeightByRatio: ', maxHeightByRatio);
         if(canvasHeight > maxHeightByRatio) {
             canvasHeight = maxHeightByRatio;
         }
 
-        l.debug('Final Canvas Size: ', canvasWidth, canvasHeight);
 
         let leftControlsWidth = Math.round(0.15 * viewportWidth);
         let rightControlsWidth = Math.round(0.20 * viewportWidth);
