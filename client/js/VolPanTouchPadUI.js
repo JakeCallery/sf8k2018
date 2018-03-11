@@ -16,6 +16,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchId = null;
         this.recenterOnTouchEnd = false;
         this.recenterOnMouseUp = false;
+        this.isTouchingOrMouseDown = false;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -91,6 +92,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             this.recenterOnMouseUp = true;
         }
 
+        this.isTouchingOrMouseDown = true;
+
         //Force position update
         this.handleMouseMove($evt);
     }
@@ -104,6 +107,10 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             this.recenterOnMouseUp = false;
             this.volPanDO.currentPan = 0;
             this.volPanDO.currentVolume = 50;
+        }
+
+        if($evt.buttons === 0) {
+            this.isTouchingOrMouseDown = false;
         }
     }
 
@@ -132,6 +139,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             }
         }
 
+        this.isTouchingOrMouseDown = true;
+
     }
 
     handleTouchEnd($evt) {
@@ -149,6 +158,10 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             this.volPanDO.currentPan = 0;
             this.volPanDO.currentVolume = 50;
             this.recenterOnTouchEnd = false;
+        }
+
+        if($evt.touches.length === 0) {
+            this.isTouchingOrMouseDown = false;
         }
     }
 
@@ -172,7 +185,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
     handleRequestAnimationFrame($evt) {
         //Clear Canvas
-        this.volPanTouchPadCanvasContext.fillStyle = '#FF00FF';
+        this.volPanTouchPadCanvasContext.fillStyle = '#0e125c';
         this.volPanTouchPadCanvasContext.fillRect(0,0,this.volPanTouchPadCanvas.width, this.volPanTouchPadCanvas.height);
 
         //Draw thumb
@@ -184,9 +197,24 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         let thumbY = padHeight - ((this.volPanDO.currentVolume / 100) * (padHeight));
 
         this.volPanTouchPadCanvasContext.beginPath();
-        this.volPanTouchPadCanvasContext.fillStyle = '#00FF00';
+        this.volPanTouchPadCanvasContext.fillStyle = '#c9be17';
+
+        if(this.isTouchingOrMouseDown) {
+            //vert line
+            this.volPanTouchPadCanvasContext.fillRect(thumbX - 1, 0, 3, padHeight);
+            l.debug('thumbX: ', thumbX - 1, padHeight);
+            //horiz line
+            this.volPanTouchPadCanvasContext.fillRect(0, thumbY - 1, this.volPanTouchPadCanvas.width, 3);
+
+        }
+
+        this.volPanTouchPadCanvasContext.strokeStyle = '#5e5e5e';
+        this.volPanTouchPadCanvasContext.lineWidth = 2;
         this.volPanTouchPadCanvasContext.arc(thumbX, thumbY, (padWidth * 0.1), 0, Math.PI * 2, false);
         this.volPanTouchPadCanvasContext.fill();
+        this.volPanTouchPadCanvasContext.stroke();
+
+
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 
