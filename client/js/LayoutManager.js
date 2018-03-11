@@ -4,6 +4,8 @@ import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from './jac/events/JacEvent';
 import verge from "./verge/verge";
+import DOMUtils from "./jac/utils/DOMUtils";
+import html2canvas from 'html2canvas';
 
 export default class LayoutManager extends EventDispatcher {
     constructor($document, $window) {
@@ -14,6 +16,7 @@ export default class LayoutManager extends EventDispatcher {
         this.geb = new GlobalEventBus();
 
         this.canvasSizeMaxRatio = 0.75;
+        this.blurCanvas = null;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -66,10 +69,21 @@ export default class LayoutManager extends EventDispatcher {
 
     handleResizeStart($evt) {
         l.debug('Layout Manager Caught Resize Start');
+        let viewportWidth = verge.viewportW();
+        let viewportHeight = verge.viewportH();
+        html2canvas(this.mainDiv).then(($canvas) => {
+            l.debug('***************************');
+            l.debug('Canvas Size: ', $canvas.width, $canvas.height);
+            this.mainContainerDiv.appendChild($canvas);
+            this.blurCanvas = $canvas;
+        });
+        this.mainDiv.style['display'] = 'none';
     }
 
     handleResizeEnd($evt) {
         l.debug('Layout Manager Caught Resize End');
+        this.mainDiv.style['display'] = 'flex';
+        this.mainContainerDiv.removeChild(this.blurCanvas);
         this.adjustLayout();
     }
 

@@ -1,6 +1,6 @@
 {
     "name": "sf8k2018",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "description": "sf8k 2018",
     "main": "index.js",
     "scripts": {
@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "babel-polyfill": "6.26.0",
+        "html2canvas": "1.0.0-alpha.10",
         "shortid": "2.2.8",
         "whatwg-fetch": "2.0.3",
         "when-dom-ready": "1.2.12"
