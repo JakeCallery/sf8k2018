@@ -3,6 +3,7 @@
  * fix vertical spacing on controls
  * figure out what to do about a full screen button
  * switch button fonts to svg for better sizing control
+* double click/tap to recenter vol/pan
 * Bug fixes
 * Add Feature Check for StereoPannerNode
 * Preloader

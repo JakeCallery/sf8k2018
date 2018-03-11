@@ -13,7 +13,7 @@ export default class LayoutManager extends EventDispatcher {
         this.window = $window;
         this.geb = new GlobalEventBus();
 
-        this.canvasSizeMaxRatio = 0.6;
+        this.canvasSizeMaxRatio = 0.75;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -147,7 +147,7 @@ export default class LayoutManager extends EventDispatcher {
 
         //Preset Button Sizing
         let presetButtonWidth = Math.round(rightControlsWidth * 0.48);
-        let presetButtonHeight = Math.round((this.soundCanvas.height * 0.90) / this.presetButtons.length);
+        let presetButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.presetButtons.length) + (3 / this.presetButtons.length));
         for(let presetButton of this.presetButtons) {
             presetButton.style['width'] = presetButtonWidth + 'px';
             presetButton.style['height'] = presetButtonHeight + 'px';
@@ -156,7 +156,7 @@ export default class LayoutManager extends EventDispatcher {
 
         //Mode Button Sizing
         let modeButtonWidth = Math.round(rightControlsWidth * 0.50);
-        let modeButtonHeight = Math.round((this.soundCanvas.height * 0.90) / this.modeButtons.length);
+        let modeButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.modeButtons.length) + (3 / this.modeButtons.length));
         for(let modeButton of this.modeButtons) {
             modeButton.style['width'] = modeButtonWidth + 'px';
             modeButton.style['height'] = modeButtonHeight + 'px';
@@ -166,8 +166,8 @@ export default class LayoutManager extends EventDispatcher {
         let soundCanvasRect = this.soundCanvas.getBoundingClientRect();
         let volPanTouchPadCanvasRect = this.volPanTouchPadCanvas.getBoundingClientRect();
         let yDiff = volPanTouchPadCanvasRect.top - soundCanvasRect.top;
-        this.volPanTouchPadCanvas.height = Math.round(this.soundCanvas.height - yDiff);
-        this.volPanTouchPadCanvas.width = leftControlsWidth;
+        this.volPanTouchPadCanvas.height = Math.round(this.soundCanvas.height - yDiff - 3);
+        this.volPanTouchPadCanvas.width = leftControlsWidth - 5;
 
 
     }

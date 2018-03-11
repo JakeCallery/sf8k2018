@@ -69,6 +69,16 @@ button {
     width: 100%;
 }
 
+.standardButton {
+    box-sizing: border-box;
+    border-radius: 10px;
+    border: 2px solid black;
+    outline: none;
+    margin-top: 0;
+    text-decoration: none;
+    padding: 0;
+}
+
 /*********************************/
 .mainContainerDiv {
     display: flex;
@@ -90,9 +100,6 @@ button {
 }
 
 .playButton {
-    border-radius: 5px;
-    border: 0;
-    outline: none;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url('../images/play.svg');
@@ -102,15 +109,7 @@ button {
     background-image: url('../images/pause.svg');
 }
 
-.volSlider {
-    -webkit-appearance: slider-vertical;
-}
-
 .muteButton {
-    border-radius: 5px;
-    border: 0;
-    outline: none;
-    margin-top: 0;
     background-repeat: no-repeat;
     background-position: center;
     background-image: url('../images/mute.svg');
@@ -121,7 +120,11 @@ button {
 }
 
 .volPanTouchPadDiv {
+}
 
+.volPanTouchPadCanvas {
+    border-radius: 5px;
+    border: 2px solid black;
 }
 
 /*********************************/
@@ -167,12 +170,6 @@ button {
     font-family: 'Black Ops One';
     font-weight: normal;
     font-size: 5vmin;
-    padding: 0;
-    border-radius: 10px;
-    text-align: center;
-    text-decoration: none;
-    border: 0;
-    outline: none;
     line-height: 5vmin;
 }
 
@@ -181,12 +178,6 @@ button {
     font-family: 'Black Ops One';
     font-weight: normal;
     font-size: 5vmin;
-    padding: 0;
-    border-radius: 10px;
-    text-align: center;
-    text-decoration: none;
-    border: 0;
-    outline: none;
     line-height: 5vmin;
 }
 .presetDiv {
@@ -201,13 +192,13 @@ button {
     font-family: 'Black Ops One';
     font-weight: normal;
     font-size: 15vmin;
-    padding: 0;
     border-radius: 10px;
     text-align: center;
     text-decoration: none;
-    border: 0;
+    border: 2px solid black;
     outline: none;
     line-height: 15vmin;
+    padding: 0;
 }
 
 .modeDiv {
@@ -221,11 +212,11 @@ button {
     background-image: url('../images/loop.svg');
     background-repeat: no-repeat;
     background-position: center;
-    padding: 0;
     border-radius: 10px;
     text-decoration: none;
-    border: 0;
+    border: 2px solid black;
     outline: none;
+    padding: 0;
 }
 
 .modeButtonContinue {
