@@ -1,9 +1,6 @@
 ##Up Next
 * styling
- * fix vertical spacing on controls
- * figure out what to do about a full screen button
  * switch button fonts to svg for better sizing control
-* double click/tap to recenter vol/pan
 * Bug fixes
 * Add Feature Check for StereoPannerNode
 * Preloader
@@ -11,7 +8,7 @@
 ##Future Features
 * warn if width is too narrow
 * passive event listeners?
-* pan lock / vol lock (for use wtih touch pad)
+* pan lock / vol lock (for use with touch pad)
 * Sequenced and Non Sequenced Presets
   * 4 presets that can be used in a sequence (loop or continue)
   * 4 presets that are loop or pause on end
@@ -39,3 +36,6 @@
   * Handle Window Resizes
 * max size (or just max height) on mute button
 * scale sound canvas height
+* fix vertical spacing on controls
+* figure out what to do about a full screen button
+* double click/tap to recenter vol/pan

@@ -56,6 +56,7 @@ export default class UIManager extends EventDispatcher {
         this.playStateChangedDelegate = EventUtils.bind(self, self.handlePlayStateChanged);
         this.resizeDelegagte = EventUtils.bind(self, LimitUtils.debounce(500, self.resizeEnd, self.resizeStart));
         this.orientationChangeDelegate = EventUtils.bind(self, self.handleOrientationChange);
+        this.fullscreenChangeDelegate = EventUtils.bind(self, self.handleFullScreenChange);
 
         //Events
         this.window.addEventListener('resize', this.resizeDelegagte);
@@ -67,6 +68,9 @@ export default class UIManager extends EventDispatcher {
         this.muteButton.addEventListener('mousedown', this.muteButtonPressDelegate);
         this.muteButton.addEventListener('touchstart', this.muteButtonPressDelegate);
         this.geb.addEventListener('playStateChanged', this.playStateChangedDelegate);
+
+        //Manage full screen
+        screenfull.on('change', this.fullscreenChangeDelegate);
 
         //Notify of initial vol just in case DOM was ready late:
         this.geb.dispatchEvent(new JacEvent('setInitialVol', 50));
@@ -139,8 +143,19 @@ export default class UIManager extends EventDispatcher {
 
     handleFullScreenClick($evt) {
         l.debug('caught full screen click');
-        screenfull.request();
+        screenfull.toggle();
     }
+
+    handleFullScreenChange($evt) {
+        l.debug('Caught Full Screen Change: ', screenfull.isFullscreen);
+        if(screenfull.isFullscreen) {
+            this.fullScreenButton.innerHTML = 'Shrink';
+        } else {
+            this.fullScreenButton.innerHTML = 'Full';
+        }
+
+    }
+
 
     handleRequestInitialVol($evt){
         l.debug('Setting Initial Vol');
