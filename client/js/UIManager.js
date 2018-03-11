@@ -40,7 +40,7 @@ export default class UIManager extends EventDispatcher {
         l.debug('Viewport Width: ', verge.viewportW());
 
         //DOM elements
-        this.mainContainerDiv = this.doc.getElementById('mainContainerDiv');
+        this.mainDiv = this.doc.getElementById('mainDiv');
         this.playButton = this.doc.getElementById('playButton');
         this.fullScreenButton = this.doc.getElementById('fullScreenButton');
         this.muteButton = this.doc.getElementById('muteButton');

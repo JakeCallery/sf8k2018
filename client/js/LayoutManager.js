@@ -25,6 +25,9 @@ export default class LayoutManager extends EventDispatcher {
     init() {
         let self = this;
 
+        this.mainContainerDiv = this.doc.getElementById('mainContainerDiv');
+        this.mainDiv = this.doc.getElementById('mainDiv');
+
         //Adjust canvas size based on screensize
         this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
         this.waveCanvas = this.doc.getElementById('waveCanvas');
@@ -89,7 +92,7 @@ export default class LayoutManager extends EventDispatcher {
         l.debug('Final Canvas Size: ', canvasWidth, canvasHeight);
 
         let leftControlsWidth = Math.round(0.15 * viewportWidth);
-        let rightControlsWidth = Math.round(0.2 * viewportWidth);
+        let rightControlsWidth = Math.round(0.20 * viewportWidth);
 
         this.leftControlsDiv.style['width'] = leftControlsWidth + 'px';
         this.rightControlsDiv.style['width'] = rightControlsWidth + 'px';
@@ -108,6 +111,7 @@ export default class LayoutManager extends EventDispatcher {
 
         this.soundCanvas.style['width'] = canvasWidth + 'px';
         this.soundCanvas.style['height'] = canvasHeight + 'px';
+
 
         //Left Controls button horizontal margins
         //let leftButtonsLeftMargin = Math.round((leftControlsWidth * 0.02) / 1.5);
@@ -135,7 +139,7 @@ export default class LayoutManager extends EventDispatcher {
 
         //Record Button Sizing
         let recordButtonHeight = Math.round(this.soundCanvas.height * 0.10);
-        let recordButtonWidth = Math.floor(rightControlsWidth * 0.5);
+        let recordButtonWidth = Math.floor(rightControlsWidth * 0.50);
         this.recordButton.style['width'] = recordButtonWidth + 'px';
         this.recordButton.style['height'] = recordButtonHeight + 'px';
 
@@ -147,7 +151,7 @@ export default class LayoutManager extends EventDispatcher {
 
         //Preset Button Sizing
         let presetButtonWidth = Math.round(rightControlsWidth * 0.48);
-        let presetButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.presetButtons.length) + (3 / this.presetButtons.length));
+        let presetButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.presetButtons.length) - (1 / this.presetButtons.length));
         for(let presetButton of this.presetButtons) {
             presetButton.style['width'] = presetButtonWidth + 'px';
             presetButton.style['height'] = presetButtonHeight + 'px';
@@ -156,7 +160,7 @@ export default class LayoutManager extends EventDispatcher {
 
         //Mode Button Sizing
         let modeButtonWidth = Math.round(rightControlsWidth * 0.50);
-        let modeButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.modeButtons.length) + (3 / this.modeButtons.length));
+        let modeButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.modeButtons.length) - (1 / this.modeButtons.length));
         for(let modeButton of this.modeButtons) {
             modeButton.style['width'] = modeButtonWidth + 'px';
             modeButton.style['height'] = modeButtonHeight + 'px';
@@ -168,6 +172,9 @@ export default class LayoutManager extends EventDispatcher {
         let yDiff = volPanTouchPadCanvasRect.top - soundCanvasRect.top;
         this.volPanTouchPadCanvas.height = Math.round(this.soundCanvas.height - yDiff - 3);
         this.volPanTouchPadCanvas.width = leftControlsWidth - 5;
+
+        //Final Vertical Centering:
+        this.mainContainerDiv.style['padding-top'] = Math.round((viewportHeight - canvasHeight) /2) + 'px';
 
 
     }
