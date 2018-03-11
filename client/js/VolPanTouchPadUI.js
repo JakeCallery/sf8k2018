@@ -35,8 +35,10 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.touchStartDelegate = EventUtils.bind(self, self.handleTouchStart);
         this.touchEndDelegate = EventUtils.bind(self, self.handleTouchEnd);
         this.touchMoveDelegate = EventUtils.bind(self, self.handleTouchMove);
+        this.doubleClickDelegate = EventUtils.bind(self, self.handleDoubleClick);
 
         //Events
+        this.volPanTouchPadCanvas.addEventListener('dblclick', this.doubleClickDelegate);
         this.volPanTouchPadCanvas.addEventListener('mousedown', this.mouseDownDelegate);
         this.volPanTouchPadCanvas.addEventListener('touchstart', this.touchStartDelegate);
         this.doc.addEventListener('touchend', this.touchEndDelegate);
@@ -67,16 +69,24 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
     }
 
+    handleDoubleClick($evt) {
+        l.debug('Double Click');
+        this.volPanDO.currentPan = 0;
+        this.volPanDO.currentVolume = 50;
+    }
+
+
     handleMouseDown($evt) {
         $evt.preventDefault();
-        l.debug('Down Delegate: ', this.mouseMoveDelegate);
         this.volPanTouchPadCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
         this.doc.addEventListener('mouseup', this.mouseUpDelegate);
+
+        //Force position update
+        this.handleMouseMove($evt);
     }
 
     handleMouseUp($evt) {
         $evt.preventDefault();
-        l.debug('Delegate: ', this.mouseMoveDelegate);
         this.volPanTouchPadCanvas.removeEventListener('mousemove', this.mouseMoveDelegate);
         this.doc.removeEventListener('mouseup', this.mouseMoveDelegate);
     }
