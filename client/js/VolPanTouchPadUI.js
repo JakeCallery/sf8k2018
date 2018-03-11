@@ -13,6 +13,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanDO = new VolPanDataObject();
 
         this.volPanTouchId = null;
+        this.recenterOnTouchEnd = false;
+        this.recenterOnMouseUp = false;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -36,11 +38,13 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.touchEndDelegate = EventUtils.bind(self, self.handleTouchEnd);
         this.touchMoveDelegate = EventUtils.bind(self, self.handleTouchMove);
         this.doubleClickDelegate = EventUtils.bind(self, self.handleDoubleClick);
+        this.contextMenuDelegate = EventUtils.bind(self, self.handleContextMenu);
 
         //Events
         this.volPanTouchPadCanvas.addEventListener('dblclick', this.doubleClickDelegate);
         this.volPanTouchPadCanvas.addEventListener('mousedown', this.mouseDownDelegate);
         this.volPanTouchPadCanvas.addEventListener('touchstart', this.touchStartDelegate);
+        this.volPanTouchPadCanvas.addEventListener('contextmenu', this.contextMenuDelegate);
         this.doc.addEventListener('touchend', this.touchEndDelegate);
 
         //Kick off rendering
@@ -77,9 +81,14 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
 
     handleMouseDown($evt) {
+        l.debug('Buttons: ', $evt.buttons);
         $evt.preventDefault();
         this.volPanTouchPadCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
         this.doc.addEventListener('mouseup', this.mouseUpDelegate);
+
+        if($evt.buttons === 2) {
+            this.recenterOnMouseUp = true;
+        }
 
         //Force position update
         this.handleMouseMove($evt);
@@ -89,6 +98,12 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         $evt.preventDefault();
         this.volPanTouchPadCanvas.removeEventListener('mousemove', this.mouseMoveDelegate);
         this.doc.removeEventListener('mouseup', this.mouseMoveDelegate);
+
+        if(this.recenterOnMouseUp) {
+            this.recenterOnMouseUp = false;
+            this.volPanDO.currentPan = 0;
+            this.volPanDO.currentVolume = 50;
+        }
     }
 
     handleMouseMove($evt) {
@@ -156,5 +171,9 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchPadCanvasContext.arc(thumbX, thumbY, (padWidth * 0.1), 0, Math.PI * 2, false);
         this.volPanTouchPadCanvasContext.fill();
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+    }
+
+    handleContextMenu($evt) {
+        $evt.preventDefault();
     }
 }
