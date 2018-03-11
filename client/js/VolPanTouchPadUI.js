@@ -4,6 +4,7 @@ import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
 import VolPanDataObject from 'VolPanDataObject';
+import MathUtils from 'jac/utils/MathUtils';
 
 export default class VolPanTouchPadUI extends EventDispatcher {
     constructor($document) {
@@ -121,6 +122,16 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             this.handleTouchMove($evt)
         }
 
+        if($evt.touches.length > 1) {
+            let touch0 = $evt.touches[0];
+            let touch1 = $evt.touches[1];
+            let dist = MathUtils.distanceBetween(touch0.clientX, touch1.clientX, touch0.clientY, touch1.clientY);
+            l.debug('---- DIST: ', dist);
+            if(dist < 400) {
+                this.recenterOnTouchEnd = true;
+            }
+        }
+
     }
 
     handleTouchEnd($evt) {
@@ -132,6 +143,12 @@ export default class VolPanTouchPadUI extends EventDispatcher {
                 this.volPanTouchPadCanvas.removeEventListener('touchmove', this.touchMoveDelegate);
                 break;
             }
+        }
+
+        if($evt.touches.length === 0 && this.recenterOnTouchEnd === true) {
+            this.volPanDO.currentPan = 0;
+            this.volPanDO.currentVolume = 50;
+            this.recenterOnTouchEnd = false;
         }
     }
 

@@ -74,6 +74,12 @@
 		    return val;
 	    };
 
+	    MathUtils.distanceBetween = function($x1, $y1, $x2, $y2) {
+			let diffX = $x1 - $x2;
+			let diffY = $y1 - $y2;
+			return Math.sqrt((diffX * diffX) + (diffY * diffY));
+        };
+
         //Return constructor
         return MathUtils;
     })();
