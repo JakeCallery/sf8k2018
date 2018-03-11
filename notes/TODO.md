@@ -1,6 +1,8 @@
 ##Up Next
 * styling
  * switch button fonts to svg for better sizing control
+ * blur when resizing
+ * crosshair for touchpad
 * Bug fixes
 * Add Feature Check for StereoPannerNode
 * Preloader
