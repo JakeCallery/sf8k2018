@@ -90,9 +90,9 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
         if($evt.buttons === 2) {
             this.recenterOnMouseUp = true;
+        } else {
+            this.isTouchingOrMouseDown = true;
         }
-
-        this.isTouchingOrMouseDown = true;
 
         //Force position update
         this.handleMouseMove($evt);
