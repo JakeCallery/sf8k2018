@@ -34,6 +34,7 @@ export default class LayoutManager extends EventDispatcher {
         this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
         this.waveCanvas = this.doc.getElementById('waveCanvas');
         this.soundCanvas = this.doc.getElementById('soundCanvas');
+        this.canvasBlendLayer = this.doc.getElementById('canvasBlendLayer');
 
         this.leftControlsDiv = this.doc.getElementById('leftControlsDiv');
         this.rightControlsDiv = this.doc.getElementById('rightControlsDiv');
@@ -112,12 +113,17 @@ export default class LayoutManager extends EventDispatcher {
         this.soundCanvas.width = canvasWidth;
         this.soundCanvas.height = canvasHeight;
 
+        this.canvasBlendLayer.width = canvasWidth;
+        this.canvasBlendLayer.height = canvasHeight;
+
         this.waveCanvas.style['width'] = canvasWidth + 'px';
         this.waveCanvas.style['height'] = canvasHeight + 'px';
 
         this.soundCanvas.style['width'] = canvasWidth + 'px';
         this.soundCanvas.style['height'] = canvasHeight + 'px';
 
+        this.canvasBlendLayer.style['width'] = canvasWidth + 'px';
+        this.canvasBlendLayer.style['height'] = canvasHeight + 'px';
 
         //Left Controls button horizontal margins
         //let leftButtonsLeftMargin = Math.round((leftControlsWidth * 0.02) / 1.5);

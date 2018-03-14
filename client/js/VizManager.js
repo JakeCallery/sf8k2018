@@ -110,7 +110,7 @@ export default class VizManager extends EventDispatcher {
 
         if(!this.isResizing) {
             //Clear canvas
-            this.waveCanvasContext.fillStyle = '#130909';
+            this.waveCanvasContext.fillStyle = '#070125';
             this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
 
             //Handle horizon
@@ -123,7 +123,8 @@ export default class VizManager extends EventDispatcher {
             this.markerDO.samplesPerPixel = this.samplesPerLine;
 
             //Set color for line drawing
-            this.waveCanvasContext.fillStyle = '#6e0a0c';
+            //this.waveCanvasContext.fillStyle = '#4A0BA8';
+            this.waveCanvasContext.fillStyle = '#ffffff';
 
             //Setup Heights
             let heightScaleFactor = null;
