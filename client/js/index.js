@@ -58,7 +58,7 @@ let pm = new PresetManager(document);
 let am = new AudioManager(window);
 am.init()
 .then(() => {
-    return am.loadSound('drinkalone.ogg');
+    return am.loadSound('drinkalone.m4a');
 })
 .then(() => {
     l.debug('Sound Loaded!');
