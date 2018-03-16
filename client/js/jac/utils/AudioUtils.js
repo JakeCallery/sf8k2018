@@ -8,7 +8,7 @@ export default {
 		let audioContext = null;
 
 		try {
-            window.audioContext = window.AudioContext || window.webkitAudioContext;
+			let AudioContext = window.AudioContext || window.webkitAudioContext;
             audioContext = new AudioContext();
 		} catch ($err) {
 			throw new Error('Web Audio API is not supported in this browser');

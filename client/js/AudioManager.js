@@ -71,7 +71,7 @@ export default class AudioManager extends EventDispatcher {
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
 
                 this.gainNode = this.audioContext.createGain();
-                this.panNode = this.audioContext.createStereoPanner();
+                //this.panNode = this.audioContext.createStereoPanner();
 
                 //set initial volume as muted
                 this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0)
@@ -130,8 +130,9 @@ export default class AudioManager extends EventDispatcher {
                         this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
                         this.audioSource.loop = true;
                         this.audioSource.connect(this.scriptProcessorNode);
-                        this.scriptProcessorNode.connect(this.panNode);
-                        this.panNode.connect(this.gainNode);
+                        this.scriptProcessorNode.connect(this.gainNode);
+                        //this.scriptProcessorNode.connect(this.panNode);
+                        //this.panNode.connect(this.gainNode);
                         this.gainNode.connect(this.audioContext.destination);
                         this.startSampleIndex = 0;
                         this.currentSampleIndex = 0;
@@ -202,7 +203,7 @@ export default class AudioManager extends EventDispatcher {
     handlePanChange($evt) {
         let pan = ($evt.data / 100);
         l.debug('Pan change: ', pan);
-        this.panNode.pan.setTargetAtTime(pan, this.audioContext.currentTime, 0);
+        //this.panNode.pan.setTargetAtTime(pan, this.audioContext.currentTime, 0);
     }
 
     handleAudioProcess($evt){

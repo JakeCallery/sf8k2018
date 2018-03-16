@@ -72,7 +72,9 @@ export default class UIManager extends EventDispatcher {
         this.geb.addEventListener('playStateChanged', this.playStateChangedDelegate);
 
         //Manage full screen
-        screenfull.on('change', this.fullscreenChangeDelegate);
+        if(screenfull) {
+            screenfull.on('change', this.fullscreenChangeDelegate);
+        }
 
         //Notify of initial vol just in case DOM was ready late:
         this.geb.dispatchEvent(new JacEvent('setInitialVol', 50));
@@ -95,7 +97,7 @@ export default class UIManager extends EventDispatcher {
     }
 
     handleOrientationChange($evt) {
-        l.debug('Caught Orientation Change: ', screen.orientation.angle);
+        l.debug('Caught Orientation Change');
         this.geb.dispatchEvent(new JacEvent('resizeStarted'));
     }
 
