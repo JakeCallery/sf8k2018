@@ -6,12 +6,14 @@ html, body {
     width: 100%;
     padding: 0;
     margin: 0;
-    background-color: #333333;
+    background-color: red;
     overflow: hidden;
 }
 
 body {
     box-sizing: border-box;
+    transform: scale(1);
+    -webkit-transform: scale(1);
 }
 
 div {
