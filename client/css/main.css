@@ -110,21 +110,21 @@ button {
 .playButton {
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url('../images/play.svg');
+    background-image: url('../assets/images/play.svg');
 }
 
 .playButtonPause {
-    background-image: url('../images/pause.svg');
+    background-image: url('../assets/images/pause.svg');
 }
 
 .muteButton {
     background-repeat: no-repeat;
     background-position: center;
-    background-image: url('../images/mute.svg');
+    background-image: url('../assets/images/mute.svg');
 }
 
 .muteButtonUnmute {
-    background-image: url('../images/unmute.svg');
+    background-image: url('../assets/images/unmute.svg');
 }
 
 .volPanTouchPadDiv {
@@ -229,7 +229,7 @@ button {
 
 .modeButton {
     flex: 1;
-    background-image: url('../images/loop.svg');
+    background-image: url('../assets/images/loop.svg');
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 10px;
@@ -240,6 +240,6 @@ button {
 }
 
 .modeButtonContinue {
-    background-image: url('../images/continue.svg');
+    background-image: url('../assets/images/continue.svg');
 }
 

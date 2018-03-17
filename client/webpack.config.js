@@ -69,12 +69,12 @@ module.exports = {
     },
 
     plugins: [
-        // new CleanWebpackPlugin([distDir], {
-        //     root: distDirRoot,
-        //     verbose: true,
-        //     dry: false,
-        //     exclude: []
-        // }),
+        new CleanWebpackPlugin([distDir], {
+            root: distDirRoot,
+            verbose: true,
+            dry: false,
+            exclude: []
+        }),
 
         new HtmlWebpackPlugin({
             filename: 'index.html',

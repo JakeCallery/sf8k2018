@@ -13,8 +13,9 @@ import PresetManager from 'PresetManager';
 import LayoutManager from "./LayoutManager";
 import VolPanTouchPadUI from "./VolPanTouchPadUI";
 
-//Inline favicons
-import '../favicons/favicons';
+//Import assets
+import '../assets/favicons/favicons';
+import '../assets/sounds/sounds';
 
 //Import through loaders
 import '../css/normalize.css';
