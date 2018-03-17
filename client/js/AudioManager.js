@@ -19,6 +19,7 @@ export default class AudioManager extends EventDispatcher {
 
         this.currentTime = 0;
         this.hasPlayedOnce = false;
+        this.isFirstPlay = true;
 
         this.scriptProcessorNode = null;
         this.gainNode = null;
@@ -84,10 +85,6 @@ export default class AudioManager extends EventDispatcher {
             //Set up source
             try {
                 this.audioSource = AudioUtils.createSoundSourceWithBuffer(this.audioContext);
-                if(!this.audioSource.start){
-                    l.warn('Source.start note defined, using noteOn');
-                    this.audioSource.start = this.audioSource.noteOn;
-                }
             } catch ($err) {
                 l.error('Failed to create audio source: ', $err);
                 reject($err);
@@ -174,6 +171,12 @@ export default class AudioManager extends EventDispatcher {
 
     handleRequestPlayToggle($evt) {
         l.debug('Toggle Play/Pause');
+
+        //Workaround for ios, muted until started with user interaction
+        if(this.isFirstPlay) {
+            this.audioSource.start(0);
+            this.isFirstPlay = false;
+        }
         this.isPlaying = !this.isPlaying;
         this.geb.dispatchEvent(new JacEvent('playStateChanged', this.isPlaying));
     }
