@@ -8,8 +8,8 @@ const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 console.log('DIRNAME: ' + __dirname);
 const distDir = 'dist';
-const distDirPath = __dirname + '/../' + distDir;
-
+const distDirRoot = __dirname + '/../';
+const distDirPath = distDirRoot + distDir;
 module.exports = {
     entry: {
         indexEntry:'./js/index.js'
