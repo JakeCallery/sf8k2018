@@ -223,10 +223,11 @@ button {
     border-radius: 10px;
     text-align: center;
     text-decoration: none;
-    border: 2px solid black;
+    /*border: 2px solid black;*/
     outline: none;
     line-height: 15vmin;
     padding: 0;
+    box-shadow: 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 }
 
 .modeDiv {
@@ -242,9 +243,11 @@ button {
     background-position: center;
     border-radius: 10px;
     text-decoration: none;
-    border: 2px solid black;
+    /*border: 2px solid black;*/
     outline: none;
     padding: 0;
+    box-shadow: 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+
 }
 
 .modeButtonContinue {
