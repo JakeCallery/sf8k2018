@@ -139,10 +139,13 @@ button {
 
 }
 
+.playButtonPlay:active {
+    background-image: url('../assets/images/PlayIconWhite.svg'), linear-gradient(rgb(58, 64, 255) 0%, rgb(20, 13, 216) 100%);
+}
+
 .playButtonPause {
     background-image: url('../assets/images/PauseIconWhite.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
 }
-
 
 .volPanTouchPadDiv {
 }
@@ -238,13 +241,25 @@ button {
     background-image: url('../assets/images/PresetUnSetIcon.svg'), linear-gradient(rgb(184, 25, 23) 0%, rgb(99, 24, 18) 100%);
 }
 
+.presetButtonUnset:active {
+    background-image: url('../assets/images/PresetUnSetIcon.svg'), linear-gradient(rgb(255, 100, 18) 0%, rgb(200, 41, 32) 100%);
+}
+
 .presetButtonSet {
     background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(184, 25, 23) 0%, rgb(99, 24, 18) 100%);
+}
+
+.presetButtonSet:active {
+    background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(255, 100, 18) 0%, rgb(200, 41, 32) 100%);
 }
 
 .presetButtonActive {
     background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(255, 100, 18) 0%, rgb(200, 41, 32) 100%);
     /*background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(247, 179, 69) 0%, rgb(184, 79, 17) 100%);*/
+}
+
+.presetButtonActive:active {
+    background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(255, 154, 0) 0%, rgb(255, 54, 3) 100%);
 }
 
 .modeDiv {
@@ -266,6 +281,10 @@ button {
 
 }
 
+.modeButton:active {
+    background-image: url('../assets/images/LoopModeIcon.svg'), linear-gradient(rgb(58, 64, 255) 0%, rgb(20, 13, 216) 100%);
+}
+
 .modeButtonContinue {
     flex: 1;
     background-image: url('../assets/images/ContinueModeIcon.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
@@ -278,3 +297,6 @@ button {
     box-shadow: 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 }
 
+.modeButtonContinue:active {
+    background-image: url('../assets/images/ContinueModeIcon.svg'), linear-gradient(rgb(58, 64, 255) 0%, rgb(20, 13, 216) 100%);
+}
