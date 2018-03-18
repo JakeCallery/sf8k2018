@@ -115,7 +115,7 @@ button {
     flex-direction: row;
 }
 
-.playButtonBase {
+.playMuteButtonBase {
     flex: 1;
     background-repeat: no-repeat;
     background-position: center;
@@ -126,24 +126,23 @@ button {
     box-shadow: 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 }
 
+.muteButtonMute {
+    background-image: url('../assets/images/MuteIconWhite.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
+}
+
+.muteButtonUnmute {
+    background-image: url('../assets/images/MuteIconWhite.svg'), linear-gradient(rgb(58, 64, 255) 0%, rgb(20, 13, 216) 100%);
+}
+
 .playButtonPlay {
-    background-image: url('../assets/images/PlayIcon.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
+    background-image: url('../assets/images/PlayIconWhite.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
 
 }
 
 .playButtonPause {
-    background-image: url('../assets/images/PauseIcon.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
+    background-image: url('../assets/images/PauseIconWhite.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(15, 10, 126) 100%);
 }
 
-.muteButton {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url('../assets/images/mute.svg');
-}
-
-.muteButtonUnmute {
-    background-image: url('../assets/images/unmute.svg');
-}
 
 .volPanTouchPadDiv {
 }
