@@ -1,6 +1,6 @@
 {
     "name": "sf8k2018",
-    "version": "0.0.29",
+    "version": "0.0.30",
     "description": "sf8k 2018",
     "main": "index.js",
     "scripts": {

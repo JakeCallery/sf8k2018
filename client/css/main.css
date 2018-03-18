@@ -237,7 +237,7 @@ button {
 
 .modeButton {
     flex: 1;
-    background-image: url('../assets/images/loop.svg');
+    background-image: url('../assets/images/loop.svg'), linear-gradient(rgb(247, 53, 236) 0%, rgb(194, 48, 183) 100%);
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 10px;

@@ -24,6 +24,7 @@ export default class AudioManager extends EventDispatcher {
         this.scriptProcessorNode = null;
         this.gainNode = null;
         this.panNode = null;
+        this.filterNode = null;
 
         this.totalSamples = null;
         this.startSampleIndex = null;
@@ -73,6 +74,7 @@ export default class AudioManager extends EventDispatcher {
 
                 this.gainNode = this.audioContext.createGain();
                 //this.panNode = this.audioContext.createStereoPanner();
+                //this.filterNode = this.audioContext.createBiquadFilter();
 
                 //set initial volume as muted
                 this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0)
@@ -128,6 +130,8 @@ export default class AudioManager extends EventDispatcher {
                         this.audioSource.loop = true;
                         this.audioSource.connect(this.scriptProcessorNode);
                         this.scriptProcessorNode.connect(this.gainNode);
+                        //this.scriptProcessorNode.connect(this.filterNode);
+                        //this.filterNode.connect(this.gainNode);
                         //this.scriptProcessorNode.connect(this.panNode);
                         //this.panNode.connect(this.gainNode);
                         this.gainNode.connect(this.audioContext.destination);
