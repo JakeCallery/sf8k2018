@@ -238,19 +238,26 @@ button {
 
 .modeButton {
     flex: 1;
-    background-image: url('../assets/images/loop.svg'), linear-gradient(rgb(247, 53, 236) 0%, rgb(194, 48, 183) 100%);
+    background-image: url('../assets/images/LoopModeIcon.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(16, 10, 172) 100%);
     background-repeat: no-repeat;
     background-position: center;
+    background-size: contain;
     border-radius: 10px;
     text-decoration: none;
-    /*border: 2px solid black;*/
     outline: none;
-    padding: 0;
     box-shadow: 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 
 }
 
 .modeButtonContinue {
-    background-image: url('../assets/images/continue.svg');
+    flex: 1;
+    background-image: url('../assets/images/ContinueModeIcon.svg'), linear-gradient(rgb(16, 10, 255) 0%, rgb(16, 10, 172) 100%);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border-radius: 10px;
+    text-decoration: none;
+    outline: none;
+    box-shadow: 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 }
 
