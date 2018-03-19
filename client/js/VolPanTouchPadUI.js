@@ -60,6 +60,9 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.thumbSize = Math.round(this.volPanTouchPadCanvas.width * 0.25);
         this.thumbOffset = Math.round(this.thumbSize/2);
         this.thumbImage = new Image(this.thumbSize, this.thumbSize);
+        //hack for ios safari, image data is empty until its on the DOM
+        //so displaying in a hidden state for now
+        //this.thumbImage.style['display'] = 'none';
         this.thumbImageData = null;
         this.thumbImage.src = thumbPath;
         this.thumbImage.addEventListener('load', this.thumbImageLoadedDelegate);
@@ -73,6 +76,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.isThumbLoaded = true;
         this.thumbCanvasCtx.drawImage(this.thumbImage, 0, 0, this.thumbSize, this.thumbSize);
         this.thumbImageData = this.thumbCanvasCtx.getImageData(0,0,this.thumbSize,this.thumbSize);
+        this.mainDiv.appendChild(this.thumbImage);
     }
 
     yCoordToVolPercent($y) {
