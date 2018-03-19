@@ -5,6 +5,7 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
 import VolPanDataObject from 'VolPanDataObject';
 import MathUtils from 'jac/utils/MathUtils';
+import thumbPath from '../assets/images/TouchPadThumb.svg';
 
 export default class VolPanTouchPadUI extends EventDispatcher {
     constructor($document) {
@@ -30,6 +31,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         //Elements
         this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
         this.volPanTouchPadCanvasContext = this.volPanTouchPadCanvas.getContext('2d');
+        this.mainDiv = this.doc.getElementById('mainDiv');
 
         //Delegates
         this.requestAnimationFrameDelegate = EventUtils.bind(self, self.handleRequestAnimationFrame);
@@ -41,6 +43,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.touchMoveDelegate = EventUtils.bind(self, self.handleTouchMove);
         this.doubleClickDelegate = EventUtils.bind(self, self.handleDoubleClick);
         this.contextMenuDelegate = EventUtils.bind(self, self.handleContextMenu);
+        this.thumbImageLoadedDelegate = EventUtils.bind(self, self.handleThumbImageLoaded);
 
         //Events
         this.volPanTouchPadCanvas.addEventListener('dblclick', this.doubleClickDelegate);
@@ -49,8 +52,27 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchPadCanvas.addEventListener('contextmenu', this.contextMenuDelegate);
         this.doc.addEventListener('touchend', this.touchEndDelegate);
 
+
+        //Setup thumb
+        this.isThumbLoaded = false;
+        this.thumbCanvas = this.doc.createElement('canvas');
+        this.thumbCanvasCtx = this.thumbCanvas.getContext('2d');
+        this.thumbSize = Math.round(this.volPanTouchPadCanvas.width * 0.25);
+        this.thumbOffset = Math.round(this.thumbSize/2);
+        this.thumbImage = new Image(this.thumbSize, this.thumbSize);
+        this.thumbImageData = null;
+        this.thumbImage.src = thumbPath;
+        this.thumbImage.addEventListener('load', this.thumbImageLoadedDelegate);
+
         //Kick off rendering
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+    }
+
+    handleThumbImageLoaded($e) {
+        l.debug('************* Caught Thumb Image Loaded: ', this.thumbSize);
+        this.isThumbLoaded = true;
+        this.thumbCanvasCtx.drawImage(this.thumbImage, 0, 0, this.thumbSize, this.thumbSize);
+        this.thumbImageData = this.thumbCanvasCtx.getImageData(0,0,this.thumbSize,this.thumbSize);
     }
 
     yCoordToVolPercent($y) {
@@ -185,8 +207,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
     handleRequestAnimationFrame($evt) {
         //Clear Canvas
-        this.volPanTouchPadCanvasContext.fillStyle = '#0e125c';
-        this.volPanTouchPadCanvasContext.fillRect(0,0,this.volPanTouchPadCanvas.width, this.volPanTouchPadCanvas.height);
+        //this.volPanTouchPadCanvasContext.fillStyle = '#0e125c';
+        this.volPanTouchPadCanvasContext.clearRect(0,0,this.volPanTouchPadCanvas.width, this.volPanTouchPadCanvas.height);
 
         //Draw thumb
         let padWidth = this.volPanTouchPadCanvas.width;
@@ -205,15 +227,19 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             l.debug('thumbX: ', thumbX - 1, padHeight);
             //horiz line
             this.volPanTouchPadCanvasContext.fillRect(0, thumbY - 1, this.volPanTouchPadCanvas.width, 3);
-
         }
 
+
+        if(this.isThumbLoaded === true) {
+            this.volPanTouchPadCanvasContext.putImageData(this.thumbImageData, thumbX - this.thumbOffset, thumbY - this.thumbOffset);
+        }
+        /*
         this.volPanTouchPadCanvasContext.strokeStyle = '#5e5e5e';
         this.volPanTouchPadCanvasContext.lineWidth = 2;
         this.volPanTouchPadCanvasContext.arc(thumbX, thumbY, (padWidth * 0.1), 0, Math.PI * 2, false);
         this.volPanTouchPadCanvasContext.fill();
         this.volPanTouchPadCanvasContext.stroke();
-
+        */
 
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
