@@ -1,8 +1,15 @@
 ##Up Next
 * styling
- * switch button fonts to svg for better sizing control
+ * finish styling sound and wave canvases
+ * style fullscreen button
+ * style record button
+ * clean up edges on blurred canvas (black backing canvas maybe?)
+  
 * Bug fixes
-* Add Feature Check for StereoPannerNode
+  * fix thumb canvas rendering issue on ios
+* Hook up lowpass filter to thumb left/right
+  * (http://webaudioapi.com/samples/filter/)
+  * Maybe add low pass to the left, high pass to right
 * Preloader
 
 ##Future Features
@@ -41,3 +48,4 @@
 * double click/tap to recenter vol/pan
 * crosshair for touchpad
 * blur when resizing
+* switch button fonts to svg for better sizing control

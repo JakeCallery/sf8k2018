@@ -62,7 +62,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.thumbImage = new Image(this.thumbSize, this.thumbSize);
         //hack for ios safari, image data is empty until its on the DOM
         //so displaying in a hidden state for now
-        //this.thumbImage.style['display'] = 'none';
+        this.thumbImage.style['display'] = 'none';
         this.thumbImageData = null;
         this.thumbImage.src = thumbPath;
         this.thumbImage.addEventListener('load', this.thumbImageLoadedDelegate);
