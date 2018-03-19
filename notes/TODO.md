@@ -7,9 +7,13 @@
   
 * Bug fixes
   * fix thumb canvas rendering issue on ios
+
 * Hook up lowpass filter to thumb left/right
   * (http://webaudioapi.com/samples/filter/)
   * Maybe add low pass to the left, high pass to right
+
+* Maybe display waveform or freqs (rotated 90) in the touchpad area
+
 * Preloader
 
 ##Future Features
