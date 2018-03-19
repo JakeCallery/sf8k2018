@@ -1,4 +1,6 @@
 ##Up Next
+* hook up button state visuals for preset buttons
+
 * styling
  * finish styling sound and wave canvases
  * style fullscreen button
