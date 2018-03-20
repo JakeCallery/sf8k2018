@@ -159,12 +159,20 @@ export default class Preset extends EventDispatcher {
     }
 
     handleStartMarkerUpdated($evt) {
-        this.inUse = false;
+        if(this.inUse) {
+            this.inUse = false;
+            this.updateButtonView();
+        }
+
         //l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
     }
 
     handleEndMarkerUpdated($evt) {
-        this.inUse = false;
+        if(this.inUse) {
+            this.inUse = false;
+            this.updateButtonView();
+        }
+
         //l.debug('Preset In Use: ' + this.presetButtonView.id + ': ' + this.inUse);
     }
 
@@ -173,6 +181,7 @@ export default class Preset extends EventDispatcher {
         this.endSample = $endSample;
         this.isSet = true;
         this.inUse = true;
+        this.updateButtonView();
     }
 
     usePreset() {
@@ -180,6 +189,21 @@ export default class Preset extends EventDispatcher {
         this.markerDO.updateEndSample(this.endSample);
         this.geb.dispatchEvent(new JacEvent('forceUpdateCurrentSampleIndex', this.startSample));
         this.inUse = true;
+        this.updateButtonView();
+    }
+
+    updateButtonView() {
+        DOMUtils.removeClass(this.presetButtonView, 'presetButtonSet');
+        DOMUtils.removeClass(this.presetButtonView, 'presetButtonUnSet');
+        DOMUtils.removeClass(this.presetButtonView, 'presetButtonInUse');
+
+        if (!this.isSet) {
+            DOMUtils.addClass(this.presetButtonView, 'presetButtonUnSet');
+        } else if (this.isSet && !this.inUse) {
+            DOMUtils.addClass(this.presetButtonView, 'presetButtonSet');
+        } else if (this.inUse) {
+            DOMUtils.addClass(this.presetButtonView, 'presetButtonInUse');
+        }
     }
 
     static get MODES() {

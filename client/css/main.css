@@ -255,12 +255,12 @@ button {
     background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(255, 100, 18) 0%, rgb(200, 41, 32) 100%);
 }
 
-.presetButtonActive {
+.presetButtonInUse {
     background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(255, 100, 18) 0%, rgb(200, 41, 32) 100%);
     /*background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(247, 179, 69) 0%, rgb(184, 79, 17) 100%);*/
 }
 
-.presetButtonActive:active {
+.presetButtonInUse:active {
     background-image: url('../assets/images/PresetSetIcon.svg'), linear-gradient(rgb(255, 154, 0) 0%, rgb(255, 54, 3) 100%);
 }
 
