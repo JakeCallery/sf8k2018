@@ -1,6 +1,4 @@
 ##Up Next
-* hook up button state visuals for preset buttons
-
 * styling
  * finish styling sound and wave canvases
  * style fullscreen button
@@ -31,6 +29,7 @@
   * 10 sec limit?
   
 ##Bugs
+* Mute button un muting doesn't respect touch pad volume 
 * while holding mute button down, can't switch preset modes
   * multi-touch issue
 
@@ -55,3 +54,4 @@
 * crosshair for touchpad
 * blur when resizing
 * switch button fonts to svg for better sizing control
+* hook up button state visuals for preset buttons
