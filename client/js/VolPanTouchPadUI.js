@@ -247,6 +247,22 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             } else {
                 //HighPass
                 this.biQuadDO.filter.type = 'highpass';
+                let minValue = 40;
+                let maxValue = this.biQuadDO.audioContext.sampleRate / 2;
+                let padVal = (Math.abs(this.volPanDO.currentPan) / 100);
+
+                // Logarithm (base 2) to compute how many octaves fall in the range.
+                let numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
+
+                // Compute a multiplier from 0 to 1 based on an exponential scale.
+                let multiplier = Math.pow(2, numberOfOctaves * (padVal - 1.0));
+
+                // Get back to the frequency value between min and max.
+                this.biQuadDO.filter.frequency.value = maxValue * multiplier;
+
+                //Set up Q (more peak near the edge of the pad) (Multiplier of 100 is nuts!)
+                this.biQuadDO.filter.Q.value = (Math.abs(this.volPanDO.currentPan) / 100) * 45;
+                //this.biQuadDO.filter.Q.value = padVal * 30;
             }
         }
 
