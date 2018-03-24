@@ -8,12 +8,6 @@
 * Bug fixes
   * fix thumb canvas rendering issue on ios
 
-* Hook up lowpass filter to thumb left/right
-  * (http://webaudioapi.com/samples/filter/)
-  * Maybe add low pass to the left, high pass to right
-
-* Maybe display waveform or freqs (rotated 90) in the touchpad area
-
 * Preloader
 
 ##Future Features
@@ -55,3 +49,7 @@
 * blur when resizing
 * switch button fonts to svg for better sizing control
 * hook up button state visuals for preset buttons
+* Maybe display waveform or freqs (rotated 90) in the touchpad area
+* Hook up lowpass filter to thumb left/right
+  * (http://webaudioapi.com/samples/filter/)
+  * Maybe add low pass to the left, high pass to right

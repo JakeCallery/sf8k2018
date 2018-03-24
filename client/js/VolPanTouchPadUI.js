@@ -14,7 +14,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         super();
 
         this.doc = $document;
-        this.volPanDO = new VolPanDataObject();
+        this.volPanDataObject = new VolPanDataObject();
 
         this.volPanTouchId = null;
         this.recenterOnTouchEnd = false;
@@ -22,7 +22,6 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.isTouchingOrMouseDown = false;
 
         this.fftDO = new FFTDataObject();
-        this.biQuadDO = new BiQuadDataObject();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -108,8 +107,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
     handleDoubleClick($evt) {
         l.debug('Double Click');
-        this.volPanDO.currentPan = 0;
-        this.volPanDO.currentVolume = 50;
+        this.volPanDataObject.currentPan = 0;
+        this.volPanDataObject.currentVolume = 50;
     }
 
 
@@ -136,8 +135,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
         if(this.recenterOnMouseUp) {
             this.recenterOnMouseUp = false;
-            this.volPanDO.currentPan = 0;
-            this.volPanDO.currentVolume = 50;
+            this.volPanDataObject.currentPan = 0;
+            this.volPanDataObject.currentVolume = 50;
         }
 
         if($evt.buttons === 0) {
@@ -186,8 +185,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         }
 
         if($evt.touches.length === 0 && this.recenterOnTouchEnd === true) {
-            this.volPanDO.currentPan = 0;
-            this.volPanDO.currentVolume = 50;
+            this.volPanDataObject.currentPan = 0;
+            this.volPanDataObject.currentVolume = 50;
             this.recenterOnTouchEnd = false;
         }
 
@@ -210,61 +209,13 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         let x = $pageX - this.volPanTouchPadCanvas.offsetLeft;
         let y = $pageY - this.volPanTouchPadCanvas.offsetTop;
 
-        this.volPanDO.currentPan = this.xCoordToPanPercent(x) * 100;
-        this.volPanDO.currentVolume = this.yCoordToVolPercent(y) * 100;
+        this.volPanDataObject.currentPan = this.xCoordToPanPercent(x) * 100;
+        this.volPanDataObject.currentVolume = this.yCoordToVolPercent(y) * 100;
     }
 
     handleRequestAnimationFrame($evt) {
         //Clear Canvas
-        //this.volPanTouchPadCanvasContext.fillStyle = '#0e125c';
         this.volPanTouchPadCanvasContext.clearRect(0,0,this.volPanTouchPadCanvas.width, this.volPanTouchPadCanvas.height);
-
-        //Update BiQuad filter
-        if(this.biQuadDO.filter) {
-            if(this.volPanDO.currentPan <= 0) {
-                //LowPass
-                this.biQuadDO.filter.type = 'lowpass';
-
-                // Clamp the frequency between the minimum value (40 Hz) and half of the
-                // sampling rate.
-                let minValue = 40;
-                let maxValue = this.biQuadDO.audioContext.sampleRate / 2;
-                let padVal = 1.0 - (Math.abs(this.volPanDO.currentPan) / 100);
-
-                // Logarithm (base 2) to compute how many octaves fall in the range.
-                let numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
-
-                // Compute a multiplier from 0 to 1 based on an exponential scale.
-                let multiplier = Math.pow(2, numberOfOctaves * (padVal - 1.0));
-
-                // Get back to the frequency value between min and max.
-                this.biQuadDO.filter.frequency.value = maxValue * multiplier;
-
-                //Set up Q (more peak near the edge of the pad) (Multiplier of 100 is nuts!)
-                this.biQuadDO.filter.Q.value = (Math.abs(this.volPanDO.currentPan) / 100) * 45;
-                //this.biQuadDO.filter.Q.value = padVal * 30;
-
-            } else {
-                //HighPass
-                this.biQuadDO.filter.type = 'highpass';
-                let minValue = 40;
-                let maxValue = this.biQuadDO.audioContext.sampleRate / 2;
-                let padVal = (Math.abs(this.volPanDO.currentPan) / 100);
-
-                // Logarithm (base 2) to compute how many octaves fall in the range.
-                let numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
-
-                // Compute a multiplier from 0 to 1 based on an exponential scale.
-                let multiplier = Math.pow(2, numberOfOctaves * (padVal - 1.0));
-
-                // Get back to the frequency value between min and max.
-                this.biQuadDO.filter.frequency.value = maxValue * multiplier;
-
-                //Set up Q (more peak near the edge of the pad) (Multiplier of 100 is nuts!)
-                this.biQuadDO.filter.Q.value = (Math.abs(this.volPanDO.currentPan) / 100) * 45;
-                //this.biQuadDO.filter.Q.value = padVal * 30;
-            }
-        }
 
         //Update Visualizer
         if(this.fftDO.fftAnalyzer) {
@@ -295,21 +246,12 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         let padHeight = this.volPanTouchPadCanvas.height;
 
         let padWidthCenter = padWidth/2;
-        let thumbX = ((this.volPanDO.currentPan / 100) * (padWidthCenter)) + padWidthCenter;
-        let thumbY = padHeight - ((this.volPanDO.currentVolume / 100) * (padHeight));
+        let thumbX = ((this.volPanDataObject.currentPan / 100) * (padWidthCenter)) + padWidthCenter;
+        let thumbY = padHeight - ((this.volPanDataObject.currentVolume / 100) * (padHeight));
 
         this.volPanTouchPadCanvasContext.beginPath();
         this.volPanTouchPadCanvasContext.fillStyle = '#c9be17';
 
-/*
-        if(this.isTouchingOrMouseDown) {
-            //vert line
-            this.volPanTouchPadCanvasContext.fillRect(thumbX - 1, 0, 3, padHeight);
-            l.debug('thumbX: ', thumbX - 1, padHeight);
-            //horiz line
-            this.volPanTouchPadCanvasContext.fillRect(0, thumbY - 1, this.volPanTouchPadCanvas.width, 3);
-        }
-*/
 
         if(this.isThumbLoaded === true) {
             this.volPanTouchPadCanvasContext.putImageData(this.thumbImageData, thumbX - this.thumbOffset, thumbY - this.thumbOffset);

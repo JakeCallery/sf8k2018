@@ -7,6 +7,7 @@ import AudioUtils from 'jac/utils/AudioUtils';
 import MarkerDataObject from 'MarkerDataObject';
 import FFTDataObject from "./FFTDataObject";
 import BiQuadDataObject from "./BiQuadDataObject";
+import VolPanDataObject from "./VolPanDataObject";
 
 export default class AudioManager extends EventDispatcher {
     constructor($window) {
@@ -17,6 +18,7 @@ export default class AudioManager extends EventDispatcher {
         this.geb = new GlobalEventBus();
         this.fftDataObject = new FFTDataObject();
         this.biQuadDataObject = new BiQuadDataObject();
+        this.volPanDataObject = new VolPanDataObject();
 
         this.audioContext = null;
         this.audioSource = null;
@@ -72,6 +74,7 @@ export default class AudioManager extends EventDispatcher {
             try {
                 this.audioContext = AudioUtils.getContext();
 
+                //Create Nodes
                 this.scriptProcessorNode = this.audioContext.createScriptProcessor(2048,0,2);
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
                 this.fftDataObject.fftAnalyzer = this.audioContext.createAnalyser();
@@ -80,15 +83,18 @@ export default class AudioManager extends EventDispatcher {
                 //BiQuad Filter
                 this.biQuadDataObject.filter =  this.biQuadFilterNode = this.audioContext.createBiquadFilter();
                 this.biQuadDataObject.audioContext = this.audioContext;
-                this.biQuadDataObject.filter.frequency.value = 5000;
+                this.biQuadDataObject.setup(40, this.audioContext.sampleRate/2, 45);
 
                 //Setup FFT Analyzer
                 this.fftDataObject.fftAnalyzer.fftSize = 2048;
                 this.fftDataObject.fftBufferLength = this.fftDataObject.fftAnalyzer.frequencyBinCount;
                 this.fftDataObject.fftDataArray = new Uint8Array(this.fftDataObject.fftBufferLength);
 
-                //set initial volume as muted
-                this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0)
+                //Set up Gain Node
+                this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0);
+
+                //force pan change for initial setup
+                this.handlePanChange(null);
 
             } catch($err) {
                 l.error('Failed to create audio context: ', $err);
@@ -109,17 +115,6 @@ export default class AudioManager extends EventDispatcher {
 
     }
 
-    handleMomentaryMute($evt) {
-        l.debug('Caught Momentary Mute');
-        this.gainNode.gain.setTargetAtTime(0, this.audioContext.currentTime, 0);
-    }
-
-    handleUnmute($evt) {
-        l.debug('Caught Unmute: ', $evt.data);
-        let vol = ($evt.data / 100);
-        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0);
-    }
-
     loadSound($url) {
         return new Promise((resolve, reject) => {
            return fetch($url, {
@@ -135,15 +130,18 @@ export default class AudioManager extends EventDispatcher {
                 l.debug('Starting audio decode');
                 return new Promise((resolve, reject) => {
                     this.audioContext.decodeAudioData($buffer, ($decodedData) => {
+                        this.audioSource.loop = true;
+
                         this.audioSource.buffer = $decodedData;
                         this.sourceLChannelData = this.audioSource.buffer.getChannelData(0);
                         this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
-                        this.audioSource.loop = true;
+
                         this.audioSource.connect(this.scriptProcessorNode);
                         this.scriptProcessorNode.connect(this.biQuadFilterNode);
                         this.biQuadFilterNode.connect(this.gainNode);
                         this.gainNode.connect(this.fftDataObject.fftAnalyzer);
                         this.fftDataObject.fftAnalyzer.connect(this.audioContext.destination);
+
                         this.startSampleIndex = 0;
                         this.currentSampleIndex = 0;
                         this.endSampleIndex = this.audioSource.buffer.length - 1;
@@ -217,9 +215,26 @@ export default class AudioManager extends EventDispatcher {
     }
 
     handlePanChange($evt) {
-        let pan = ($evt.data / 100);
-        l.debug('Pan change: ', pan);
-        //this.panNode.pan.setTargetAtTime(pan, this.audioContext.currentTime, 0);
+
+        //Update BiQuad filter
+        let padVal = null;
+        if(this.biQuadDataObject.filter) {
+            if(this.volPanDataObject.currentPan <= 0) {
+                //LowPass
+                this.biQuadDataObject.filter.type = 'lowpass';
+                padVal = 1.0 - (Math.abs(this.volPanDataObject.currentPan) / 100);
+            } else {
+                //HighPass
+                this.biQuadDataObject.filter.type = 'highpass';
+                padVal = (Math.abs(this.volPanDataObject.currentPan) / 100);
+            }
+
+            //Set Freq Gate
+            this.biQuadDataObject.setFreqByVal(padVal);
+            this.biQuadDataObject.setQByVal(Math.abs(this.volPanDataObject.currentPan) / 100);
+
+        }
+
     }
 
     handleAudioProcess($evt){
