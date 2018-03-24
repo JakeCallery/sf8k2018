@@ -6,6 +6,7 @@ import JacEvent from './jac/events/JacEvent';
 import AudioUtils from 'jac/utils/AudioUtils';
 import MarkerDataObject from 'MarkerDataObject';
 import FFTDataObject from "./FFTDataObject";
+import BiQuadDataObject from "./BiQuadDataObject";
 
 export default class AudioManager extends EventDispatcher {
     constructor($window) {
@@ -15,6 +16,7 @@ export default class AudioManager extends EventDispatcher {
         this.window = $window;
         this.geb = new GlobalEventBus();
         this.fftDataObject = new FFTDataObject();
+        this.biQuadDataObject = new BiQuadDataObject();
 
         this.audioContext = null;
         this.audioSource = null;
@@ -25,8 +27,7 @@ export default class AudioManager extends EventDispatcher {
 
         this.scriptProcessorNode = null;
         this.gainNode = null;
-        this.panNode = null;
-        this.filterNode = null;
+        this.biQuadFilterNode = null;
 
         this.totalSamples = null;
         this.startSampleIndex = null;
@@ -75,8 +76,11 @@ export default class AudioManager extends EventDispatcher {
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
                 this.fftDataObject.fftAnalyzer = this.audioContext.createAnalyser();
                 this.gainNode = this.audioContext.createGain();
-                //this.panNode = this.audioContext.createStereoPanner();
-                //this.filterNode = this.audioContext.createBiquadFilter();
+
+                //BiQuad Filter
+                this.biQuadDataObject.filter =  this.biQuadFilterNode = this.audioContext.createBiquadFilter();
+                this.biQuadDataObject.audioContext = this.audioContext;
+                this.biQuadDataObject.filter.frequency.value = 5000;
 
                 //Setup FFT Analyzer
                 this.fftDataObject.fftAnalyzer.fftSize = 2048;
@@ -136,13 +140,10 @@ export default class AudioManager extends EventDispatcher {
                         this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
                         this.audioSource.loop = true;
                         this.audioSource.connect(this.scriptProcessorNode);
-                        this.scriptProcessorNode.connect(this.fftDataObject.fftAnalyzer);
-                        this.fftDataObject.fftAnalyzer.connect(this.gainNode);
-                        //this.scriptProcessorNode.connect(this.filterNode);
-                        //this.filterNode.connect(this.gainNode);
-                        //this.scriptProcessorNode.connect(this.panNode);
-                        //this.panNode.connect(this.gainNode);
-                        this.gainNode.connect(this.audioContext.destination);
+                        this.scriptProcessorNode.connect(this.biQuadFilterNode);
+                        this.biQuadFilterNode.connect(this.gainNode);
+                        this.gainNode.connect(this.fftDataObject.fftAnalyzer);
+                        this.fftDataObject.fftAnalyzer.connect(this.audioContext.destination);
                         this.startSampleIndex = 0;
                         this.currentSampleIndex = 0;
                         this.endSampleIndex = this.audioSource.buffer.length - 1;

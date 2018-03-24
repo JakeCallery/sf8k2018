@@ -7,6 +7,7 @@ import VolPanDataObject from 'VolPanDataObject';
 import MathUtils from 'jac/utils/MathUtils';
 import thumbPath from '../assets/images/TouchPadThumb.svg';
 import FFTDataObject from "./FFTDataObject";
+import BiQuadDataObject from "./BiQuadDataObject";
 
 export default class VolPanTouchPadUI extends EventDispatcher {
     constructor($document) {
@@ -21,6 +22,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.isTouchingOrMouseDown = false;
 
         this.fftDO = new FFTDataObject();
+        this.biQuadDO = new BiQuadDataObject();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -217,6 +219,37 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         //this.volPanTouchPadCanvasContext.fillStyle = '#0e125c';
         this.volPanTouchPadCanvasContext.clearRect(0,0,this.volPanTouchPadCanvas.width, this.volPanTouchPadCanvas.height);
 
+        //Update BiQuad filter
+        if(this.biQuadDO.filter) {
+            if(this.volPanDO.currentPan <= 0) {
+                //LowPass
+                this.biQuadDO.filter.type = 'lowpass';
+
+                // Clamp the frequency between the minimum value (40 Hz) and half of the
+                // sampling rate.
+                let minValue = 40;
+                let maxValue = this.biQuadDO.audioContext.sampleRate / 2;
+                let padVal = 1.0 - (Math.abs(this.volPanDO.currentPan) / 100);
+
+                // Logarithm (base 2) to compute how many octaves fall in the range.
+                let numberOfOctaves = Math.log(maxValue / minValue) / Math.LN2;
+
+                // Compute a multiplier from 0 to 1 based on an exponential scale.
+                let multiplier = Math.pow(2, numberOfOctaves * (padVal - 1.0));
+
+                // Get back to the frequency value between min and max.
+                this.biQuadDO.filter.frequency.value = maxValue * multiplier;
+
+                //Set up Q (more peak near the edge of the pad) (Multiplier of 100 is nuts!)
+                this.biQuadDO.filter.Q.value = (Math.abs(this.volPanDO.currentPan) / 100) * 45;
+                //this.biQuadDO.filter.Q.value = padVal * 30;
+
+            } else {
+                //HighPass
+                this.biQuadDO.filter.type = 'highpass';
+            }
+        }
+
         //Update Visualizer
         if(this.fftDO.fftAnalyzer) {
             this.fftDO.fftAnalyzer.getByteTimeDomainData(this.fftDO.fftDataArray);
@@ -227,9 +260,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             let y = canvasHeight;
             for(let i = 0; i < this.fftDO.fftBufferLength; i++) {
                 let v = (this.fftDO.fftDataArray[i] / 128.0);
-                let x = (v * canvasWidth) * (this.volPanDO.currentVolume / 100);
-                x += (canvasWidth/2);
-                x -= canvasWidth * (this.volPanDO.currentVolume / 100);
+                let x = (v * canvasWidth);
+                x -= (canvasWidth/2);
 
                 if(i === 0) {
                     this.volPanTouchPadCanvasContext.moveTo(x,y);
@@ -239,9 +271,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
                 y -= segLength;
             }
-
             this.volPanTouchPadCanvasContext.stroke();
-
         }
 
         //Draw thumb
@@ -255,6 +285,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchPadCanvasContext.beginPath();
         this.volPanTouchPadCanvasContext.fillStyle = '#c9be17';
 
+/*
         if(this.isTouchingOrMouseDown) {
             //vert line
             this.volPanTouchPadCanvasContext.fillRect(thumbX - 1, 0, 3, padHeight);
@@ -262,7 +293,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             //horiz line
             this.volPanTouchPadCanvasContext.fillRect(0, thumbY - 1, this.volPanTouchPadCanvas.width, 3);
         }
-
+*/
 
         if(this.isThumbLoaded === true) {
             this.volPanTouchPadCanvasContext.putImageData(this.thumbImageData, thumbX - this.thumbOffset, thumbY - this.thumbOffset);
