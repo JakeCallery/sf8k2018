@@ -5,6 +5,7 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from './jac/events/JacEvent';
 import AudioUtils from 'jac/utils/AudioUtils';
 import MarkerDataObject from 'MarkerDataObject';
+import FFTDataObject from "./FFTDataObject";
 
 export default class AudioManager extends EventDispatcher {
     constructor($window) {
@@ -13,6 +14,7 @@ export default class AudioManager extends EventDispatcher {
         let self = this;
         this.window = $window;
         this.geb = new GlobalEventBus();
+        this.fftDataObject = new FFTDataObject();
 
         this.audioContext = null;
         this.audioSource = null;
@@ -71,10 +73,15 @@ export default class AudioManager extends EventDispatcher {
 
                 this.scriptProcessorNode = this.audioContext.createScriptProcessor(2048,0,2);
                 this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
-
+                this.fftDataObject.fftAnalyzer = this.audioContext.createAnalyser();
                 this.gainNode = this.audioContext.createGain();
                 //this.panNode = this.audioContext.createStereoPanner();
                 //this.filterNode = this.audioContext.createBiquadFilter();
+
+                //Setup FFT Analyzer
+                this.fftDataObject.fftAnalyzer.fftSize = 2048;
+                this.fftDataObject.fftBufferLength = this.fftDataObject.fftAnalyzer.frequencyBinCount;
+                this.fftDataObject.fftDataArray = new Uint8Array(this.fftDataObject.fftBufferLength);
 
                 //set initial volume as muted
                 this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0)
@@ -129,7 +136,8 @@ export default class AudioManager extends EventDispatcher {
                         this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
                         this.audioSource.loop = true;
                         this.audioSource.connect(this.scriptProcessorNode);
-                        this.scriptProcessorNode.connect(this.gainNode);
+                        this.scriptProcessorNode.connect(this.fftDataObject.fftAnalyzer);
+                        this.fftDataObject.fftAnalyzer.connect(this.gainNode);
                         //this.scriptProcessorNode.connect(this.filterNode);
                         //this.filterNode.connect(this.gainNode);
                         //this.scriptProcessorNode.connect(this.panNode);

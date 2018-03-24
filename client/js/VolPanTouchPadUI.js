@@ -6,6 +6,7 @@ import JacEvent from 'jac/events/JacEvent';
 import VolPanDataObject from 'VolPanDataObject';
 import MathUtils from 'jac/utils/MathUtils';
 import thumbPath from '../assets/images/TouchPadThumb.svg';
+import FFTDataObject from "./FFTDataObject";
 
 export default class VolPanTouchPadUI extends EventDispatcher {
     constructor($document) {
@@ -18,6 +19,8 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.recenterOnTouchEnd = false;
         this.recenterOnMouseUp = false;
         this.isTouchingOrMouseDown = false;
+
+        this.fftDO = new FFTDataObject();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -213,6 +216,31 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         //Clear Canvas
         //this.volPanTouchPadCanvasContext.fillStyle = '#0e125c';
         this.volPanTouchPadCanvasContext.clearRect(0,0,this.volPanTouchPadCanvas.width, this.volPanTouchPadCanvas.height);
+
+        //Update Visualizer
+        if(this.fftDO.fftAnalyzer) {
+            this.fftDO.fftAnalyzer.getByteTimeDomainData(this.fftDO.fftDataArray);
+            this.volPanTouchPadCanvasContext.strokeStyle = '#C82920';
+            let canvasWidth = this.volPanTouchPadCanvas.width;
+            let canvasHeight = this.volPanTouchPadCanvas.height;
+            let segLength = canvasHeight / this.fftDO.fftBufferLength;
+            let y = canvasHeight;
+            for(let i = 0; i < this.fftDO.fftBufferLength; i++) {
+                let v = (this.fftDO.fftDataArray[i] / (128.0 * (this.volPanDO.currentVolume / 100)));
+                let x = v * canvasWidth/2;
+
+                if(i === 0) {
+                    this.volPanTouchPadCanvasContext.moveTo(x,y);
+                } else {
+                    this.volPanTouchPadCanvasContext.lineTo(x,y);
+                }
+
+                y -= segLength;
+            }
+
+            this.volPanTouchPadCanvasContext.stroke();
+
+        }
 
         //Draw thumb
         let padWidth = this.volPanTouchPadCanvas.width;
