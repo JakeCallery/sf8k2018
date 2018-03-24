@@ -226,8 +226,10 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             let segLength = canvasHeight / this.fftDO.fftBufferLength;
             let y = canvasHeight;
             for(let i = 0; i < this.fftDO.fftBufferLength; i++) {
-                let v = (this.fftDO.fftDataArray[i] / (128.0 * (this.volPanDO.currentVolume / 100)));
-                let x = v * canvasWidth/2;
+                let v = (this.fftDO.fftDataArray[i] / 128.0);
+                let x = (v * canvasWidth) * (this.volPanDO.currentVolume / 100);
+                x += (canvasWidth/2);
+                x -= canvasWidth * (this.volPanDO.currentVolume / 100);
 
                 if(i === 0) {
                     this.volPanTouchPadCanvasContext.moveTo(x,y);
