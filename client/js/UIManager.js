@@ -29,6 +29,7 @@ export default class UIManager extends EventDispatcher {
 
     init() {
         l.debug('DOM Ready');
+
         let self = this;
 
         l.debug('Absolute Screen Width: ' + window.screen.width);
@@ -58,11 +59,16 @@ export default class UIManager extends EventDispatcher {
         this.resizeDelegate = EventUtils.bind(self, self.handleResize);
         this.orientationChangeDelegate = EventUtils.bind(self, self.handleOrientationChange);
         this.fullscreenChangeDelegate = EventUtils.bind(self, self.handleFullScreenChange);
+        this.zoomDelegate = EventUtils.bind(self, self.handleZoom);
 
         //Events
         this.window.addEventListener('resize', this.resizeDebounceDelegate);
         this.window.addEventListener('resize', this.resizeDelegate);
         this.window.addEventListener('orientationchange', this.orientationChangeDelegate);
+
+        //ios workaround for disabling pinch to zoom
+        this.window.document.addEventListener('gesturestart', this.zoomDelegate);
+        this.window.document.addEventListener('touchmove', this.zoomDelegate);
 
         this.playButton.addEventListener('click', this.playClickDelegate);
         this.fullScreenButton.addEventListener('click', this.fullScreenClickDelegate);
@@ -80,6 +86,15 @@ export default class UIManager extends EventDispatcher {
         this.geb.dispatchEvent(new JacEvent('setInitialVol', 50));
         this.geb.dispatchEvent(new JacEvent('setInitialPan', 0));
 
+    }
+
+    handleZoom($evt) {
+        let event = $evt.originalEvent || $evt;
+        if(event.scale > 1) {
+            l.debug('Blocking Scale');
+            event.preventDefault();
+            this.doc.body.style.transform = 'scale(1)';
+        }
     }
 
     handleResize($evt) {
