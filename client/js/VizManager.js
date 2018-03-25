@@ -5,6 +5,7 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from 'jac/events/JacEvent';
 import MarkerDataObject from 'MarkerDataObject';
 import Stats from 'mrdoob/Stats';
+import GlobalDataObject from "./GlobalDataObject";
 
 export default class VizManager extends EventDispatcher {
     constructor($document){
@@ -24,6 +25,7 @@ export default class VizManager extends EventDispatcher {
         this.rBuffer = null;
         this.markerDO = new MarkerDataObject();
         this.isResizing = false;
+        this.globalDO = new GlobalDataObject();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -183,6 +185,19 @@ export default class VizManager extends EventDispatcher {
                 this.cleanWaveCanvasContext.fillRect(x, y, 1, height);
             }
 
+            //Draw drag area
+            //this.cleanWaveCanvasContext.fillStyle = 'rgba(137,33,127,0.3)';
+            let gradient = this.cleanWaveCanvasContext.createLinearGradient(0,0,0,this.cleanWaveCanvas.height);
+            gradient.addColorStop(0,'rgba(0,0,0,0)');
+            gradient.addColorStop(this.globalDO.lowerAreaY / this.cleanWaveCanvas.height, 'rgba(0,0,0,0');
+            gradient.addColorStop(1.0, 'rgba(16,10,255,0.5');
+            this.cleanWaveCanvasContext.fillStyle = gradient;
+            this.cleanWaveCanvasContext.fillRect(0,
+                this.globalDO.lowerAreaY,
+                this.cleanWaveCanvas.width,
+                this.cleanWaveCanvas.height - this.globalDO.lowerAreaY
+                );
+
             this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
         } else {
             let gradient = this.waveCanvasContext.createLinearGradient(0,0,0,this.waveCanvas.height);
@@ -204,8 +219,6 @@ export default class VizManager extends EventDispatcher {
         this.clearSoundCanvas();
 
         //Draw Loop rect
-        //this.soundCanvasContext.fillStyle = '#d6d124';
-        //this.soundCanvasContext.fillStyle = 'rgba(74,11,168,0.5)';
         this.soundCanvasContext.fillStyle = 'rgba(16,10,255,0.3)';
         this.soundCanvasContext.fillRect(
             this.markerDO.loopRect.x,

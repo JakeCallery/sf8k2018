@@ -6,6 +6,7 @@ import EventDispatcher from 'jac/events/EventDispatcher';
 import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from './jac/events/JacEvent';
 import MarkerDataObject from 'MarkerDataObject';
+import GlobalDataObject from "./GlobalDataObject";
 
 export default class InputManager extends EventDispatcher {
     constructor($document) {
@@ -15,6 +16,7 @@ export default class InputManager extends EventDispatcher {
         let self = this;
         this.doc = $document;
         this.geb = new GlobalEventBus();
+        this.globalDO = new GlobalDataObject();
 
         this.lastTouchPosDict = {};
         this.lastLoopRectTouchPos = null;
@@ -97,7 +99,7 @@ export default class InputManager extends EventDispatcher {
     handleTouchStart($evt) {
         l.debug('touch Start');
         $evt.preventDefault();
-        let horizon = this.soundCanvas.height / 2;
+        let horizon = this.globalDO.lowerAreaY;
 
         //TODO: Should "touches" be "changedTouches" here?
         //Save touch start points:

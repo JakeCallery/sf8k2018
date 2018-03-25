@@ -5,6 +5,7 @@ import GlobalEventBus from 'jac/events/GlobalEventBus';
 import JacEvent from './jac/events/JacEvent';
 import verge from "./verge/verge";
 import DOMUtils from "./jac/utils/DOMUtils";
+import GlobalDataObject from "./GlobalDataObject";
 
 export default class LayoutManager extends EventDispatcher {
     constructor($document, $window) {
@@ -13,6 +14,7 @@ export default class LayoutManager extends EventDispatcher {
         this.doc = $document;
         this.window = $window;
         this.geb = new GlobalEventBus();
+        this.globalDO = new GlobalDataObject();
 
         this.canvasSizeMaxRatio = 0.75;
         this.blurCanvas = null;
@@ -132,6 +134,9 @@ export default class LayoutManager extends EventDispatcher {
         this.canvasBlendLayer.style['width'] = canvasWidth + 'px';
         this.canvasBlendLayer.style['height'] = canvasHeight + 'px';
 
+        this.globalDO.lowerAreaY = this.waveCanvas.height - (this.waveCanvas.height / 4);
+        l.debug('LowerAreaY: ' + this.globalDO.lowerAreaY);
+
         //Left Controls button horizontal margins
         //let leftButtonsLeftMargin = Math.round((leftControlsWidth * 0.02) / 1.5);
         let leftButtonsLeftMargin = 0;
@@ -174,7 +179,6 @@ export default class LayoutManager extends EventDispatcher {
         for(let presetButton of this.presetButtons) {
             presetButton.style['width'] = presetButtonWidth + 'px';
             presetButton.style['height'] = presetButtonHeight + 'px';
-
         }
 
         //Mode Button Sizing
