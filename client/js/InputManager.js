@@ -101,19 +101,13 @@ export default class InputManager extends EventDispatcher {
         $evt.preventDefault();
         let horizon = this.globalDO.lowerAreaY;
 
+        this.globalDO.hasTouchedOnce = true;
+
         //TODO: Should "touches" be "changedTouches" here?
         //Save touch start points:
         for(let i = 0; i < $evt.touches.length; i++) {
 
             let touch = $evt.touches[i];
-
-            //TEMP
-            l.debug('ClientY: ', touch.pageY);
-            l.debug('PageY: ', touch.pageY);
-            ////////////
-
-
-            let touchY = touch.pageY - this.soundCanvasOffsetY;
             let touchId = touch.identifier.toString();
             if (!(touchId in this.lastTouchPosDict)) {
                 this.lastTouchPosDict[touchId] =
@@ -129,8 +123,6 @@ export default class InputManager extends EventDispatcher {
             for(let i = 0; i < $evt.changedTouches.length; i++) {
                 let touch = $evt.changedTouches[i];
                 let touchY = touch.pageY - this.soundCanvasOffsetY;
-                l.debug('TouchY: ' + touchY + ' / ' + this.soundCanvas.height/2 );
-                //if(touchY >= this.markerDO.loopRect.y){
                 if(touchY >= horizon){
                     this.loopRectTouchId = touch.identifier.toString();
                     this.lastLoopRectTouchPos = touch.pageX - this.soundCanvasOffsetX;
@@ -255,10 +247,8 @@ export default class InputManager extends EventDispatcher {
                     let newX = this.markerDO.startMarkerX + diff;
 
                     if(newX < 0) {
-                        l.debug('Capping start marker new X to 0');
                         newX = 0;
                     } else if(newX > this.soundCanvas.width) {
-                        l.debug('Capping start marker new X to canvas width: ' + this.soundCanvas.width);
                         newX = this.soundCanvas.width;
                     }
 
@@ -282,10 +272,8 @@ export default class InputManager extends EventDispatcher {
                     let newX = this.markerDO.endMarkerX + diff;
 
                     if(newX < 0) {
-                        l.debug('Capping end marker new X to 0');
                         newX = 0;
                     } else if(newX > this.soundCanvas.width) {
-                        l.debug('Capping end marker new X to canvas width: ' + this.soundCanvas.width);
                         newX = this.soundCanvas.width;
                     }
 
@@ -303,8 +291,6 @@ export default class InputManager extends EventDispatcher {
                 //This touch isn't being used for markers
                 //l.debug('Touch not assigned to start or end marker');
             }
-
-
         }
     }
 

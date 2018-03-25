@@ -59,12 +59,14 @@ export default class VizManager extends EventDispatcher {
         this.resizeStartedDelegate = EventUtils.bind(self, self.handleResizeStarted);
         this.resizingDelegate = EventUtils.bind(self, self.handleResizing);
         this.resizeEndedDelegate = EventUtils.bind(self, self.handleResizeEnded);
+        this.forceReLayoutDelegate = EventUtils.bind(self, self.handleForceReLayout);
 
         //Events
         this.geb.addEventListener('resizeStarted', this.resizeStartedDelegate);
         this.geb.addEventListener('resizing', this.resizingDelegate);
         this.geb.addEventListener('resizeEnded', this.resizeEndedDelegate);
         this.geb.addEventListener('soundLoaded', this.soundLoadedDelgate);
+        this.geb.addEventListener('forceReLayout', this.forceReLayoutDelegate);
     }
 
     handleSoundLoaded($evt) {
@@ -109,6 +111,11 @@ export default class VizManager extends EventDispatcher {
         this.isResizing = false;
         this.layoutVis();
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+    }
+
+    handleForceReLayout($evt) {
+        l.debug('Forcing ReLayout: ' + this.globalDO.hasTouchedOnce);
+        this.layoutVis();
     }
 
     layoutVis() {
@@ -186,18 +193,18 @@ export default class VizManager extends EventDispatcher {
             }
 
             //Draw drag area
-            //this.cleanWaveCanvasContext.fillStyle = 'rgba(137,33,127,0.3)';
-            let gradient = this.cleanWaveCanvasContext.createLinearGradient(0,0,0,this.cleanWaveCanvas.height);
-            gradient.addColorStop(0,'rgba(0,0,0,0)');
-            gradient.addColorStop(this.globalDO.lowerAreaY / this.cleanWaveCanvas.height, 'rgba(0,0,0,0');
-            gradient.addColorStop(1.0, 'rgba(16,10,255,0.5');
-            this.cleanWaveCanvasContext.fillStyle = gradient;
-            this.cleanWaveCanvasContext.fillRect(0,
-                this.globalDO.lowerAreaY,
-                this.cleanWaveCanvas.width,
-                this.cleanWaveCanvas.height - this.globalDO.lowerAreaY
+            if(this.globalDO.hasTouchedOnce === true) {
+                let gradient = this.cleanWaveCanvasContext.createLinearGradient(0,0,0,this.cleanWaveCanvas.height);
+                gradient.addColorStop(0,'rgba(0,0,0,0)');
+                gradient.addColorStop(this.globalDO.lowerAreaY / this.cleanWaveCanvas.height, 'rgba(0,0,0,0');
+                gradient.addColorStop(1.0, 'rgba(16,10,255,0.5');
+                this.cleanWaveCanvasContext.fillStyle = gradient;
+                this.cleanWaveCanvasContext.fillRect(0,
+                    this.globalDO.lowerAreaY,
+                    this.cleanWaveCanvas.width,
+                    this.cleanWaveCanvas.height - this.globalDO.lowerAreaY
                 );
-
+            }
             this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
         } else {
             let gradient = this.waveCanvasContext.createLinearGradient(0,0,0,this.waveCanvas.height);
