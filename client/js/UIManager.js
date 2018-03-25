@@ -90,7 +90,7 @@ export default class UIManager extends EventDispatcher {
 
     handleZoom($evt) {
         let event = $evt.originalEvent || $evt;
-        if(event.scale > 1) {
+        if(event.scale !== 1) {
             l.debug('Blocking Scale');
             event.preventDefault();
             this.doc.body.style.transform = 'scale(1)';
