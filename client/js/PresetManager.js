@@ -95,8 +95,6 @@ export default class PresetManager extends EventDispatcher {
     }
 
     getActivePresetIndex(){
-        //TODO: May want to cache this instead since we are against the
-        //clock set but the audio buffer when we run this
         let presetIndex = null;
         let numPresets = this.presets.length;
         for(let i = 0; i < numPresets; i++){

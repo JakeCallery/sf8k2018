@@ -23,9 +23,7 @@
 ##Bugs
 * Mute button un muting doesn't respect touch pad volume 
 * while holding mute button down, can't switch preset modes
-  * multi-touch issue
-* on ipad, full 180 rotate doesn't always redraw the page
-  
+  * multi-touch issue  
 
 ##Done
 * Y offset messed up when page is scrolled
@@ -57,3 +55,4 @@
 * style fullscreen button
 * Mouse doesn't work on MacOS Safari
 * ipad scaling is often an issue, may need to "lock" it like before
+* on ipad, full 180 rotate doesn't always redraw the page

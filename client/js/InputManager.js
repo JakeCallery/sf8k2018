@@ -225,7 +225,6 @@ export default class InputManager extends EventDispatcher {
     }
 
     handleTouchMove($evt) {
-        //TODO: refactor to be more DRY
         for(let i = 0; i < $evt.changedTouches.length; i++) {
             let touch = $evt.changedTouches[i];
             let touchId = touch.identifier.toString();
