@@ -12,11 +12,15 @@ export default class FeatureVerifier extends EventDispatcher {
     verify() {
         let notVerifiedList = [];
 
-        //TODO: Add check for StereoPannerNode
-
         //Audio Context
-        if(!(window.AudioContext || window.webkitAudioContext)){
+        let AudioContext = window.AudioContext || window.webkitAudioContext || false;
+        if(!AudioContext){
             notVerifiedList.push('AudioContext');
+        } else {
+            let ac = new AudioContext();
+            if(!('createBiquadFilter' in ac)){
+                notVerifiedList.push('BiQuadFilter');
+            }
         }
 
         //Fetch

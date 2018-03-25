@@ -1,5 +1,3 @@
-//TODO: Preset "setting" doesn't work with touch
-
 import l from 'jac/logger/Logger';
 import EventUtils from 'jac/utils/EventUtils';
 import EventDispatcher from 'jac/events/EventDispatcher';
@@ -105,11 +103,10 @@ export default class InputManager extends EventDispatcher {
 
         this.globalDO.hasTouchedOnce = true;
 
-        //TODO: Should "touches" be "changedTouches" here?
         //Save touch start points:
-        for(let i = 0; i < $evt.touches.length; i++) {
+        for(let i = 0; i < $evt.changedTouches.length; i++) {
 
-            let touch = $evt.touches[i];
+            let touch = $evt.changedTouches[i];
             let touchId = touch.identifier.toString();
             if (!(touchId in this.lastTouchPosDict)) {
                 this.lastTouchPosDict[touchId] =
@@ -192,7 +189,6 @@ export default class InputManager extends EventDispatcher {
             this.endMarkerTouchId = endMarkerTouchDOs[0].id.toString();
         }
 
-        //TODO: Draw colored line from marker center to assigned touch point
         l.debug('StartMarker Touch Id: ', this.startMarkerTouchId);
         l.debug('EndMarker Touch Id: ', this.endMarkerTouchId);
     }

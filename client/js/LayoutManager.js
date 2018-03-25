@@ -98,7 +98,7 @@ export default class LayoutManager extends EventDispatcher {
 
     adjustLayout() {
 
-        l.debug('******** Current Zoom/Scale: ', this.doc.body.clientWidth / window.innerWidth);
+        l.debug('Current Zoom/Scale: ', this.doc.body.clientWidth / window.innerWidth);
 
         let viewportWidth = verge.viewportW();
         let viewportHeight = verge.viewportH();
