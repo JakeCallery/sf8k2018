@@ -98,8 +98,12 @@ export default class LayoutManager extends EventDispatcher {
 
     adjustLayout() {
 
+        l.debug('******** Current Zoom/Scale: ', this.doc.body.clientWidth / window.innerWidth);
+
         let viewportWidth = verge.viewportW();
         let viewportHeight = verge.viewportH();
+
+        l.debug('Viewport Width/Height: ' + viewportWidth + '/' + viewportHeight);
 
         let canvasWidth = Math.round(0.65 * viewportWidth);
         let canvasHeight = viewportHeight;
@@ -110,6 +114,7 @@ export default class LayoutManager extends EventDispatcher {
             canvasHeight = maxHeightByRatio;
         }
 
+        l.debug('**** Canvas Width/ Height: ' + canvasWidth + '/' + canvasHeight);
 
         let leftControlsWidth = Math.round(0.15 * viewportWidth);
         let rightControlsWidth = Math.round(0.20 * viewportWidth);

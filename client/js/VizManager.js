@@ -99,6 +99,7 @@ export default class VizManager extends EventDispatcher {
     handleResizeStarted($evt) {
         l.debug('VizManager caught resize started');
         cancelAnimationFrame(this.rafId);
+        this.rafId = null;
         this.isResizing = true;
     }
 
@@ -110,7 +111,12 @@ export default class VizManager extends EventDispatcher {
         l.debug('VizManager caught resize ended');
         this.isResizing = false;
         this.layoutVis();
-        this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+
+        l.debug('RAF ID: ' + this.rafId);
+        if(this.rafId === null) {
+            this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
+        }
+
     }
 
     handleForceReLayout($evt) {

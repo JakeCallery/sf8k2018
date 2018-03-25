@@ -1,15 +1,12 @@
 ##Up Next
 * styling
- * finish styling sound and wave canvases
- * style fullscreen button
- * style record button
  * clean up edges on blurred canvas (black backing canvas maybe?)
   
 * Bug fixes
   * fix thumb canvas rendering issue on ios
-  * Mouse doesn't work on MacOS Safari
-
+ 
 * Preloader
+* enable/disable debug views with url query
 
 ##Future Features
 * warn if width is too narrow
@@ -24,12 +21,11 @@
   * 10 sec limit?
   
 ##Bugs
-* Mouse doesn't work on MacOS Safari
 * Mute button un muting doesn't respect touch pad volume 
 * while holding mute button down, can't switch preset modes
   * multi-touch issue
 * on ipad, full 180 rotate doesn't always redraw the page
-  * ipad scaling is often an issue, may need to "lock" it like before
+  
 
 ##Done
 * Y offset messed up when page is scrolled
@@ -57,3 +53,7 @@
 * Hook up lowpass filter to thumb left/right
   * (http://webaudioapi.com/samples/filter/)
   * Maybe add low pass to the left, high pass to right
+* finish styling sound and wave canvases
+* style fullscreen button
+* Mouse doesn't work on MacOS Safari
+* ipad scaling is often an issue, may need to "lock" it like before

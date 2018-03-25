@@ -19,6 +19,7 @@ export default class UIManager extends EventDispatcher {
         this.geb = new GlobalEventBus();
 
         this.muteButtonTouchId = null;
+        this.lastOrientation = null;
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -31,6 +32,8 @@ export default class UIManager extends EventDispatcher {
         l.debug('DOM Ready');
 
         let self = this;
+        this.lastOrientation = this.window.orientation;
+        l.debug('Orientation: ' + this.lastOrientation);
 
         l.debug('Absolute Screen Width: ' + window.screen.width);
         l.debug('Absolute Screen Height: ' + window.screen.height);
@@ -93,8 +96,9 @@ export default class UIManager extends EventDispatcher {
         if(event.scale !== 1) {
             l.debug('Blocking Scale');
             event.preventDefault();
-            this.doc.body.style.transform = 'scale(1)';
         }
+
+        this.doc.body.style.transform = 'scale(1)';
     }
 
     handleResize($evt) {
@@ -112,8 +116,23 @@ export default class UIManager extends EventDispatcher {
     }
 
     handleOrientationChange($evt) {
-        l.debug('Caught Orientation Change');
+        l.debug('**** Last Orientation: ' + this.lastOrientation);
+        l.debug('THIS orientation: ' + this.window.orientation);
+
+        let orientationDiff = Math.abs(this.lastOrientation - this.window.orientation);
+        l.debug('Orientation Diff: ' + orientationDiff);
+
+        this.lastOrientation = this.window.orientation;
+
+        l.debug('Caught Orientation Change: ', $evt);
         this.geb.dispatchEvent(new JacEvent('resizeStarted'));
+
+        if(orientationDiff >= 180) {
+            //Must fire resize ended right away, as there is no second resize event
+            //if orientation changes by 180 degs
+            this.geb.dispatchEvent(new JacEvent('resizeEnded'));
+        }
+
     }
 
     handleMuteButtonPress($evt) {
