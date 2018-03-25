@@ -119,8 +119,12 @@ export default class VizManager extends EventDispatcher {
 
             //Handle horizon
             this.horizon = Math.round(this.waveCanvas.height/2);
+            /*
             this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
             this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
+            */
+            this.markerDO.loopRect.height = this.waveCanvas.height;
+            this.markerDO.loopRect.y = 0;
 
             //Determine how many samples to average to generate the line
             this.samplesPerLine = Math.floor(this.totalSamples / this.waveCanvas.width);
@@ -129,7 +133,7 @@ export default class VizManager extends EventDispatcher {
             //Set color for line drawing
             //this.waveCanvasContext.fillStyle = '#4A0BA8';
             this.waveCanvasContext.fillStyle = '#ffffff';
-            this.cleanWaveCanvasContext.fillStyle = '#ffffff';
+            this.cleanWaveCanvasContext.fillStyle = '#AAAAAA';
 
             //Setup Heights
             let heightScaleFactor = null;
@@ -201,7 +205,7 @@ export default class VizManager extends EventDispatcher {
 
         //Draw Loop rect
         //this.soundCanvasContext.fillStyle = '#d6d124';
-        this.soundCanvasContext.fillStyle = 'rgba(214,209,36,0.3)';
+        this.soundCanvasContext.fillStyle = 'rgba(74,11,168,0.3)';
         this.soundCanvasContext.fillRect(
             this.markerDO.loopRect.x,
             this.markerDO.loopRect.y,
@@ -210,13 +214,13 @@ export default class VizManager extends EventDispatcher {
         );
 
         //Draw Start Marker
-        this.soundCanvasContext.fillStyle = '#00ff00';
+        this.soundCanvasContext.fillStyle = '#FF9A00';
         let startMarkerX = Math.floor(this.markerDO.startMarkerSample / this.samplesPerLine);
         //l.debug('StartMarkerX: ', startMarkerX , '/', this.markerDO.startMarkerSample, this.samplesPerLine);
         this.soundCanvasContext.fillRect(startMarkerX-2, 0, 4, this.soundCanvas.height);
 
         //Draw End Marker
-        this.soundCanvasContext.fillStyle = '#ff0000';
+        this.soundCanvasContext.fillStyle = '#C82920';
         let endMarkerX = Math.floor(this.markerDO.endMarkerSample / this.samplesPerLine);
         this.soundCanvasContext.fillRect(endMarkerX-2, 0, 4, this.soundCanvas.height);
 
