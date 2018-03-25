@@ -97,6 +97,7 @@ export default class InputManager extends EventDispatcher {
     handleTouchStart($evt) {
         l.debug('touch Start');
         $evt.preventDefault();
+        let horizon = this.soundCanvas.height / 2;
 
         //TODO: Should "touches" be "changedTouches" here?
         //Save touch start points:
@@ -126,7 +127,9 @@ export default class InputManager extends EventDispatcher {
             for(let i = 0; i < $evt.changedTouches.length; i++) {
                 let touch = $evt.changedTouches[i];
                 let touchY = touch.pageY - this.soundCanvasOffsetY;
-                if(touchY >= this.markerDO.loopRect.y){
+                l.debug('TouchY: ' + touchY + ' / ' + this.soundCanvas.height/2 );
+                //if(touchY >= this.markerDO.loopRect.y){
+                if(touchY >= horizon){
                     this.loopRectTouchId = touch.identifier.toString();
                     this.lastLoopRectTouchPos = touch.pageX - this.soundCanvasOffsetX;
                 }
@@ -140,7 +143,7 @@ export default class InputManager extends EventDispatcher {
                 let touchY = $evt.changedTouches[i].pageY - this.soundCanvasOffsetY;
 
                 //Ignore if in the loop rect
-                if(touchY < this.markerDO.loopRect.y) {
+                if(touchY < horizon) {
                     startMarkerTouchDOs.push(
                         this.createMarkerTouchDataObj(
                             $evt.changedTouches[i],
@@ -157,7 +160,7 @@ export default class InputManager extends EventDispatcher {
         if(this.endMarkerTouchId === null) {
             for (let i = 0; i < $evt.changedTouches.length; i++) {
                 let touchY = $evt.changedTouches[i].pageY - this.soundCanvasOffsetY;
-                if(touchY < this.markerDO.loopRect.y){
+                if(touchY < horizon){
                     endMarkerTouchDOs.push(
                         this.createMarkerTouchDataObj(
                             $evt.changedTouches[i],
@@ -296,7 +299,7 @@ export default class InputManager extends EventDispatcher {
                 }
             } else {
                 //This touch isn't being used for markers
-                l.debug('Touch not assigned to start or end marker');
+                //l.debug('Touch not assigned to start or end marker');
             }
 
 

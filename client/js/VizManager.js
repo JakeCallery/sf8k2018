@@ -186,9 +186,9 @@ export default class VizManager extends EventDispatcher {
             this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
         } else {
             let gradient = this.waveCanvasContext.createLinearGradient(0,0,0,this.waveCanvas.height);
-            gradient.addColorStop(0.0, '#130909');
-            gradient.addColorStop(0.5, '#400a0c');
-            gradient.addColorStop(1.0, '#130909');
+            gradient.addColorStop(0.0, '#330b67');
+            gradient.addColorStop(0.5, '#89217f');
+            gradient.addColorStop(1.0, '#330b67');
 
             this.waveCanvasContext.fillStyle = gradient;
             this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
@@ -205,7 +205,8 @@ export default class VizManager extends EventDispatcher {
 
         //Draw Loop rect
         //this.soundCanvasContext.fillStyle = '#d6d124';
-        this.soundCanvasContext.fillStyle = 'rgba(74,11,168,0.3)';
+        //this.soundCanvasContext.fillStyle = 'rgba(74,11,168,0.5)';
+        this.soundCanvasContext.fillStyle = 'rgba(16,10,255,0.3)';
         this.soundCanvasContext.fillRect(
             this.markerDO.loopRect.x,
             this.markerDO.loopRect.y,
@@ -214,13 +215,15 @@ export default class VizManager extends EventDispatcher {
         );
 
         //Draw Start Marker
-        this.soundCanvasContext.fillStyle = '#FF9A00';
+        //this.soundCanvasContext.fillStyle = '#FF9A00';
+        this.soundCanvasContext.fillStyle = '#ffffff';
         let startMarkerX = Math.floor(this.markerDO.startMarkerSample / this.samplesPerLine);
         //l.debug('StartMarkerX: ', startMarkerX , '/', this.markerDO.startMarkerSample, this.samplesPerLine);
         this.soundCanvasContext.fillRect(startMarkerX-2, 0, 4, this.soundCanvas.height);
 
         //Draw End Marker
-        this.soundCanvasContext.fillStyle = '#C82920';
+        //this.soundCanvasContext.fillStyle = '#C82920';
+        this.soundCanvasContext.fillStyle = '#ffffff';
         let endMarkerX = Math.floor(this.markerDO.endMarkerSample / this.samplesPerLine);
         this.soundCanvasContext.fillRect(endMarkerX-2, 0, 4, this.soundCanvas.height);
 
