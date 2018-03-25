@@ -231,7 +231,7 @@ export default class VizManager extends EventDispatcher {
         );
 
         //Draw Start Marker
-        this.soundCanvasContext.fillStyle = '#FF0000';
+        this.soundCanvasContext.fillStyle = '#ffffff';
         let startMarkerX = Math.floor(this.markerDO.startMarkerSample / this.samplesPerLine);
         this.soundCanvasContext.fillRect(startMarkerX-2, 0, 4, this.soundCanvas.height);
 
