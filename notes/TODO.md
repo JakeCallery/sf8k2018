@@ -7,6 +7,7 @@
   
 * Bug fixes
   * fix thumb canvas rendering issue on ios
+  * Mouse doesn't work on MacOS Safari
 
 * Preloader
 
@@ -23,6 +24,7 @@
   * 10 sec limit?
   
 ##Bugs
+* Mouse doesn't work on MacOS Safari
 * Mute button un muting doesn't respect touch pad volume 
 * while holding mute button down, can't switch preset modes
   * multi-touch issue

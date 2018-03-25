@@ -175,16 +175,23 @@ button {
 
 }
 
+.cleanWaveCanvas {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    top: 0;
+}
+
 .soundCanvas {
     position: absolute;
-    z-index: 2;
+    z-index: 10;
     left: 0;
     top: 0;
 }
 
 .canvasBlendLayer {
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     left: 0;
     top: 0;
     background: linear-gradient(0.25turn, #F735EC, #4A0BA8);

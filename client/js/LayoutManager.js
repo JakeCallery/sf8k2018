@@ -33,6 +33,7 @@ export default class LayoutManager extends EventDispatcher {
         //Adjust canvas size based on screensize
         this.canvasContainerDiv = this.doc.getElementById('canvasContainerDiv');
         this.waveCanvas = this.doc.getElementById('waveCanvas');
+        this.cleanWaveCanvas = this.doc.getElementById('cleanWaveCanvas');
         this.soundCanvas = this.doc.getElementById('soundCanvas');
         this.canvasBlendLayer = this.doc.getElementById('canvasBlendLayer');
 
@@ -110,6 +111,9 @@ export default class LayoutManager extends EventDispatcher {
         this.waveCanvas.width = canvasWidth;
         this.waveCanvas.height = canvasHeight;
 
+        this.cleanWaveCanvas.width = canvasWidth;
+        this.cleanWaveCanvas.height = canvasHeight;
+
         this.soundCanvas.width = canvasWidth;
         this.soundCanvas.height = canvasHeight;
 
@@ -118,6 +122,9 @@ export default class LayoutManager extends EventDispatcher {
 
         this.waveCanvas.style['width'] = canvasWidth + 'px';
         this.waveCanvas.style['height'] = canvasHeight + 'px';
+
+        this.cleanWaveCanvas.style['width'] = canvasWidth + 'px';
+        this.cleanWaveCanvas.style['height'] = canvasHeight + 'px';
 
         this.soundCanvas.style['width'] = canvasWidth + 'px';
         this.soundCanvas.style['height'] = canvasHeight + 'px';

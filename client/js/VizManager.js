@@ -45,6 +45,9 @@ export default class VizManager extends EventDispatcher {
         this.waveCanvas = this.doc.getElementById('waveCanvas');
         this.waveCanvasContext = this.waveCanvas.getContext('2d');
 
+        this.cleanWaveCanvas = this.doc.getElementById('cleanWaveCanvas');
+        this.cleanWaveCanvasContext = this.cleanWaveCanvas.getContext('2d');
+
         this.soundCanvas = this.doc.getElementById('soundCanvas');
         this.soundCanvasContext = this.soundCanvas.getContext('2d');
 
@@ -111,7 +114,8 @@ export default class VizManager extends EventDispatcher {
         if(!this.isResizing) {
             //Clear canvas
             this.waveCanvasContext.fillStyle = '#070125';
-            this.waveCanvasContext.fillRect(0,0,this.waveCanvas.width,this.waveCanvas.height);
+            this.waveCanvasContext.fillRect(0, 0, this.waveCanvas.width,this.waveCanvas.height);
+            this.cleanWaveCanvasContext.clearRect(0, 0, this.cleanWaveCanvas.width, this.cleanWaveCanvas.height);
 
             //Handle horizon
             this.horizon = Math.round(this.waveCanvas.height/2);
@@ -125,6 +129,7 @@ export default class VizManager extends EventDispatcher {
             //Set color for line drawing
             //this.waveCanvasContext.fillStyle = '#4A0BA8';
             this.waveCanvasContext.fillStyle = '#ffffff';
+            this.cleanWaveCanvasContext.fillStyle = '#ffffff';
 
             //Setup Heights
             let heightScaleFactor = null;
@@ -170,7 +175,8 @@ export default class VizManager extends EventDispatcher {
                 }
 
                 let height = sampleHeights[x] * heightScaleFactor * 2;
-                this.waveCanvasContext.fillRect(x, y, 1, height);
+                this.waveCanvasContext.fillRect(x-2, y, 5, height);
+                this.cleanWaveCanvasContext.fillRect(x, y, 1, height);
             }
 
             this.geb.dispatchEvent(new JacEvent('vizLayoutChanged'));
