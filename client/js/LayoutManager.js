@@ -6,6 +6,7 @@ import JacEvent from './jac/events/JacEvent';
 import verge from "./verge/verge";
 import DOMUtils from "./jac/utils/DOMUtils";
 import GlobalDataObject from "./GlobalDataObject";
+import screenfull from 'screenfull/screenfull';
 
 export default class LayoutManager extends EventDispatcher {
     constructor($document, $window) {
@@ -15,7 +16,7 @@ export default class LayoutManager extends EventDispatcher {
         this.window = $window;
         this.geb = new GlobalEventBus();
         this.globalDO = new GlobalDataObject();
-
+        this.hasFullScreenButton = true;
         this.canvasSizeMaxRatio = 0.75;
         this.blurCanvas = null;
 
@@ -67,6 +68,15 @@ export default class LayoutManager extends EventDispatcher {
         this.geb.addEventListener('resizing', this.resizingDelegate);
         this.geb.addEventListener('resizeEnded', this.resizeEndDelegate);
 
+        if(!screenfull) {
+            l.debug('**** Fullscreen not supported ****');
+            //Hide Fullscreen button
+            DOMUtils.addClass(this.fullscreenButton, 'is-hidden');
+            this.hasFullScreenButton = false;
+        } else {
+            l.debug('**** FullScreen Supported *****')
+        }
+
         this.adjustLayout();
 
     }
@@ -87,6 +97,7 @@ export default class LayoutManager extends EventDispatcher {
     }
 
     adjustLayout() {
+
         let viewportWidth = verge.viewportW();
         let viewportHeight = verge.viewportH();
 
@@ -168,7 +179,13 @@ export default class LayoutManager extends EventDispatcher {
 
         //Preset Button Sizing
         let presetButtonWidth = Math.round(rightControlsWidth * 0.48);
-        let presetButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.presetButtons.length) - (1 / this.presetButtons.length));
+        let presetButtonHeight = null;
+        if(this.hasFullScreenButton === true) {
+            presetButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.presetButtons.length) - (1 / this.presetButtons.length));
+        } else {
+            presetButtonHeight = Math.round(((this.soundCanvas.height * 1.0) / this.presetButtons.length) - (1 / this.presetButtons.length));
+        }
+
         for(let presetButton of this.presetButtons) {
             presetButton.style['width'] = presetButtonWidth + 'px';
             presetButton.style['height'] = presetButtonHeight + 'px';
@@ -176,7 +193,14 @@ export default class LayoutManager extends EventDispatcher {
 
         //Mode Button Sizing
         let modeButtonWidth = Math.round(rightControlsWidth * 0.50);
-        let modeButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.modeButtons.length) - (1 / this.modeButtons.length));
+        let modeButtonHeight = null;
+
+        if(this.hasFullScreenButton === true) {
+            modeButtonHeight = Math.round(((this.soundCanvas.height * 0.90) / this.modeButtons.length) - (1 / this.modeButtons.length));
+        } else {
+            modeButtonHeight = Math.round(((this.soundCanvas.height * 1.0) / this.modeButtons.length) - (1 / this.modeButtons.length));
+        }
+
         for(let modeButton of this.modeButtons) {
             modeButton.style['width'] = modeButtonWidth + 'px';
             modeButton.style['height'] = modeButtonHeight + 'px';

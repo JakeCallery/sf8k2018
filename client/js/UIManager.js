@@ -160,10 +160,8 @@ export default class UIManager extends EventDispatcher {
         DOMUtils.removeClass(this.fullScreenButton, 'fullScreenButtonShrink');
         DOMUtils.removeClass(this.fullScreenButton, 'fullScreenButtonExpand');
         if(screenfull.isFullscreen) {
-            //this.fullScreenButton.innerHTML = 'Shrink';
             DOMUtils.addClass(this.fullScreenButton, 'fullScreenButtonShrink');
         } else {
-            //this.fullScreenButton.innerHTML = 'Full';
             DOMUtils.addClass(this.fullScreenButton, 'fullScreenButtonExpand')
         }
 
