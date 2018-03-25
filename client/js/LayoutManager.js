@@ -55,7 +55,6 @@ export default class LayoutManager extends EventDispatcher {
         this.volPanTouchPadDiv = this.doc.getElementById('volPanTouchPadDiv');
         this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
 
-        this.recordButton = this.doc.getElementById('recordButton');
         this.fullscreenButton = this.doc.getElementById('fullScreenButton');
 
         //Delegates
@@ -161,15 +160,9 @@ export default class LayoutManager extends EventDispatcher {
         //Right Controls Button horizontal margins
         let rightButtonsLeftMargin = Math.round((rightControlsWidth * 0.02) / 1.5);
 
-        //Record Button Sizing
-        let recordButtonHeight = Math.round(this.soundCanvas.height * 0.10);
-        let recordButtonWidth = Math.floor(rightControlsWidth * 0.50);
-        this.recordButton.style['width'] = recordButtonWidth + 'px';
-        this.recordButton.style['height'] = recordButtonHeight + 'px';
-
         //Fullscreen Button Sizing
         let fullscreenButtonHeight = Math.round(this.soundCanvas.height * 0.10);
-        let fullscreenButtonWidth = Math.floor(rightControlsWidth * 0.50);
+        let fullscreenButtonWidth = Math.floor(rightControlsWidth * 1.0);
         this.fullscreenButton.style['width'] = fullscreenButtonWidth + 'px';
         this.fullscreenButton.style['height'] = fullscreenButtonHeight+ 'px';
 
