@@ -116,7 +116,7 @@ export default class UIManager extends EventDispatcher {
     }
 
     handleOrientationChange($evt) {
-        l.debug('**** Last Orientation: ' + this.lastOrientation);
+        l.debug('LAST Orientation: ' + this.lastOrientation);
         l.debug('THIS orientation: ' + this.window.orientation);
 
         let orientationDiff = Math.abs(this.lastOrientation - this.window.orientation);

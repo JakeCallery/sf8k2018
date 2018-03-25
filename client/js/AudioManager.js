@@ -41,6 +41,7 @@ export default class AudioManager extends EventDispatcher {
 
         this.isPlaying = false;
         this.wasPlaying = false;
+        this.lastResizeStartTime = null;
 
         this.markerDO = new MarkerDataObject();
 
@@ -287,10 +288,17 @@ export default class AudioManager extends EventDispatcher {
     }
 
     handleResizeStarted($evt) {
-        l.debug('AudioManager caught ResizeStarted');
+        l.debug('============ AudioManager caught ResizeStarted');
         l.debug('IsPlaying: ', this.isPlaying);
-        this.wasPlaying = this.isPlaying;
-        this.geb.dispatchEvent(new JacEvent('requestPause'));
+        //Workaround for ios orientation event
+        let now = Date.now();
+        if(this.lastResizeStartTime === null ||
+            (now - this.lastResizeStartTime) > 1000) {
+            this.lastResizeStartTime = now;
+            this.wasPlaying = this.isPlaying;
+            this.geb.dispatchEvent(new JacEvent('requestPause'));
+        }
+
     }
 
     handleResizeEnded($evt) {
