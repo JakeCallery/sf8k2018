@@ -128,10 +128,6 @@ export default class VizManager extends EventDispatcher {
 
             //Handle horizon
             this.horizon = Math.round(this.waveCanvas.height/2);
-            /*
-            this.markerDO.loopRect.height = this.horizon - Math.round(this.horizon / 2);
-            this.markerDO.loopRect.y = this.horizon + Math.round(this.horizon / 2);
-            */
             this.markerDO.loopRect.height = this.waveCanvas.height;
             this.markerDO.loopRect.y = 0;
 
@@ -235,14 +231,11 @@ export default class VizManager extends EventDispatcher {
         );
 
         //Draw Start Marker
-        //this.soundCanvasContext.fillStyle = '#FF9A00';
-        this.soundCanvasContext.fillStyle = '#ffffff';
+        this.soundCanvasContext.fillStyle = '#FF0000';
         let startMarkerX = Math.floor(this.markerDO.startMarkerSample / this.samplesPerLine);
-        //l.debug('StartMarkerX: ', startMarkerX , '/', this.markerDO.startMarkerSample, this.samplesPerLine);
         this.soundCanvasContext.fillRect(startMarkerX-2, 0, 4, this.soundCanvas.height);
 
         //Draw End Marker
-        //this.soundCanvasContext.fillStyle = '#C82920';
         this.soundCanvasContext.fillStyle = '#ffffff';
         let endMarkerX = Math.floor(this.markerDO.endMarkerSample / this.samplesPerLine);
         this.soundCanvasContext.fillRect(endMarkerX-2, 0, 4, this.soundCanvas.height);

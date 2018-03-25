@@ -21,6 +21,8 @@ export default class InputManager extends EventDispatcher {
         this.lastTouchPosDict = {};
         this.lastLoopRectTouchPos = null;
 
+        this.lastButtonDown = null;
+
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
             this.init();
@@ -299,7 +301,10 @@ export default class InputManager extends EventDispatcher {
     }
 
     handleMouseDown($evt) {
-        l.debug('Mouse Down:', $evt.buttons);
+        l.debug('Mouse Down:', $evt.button);
+
+        this.lastButtonDown = $evt.button;
+
         $evt.preventDefault();
         this.soundCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
         this.doc.addEventListener('mouseup', this.mouseUpDelegate);
@@ -319,21 +324,24 @@ export default class InputManager extends EventDispatcher {
     }
 
     updateFromButton($evt) {
-        if($evt.buttons === 1){
+        l.debug('Last Button Down: ' + this.lastButtonDown);
+
+        if(this.lastButtonDown === 0){
             l.debug('Setting Start marker to: ', $evt.pageX - this.soundCanvasOffsetX);
             this.markerDO.startMarkerX = $evt.pageX - this.soundCanvasOffsetX;
         }
 
-        if($evt.buttons === 2){
-            l.debug('Setting End marker to: ', $evt.pageX - this.soundCanvasOffsetX);
-            this.markerDO.endMarkerX = $evt.pageX - this.soundCanvasOffsetX;
-        }
-
-        if($evt.buttons === 4) {
+        if(this.lastButtonDown === 1) {
             let mouseMoveDiff = ($evt.pageX - this.soundCanvasOffsetX) - this.lastMouseDownX;
             this.handleLoopRectDrag(mouseMoveDiff);
             this.lastMouseDownX = $evt.pageX - this.soundCanvasOffsetX;
         }
+
+        if(this.lastButtonDown === 2){
+            l.debug('Setting End marker to: ', $evt.pageX - this.soundCanvasOffsetX);
+            this.markerDO.endMarkerX = $evt.pageX - this.soundCanvasOffsetX;
+        }
+
     }
 
     handleLoopRectDrag($diff) {

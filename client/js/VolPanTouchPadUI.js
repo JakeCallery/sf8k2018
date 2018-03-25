@@ -19,7 +19,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchId = null;
         this.recenterOnTouchEnd = false;
         this.recenterOnMouseUp = false;
-        this.isTouchingOrMouseDown = false;
+        this.lasButtonDown = null;
 
         this.fftDO = new FFTDataObject();
 
@@ -113,15 +113,15 @@ export default class VolPanTouchPadUI extends EventDispatcher {
 
 
     handleMouseDown($evt) {
-        l.debug('Buttons: ', $evt.buttons);
         $evt.preventDefault();
+
+        this.lasButtonDown = $evt.button;
+
         this.volPanTouchPadCanvas.addEventListener('mousemove', this.mouseMoveDelegate);
         this.doc.addEventListener('mouseup', this.mouseUpDelegate);
 
-        if($evt.buttons === 2) {
+        if(this.lasButtonDown === 2) {
             this.recenterOnMouseUp = true;
-        } else {
-            this.isTouchingOrMouseDown = true;
         }
 
         //Force position update
@@ -138,14 +138,10 @@ export default class VolPanTouchPadUI extends EventDispatcher {
             this.volPanDataObject.currentPan = 0;
             this.volPanDataObject.currentVolume = 50;
         }
-
-        if($evt.buttons === 0) {
-            this.isTouchingOrMouseDown = false;
-        }
     }
 
     handleMouseMove($evt) {
-        if($evt.buttons === 1) {
+        if(this.lasButtonDown === 0) {
             this.changeVolPanFromPageLocation($evt.pageX, $evt.pageY);
         }
     }
@@ -252,17 +248,9 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchPadCanvasContext.beginPath();
         this.volPanTouchPadCanvasContext.fillStyle = '#c9be17';
 
-
         if(this.isThumbLoaded === true) {
             this.volPanTouchPadCanvasContext.putImageData(this.thumbImageData, thumbX - this.thumbOffset, thumbY - this.thumbOffset);
         }
-        /*
-        this.volPanTouchPadCanvasContext.strokeStyle = '#5e5e5e';
-        this.volPanTouchPadCanvasContext.lineWidth = 2;
-        this.volPanTouchPadCanvasContext.arc(thumbX, thumbY, (padWidth * 0.1), 0, Math.PI * 2, false);
-        this.volPanTouchPadCanvasContext.fill();
-        this.volPanTouchPadCanvasContext.stroke();
-        */
 
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
