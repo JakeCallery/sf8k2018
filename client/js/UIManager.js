@@ -7,6 +7,7 @@ import screenfull from 'screenfull/screenfull';
 import verge from 'verge/verge';
 import DOMUtils from "./jac/utils/DOMUtils";
 import LimitUtils from "./jac/utils/LimitUtils";
+import VolPanDataObject from "./VolPanDataObject";
 
 export default class UIManager extends EventDispatcher {
     constructor($window) {
@@ -20,6 +21,8 @@ export default class UIManager extends EventDispatcher {
 
         this.muteButtonTouchId = null;
         this.lastOrientation = null;
+
+        this.volPanDO = new VolPanDataObject();
 
         //Wait for the DOM to be ready
         this.doc.addEventListener('DOMContentLoaded', () => {
@@ -53,7 +56,6 @@ export default class UIManager extends EventDispatcher {
 
         //Delegates
         this.playClickDelegate = EventUtils.bind(self, self.handlePlayClick);
-        this.requestInitialVolDelegate = EventUtils.bind(self, self.handleRequestInitialVol);
         this.fullScreenClickDelegate = EventUtils.bind(self, self.handleFullScreenClick);
         this.muteButtonPressDelegate = EventUtils.bind(self, self.handleMuteButtonPress);
         this.globalMuteReleaseDelegate = EventUtils.bind(self, self.handleGlobalMuteRelease);
@@ -75,7 +77,6 @@ export default class UIManager extends EventDispatcher {
 
         this.playButton.addEventListener('click', this.playClickDelegate);
         this.fullScreenButton.addEventListener('click', this.fullScreenClickDelegate);
-        this.geb.addEventListener('requestInitialVol', this.requestInitialVolDelegate);
         this.muteButton.addEventListener('mousedown', this.muteButtonPressDelegate);
         this.muteButton.addEventListener('touchstart', this.muteButtonPressDelegate);
         this.geb.addEventListener('playStateChanged', this.playStateChangedDelegate);
@@ -159,8 +160,7 @@ export default class UIManager extends EventDispatcher {
         l.debug('Caught Mute Button Release');
 
         //Unmute to vol input vol
-        //TODO: hook this up to new UI
-        let sliderVol = 50;
+        let sliderVol = this.volPanDO.currentVolume;
 
         if('changedTouches' in $evt) {
             l.debug('Touch Release');
@@ -198,14 +198,6 @@ export default class UIManager extends EventDispatcher {
         } else {
             DOMUtils.addClass(this.fullScreenButton, 'fullScreenButtonExpand')
         }
-
-    }
-
-
-    handleRequestInitialVol($evt){
-        l.debug('Setting Initial Vol');
-        //TODO: update this to new UI
-        //this.geb.dispatchEvent(new JacEvent('setInitialVol', this.volSlider.value));
     }
 
     handlePlayClick($evt) {
