@@ -16,10 +16,12 @@ import VolPanTouchPadUI from "./VolPanTouchPadUI";
 //Import assets
 import '../assets/favicons/favicons';
 import '../assets/sounds/sounds';
+//import '../assets/images/images';
 
 //Import through loaders
 import '../css/normalize.css';
 import '../css/main.css';
+import BasicPreloader from "./BasicPreloader";
 
 
 l.addLogTarget(new ConsoleTarget());
@@ -49,6 +51,33 @@ if(fvResponse.length !== 0) {
 } else {
     l.debug('All features Verified');
 }
+
+//Hide for preload
+let mainContainerDiv = document.getElementById('mainContainerDiv');
+mainContainerDiv.style['display'] = 'none';
+
+const images = require.context(
+    '!!file-loader?name=./images/[hash]-[name].[ext]!../assets/images',
+    true,
+    /\.(svg|png)$/
+);
+
+let imageList = [];
+images.keys().forEach(($key) => {
+    l.debug('Value: ', images($key));
+    imageList.push(images($key));
+});
+
+let preloader = new BasicPreloader(window);
+preloader.addEventListener('imageLoaded', ($evt) => {
+   l.debug('Image Loaded: ' + $evt.data);
+   if(preloader.numTotal === preloader.numLoaded) {
+       l.debug('DONE LOADING!');
+       mainContainerDiv.style['display'] = 'block';
+   }
+});
+preloader.preload(imageList);
+
 
 //Setup UI
 let lm = new LayoutManager(document, window);
