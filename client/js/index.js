@@ -77,13 +77,11 @@ preloader.addEventListener('imageLoaded', ($evt) => {
    l.debug('Image Loaded: ' + $evt.data);
    if(preloader.numTotal === preloader.numLoaded) {
        l.debug('DONE LOADING!');
-       mainContainerDiv.style['visibility'] = 'visible';
-       mainContainerDiv.style['display'] = 'none';
        //Awful workaround to get safari to show the svg images on load every time
        setTimeout(() => {
+           mainContainerDiv.style['visibility'] = 'visible';
            mainContainerDiv.style['display'] = 'block';
        },1000);
-
    }
 });
 preloader.preload(imageList);
