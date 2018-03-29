@@ -78,8 +78,9 @@ export default class VizManager extends EventDispatcher {
         this.audioContext = $evt.data.audioContext;
 
         this.totalSamples = this.audioSource.buffer.length;
-        this.lBuffer = this.audioSource.buffer.getChannelData(0);
-        this.rBuffer = this.audioSource.buffer.getChannelData(1);
+        //Make actual copy of buffer because Edge detaches audiosource.buffer after decode
+        this.lBuffer = this.audioSource.buffer.getChannelData(0).slice(0);
+        this.rBuffer = this.audioSource.buffer.getChannelData(1).slice(0);
 
         //set initial start/end markers
         this.markerDO.startMarkerSample = 0;
