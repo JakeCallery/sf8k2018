@@ -7,7 +7,7 @@ import VolPanDataObject from 'VolPanDataObject';
 import MathUtils from 'jac/utils/MathUtils';
 import thumbPath from '../assets/images/TouchPadThumb.svg';
 import FFTDataObject from "./FFTDataObject";
-import BiQuadDataObject from "./BiQuadDataObject";
+import DOMUtils from 'jac/utils/DOMUtils';
 
 export default class VolPanTouchPadUI extends EventDispatcher {
     constructor($document) {
@@ -36,6 +36,7 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.volPanTouchPadCanvas = this.doc.getElementById('volPanTouchPadCanvas');
         this.volPanTouchPadCanvasContext = this.volPanTouchPadCanvas.getContext('2d');
         this.mainDiv = this.doc.getElementById('mainDiv');
+        this.volPanTouchPadDiv = this.doc.getElementById('volPanTouchPadDiv');
 
         //Delegates
         this.requestAnimationFrameDelegate = EventUtils.bind(self, self.handleRequestAnimationFrame);
@@ -64,9 +65,10 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         this.thumbSize = Math.round(this.volPanTouchPadCanvas.width * 0.25);
         this.thumbOffset = Math.round(this.thumbSize/2);
         this.thumbImage = new Image(this.thumbSize, this.thumbSize);
+
         //hack for ios safari, image data is empty until its on the DOM
         //so displaying in a hidden state for now
-        this.thumbImage.style['display'] = 'none';
+        DOMUtils.addClass(this.thumbImage, 'thumbImg');
         this.thumbImageData = null;
         this.thumbImage.src = thumbPath;
         this.thumbImage.addEventListener('load', this.thumbImageLoadedDelegate);
@@ -78,9 +80,9 @@ export default class VolPanTouchPadUI extends EventDispatcher {
     handleThumbImageLoaded($e) {
         l.debug('************* Caught Thumb Image Loaded: ', this.thumbSize);
         this.isThumbLoaded = true;
-        this.thumbCanvasCtx.drawImage(this.thumbImage, 0, 0, this.thumbSize, this.thumbSize);
-        this.thumbImageData = this.thumbCanvasCtx.getImageData(0,0,this.thumbSize,this.thumbSize);
-        this.mainDiv.appendChild(this.thumbImage);
+        this.volPanTouchPadDiv.appendChild(this.thumbImage);
+        // this.thumbCanvasCtx.drawImage(this.thumbImage, 0, 0, this.thumbSize, this.thumbSize);
+        // this.thumbImageData = this.thumbCanvasCtx.getImageData(0,0,this.thumbSize,this.thumbSize);
     }
 
     yCoordToVolPercent($y) {
@@ -245,13 +247,21 @@ export default class VolPanTouchPadUI extends EventDispatcher {
         let thumbX = ((this.volPanDataObject.currentPan / 100) * (padWidthCenter)) + padWidthCenter;
         let thumbY = padHeight - ((this.volPanDataObject.currentVolume / 100) * (padHeight));
 
-        this.volPanTouchPadCanvasContext.beginPath();
-        this.volPanTouchPadCanvasContext.fillStyle = '#c9be17';
+        thumbX += this.volPanTouchPadDiv.offsetLeft - (this.thumbImage.width/2);
+        thumbY += this.volPanTouchPadDiv.offsetTop - (this.thumbImage.height/2);
 
+        this.thumbImage.style['left'] = thumbX + 'px';
+        this.thumbImage.style['top'] = thumbY + 'px';
+
+        // this.volPanTouchPadCanvasContext.beginPath();
+        // this.volPanTouchPadCanvasContext.fillStyle = '#c9be17';
+        //
+
+        /*
         if(this.isThumbLoaded === true) {
             this.volPanTouchPadCanvasContext.putImageData(this.thumbImageData, thumbX - this.thumbOffset, thumbY - this.thumbOffset);
         }
-
+        */
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 

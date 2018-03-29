@@ -156,6 +156,10 @@ button {
     border-radius: 5px;
 }
 
+.thumbImg {
+    position: absolute;
+}
+
 /*********************************/
 /* CENTER CANVAS */
 /*********************************/
