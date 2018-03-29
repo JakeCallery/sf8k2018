@@ -12,6 +12,7 @@ import InputManager from 'InputManager';
 import PresetManager from 'PresetManager';
 import LayoutManager from "./LayoutManager";
 import VolPanTouchPadUI from "./VolPanTouchPadUI";
+import JacEvent from 'jac/events/JacEvent';
 
 //For Edge Support:
 //https://github.com/babel/babel/issues/4075
@@ -58,7 +59,6 @@ if(fvResponse.length !== 0) {
 
 //Hide for preload
 let mainContainerDiv = document.getElementById('mainContainerDiv');
-mainContainerDiv.style['display'] = 'none';
 
 const images = require.context(
     '!!file-loader?name=./images/[hash]-[name].[ext]!../assets/images',
@@ -77,7 +77,13 @@ preloader.addEventListener('imageLoaded', ($evt) => {
    l.debug('Image Loaded: ' + $evt.data);
    if(preloader.numTotal === preloader.numLoaded) {
        l.debug('DONE LOADING!');
-       mainContainerDiv.style['display'] = 'block';
+       mainContainerDiv.style['visibility'] = 'visible';
+       mainContainerDiv.style['display'] = 'none';
+       //Awful workaround to get safari to show the images on load everytime
+       setTimeout(() => {
+           mainContainerDiv.style['display'] = 'block';
+       },1000);
+
    }
 });
 preloader.preload(imageList);

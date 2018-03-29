@@ -62,11 +62,13 @@ export default class LayoutManager extends EventDispatcher {
         this.resizeStartDelegate = EventUtils.bind(self, self.handleResizeStart);
         this.resizeEndDelegate = EventUtils.bind(self, self.handleResizeEnd);
         this.resizingDelegate = EventUtils.bind(self, self.handleResizing);
+        this.requestRelayoutDelegate = EventUtils.bind(self, self.handleRequestRelayout);
 
         //Events
         this.geb.addEventListener('resizeStarted', this.resizeStartDelegate);
         this.geb.addEventListener('resizing', this.resizingDelegate);
         this.geb.addEventListener('resizeEnded', this.resizeEndDelegate);
+        this.geb.addEventListener('requestRelayout', this.requestRelayoutDelegate);
 
         if(!screenfull) {
             l.debug('**** Fullscreen not supported ****');
@@ -79,6 +81,11 @@ export default class LayoutManager extends EventDispatcher {
 
         this.adjustLayout();
 
+    }
+
+    handleRequestRelayout($evt) {
+        l.debug('Caught Request Relayout');
+        this.adjustLayout();
     }
 
     handleResizeStart($evt) {

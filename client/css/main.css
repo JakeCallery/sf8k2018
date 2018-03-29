@@ -26,10 +26,6 @@ div {
     padding: 0;
 }
 
-.displayNone {
-    display: none;
-}
-
 .is-invisible {
     opacity: 0;
 }
