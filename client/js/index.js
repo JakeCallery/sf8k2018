@@ -13,6 +13,10 @@ import PresetManager from 'PresetManager';
 import LayoutManager from "./LayoutManager";
 import VolPanTouchPadUI from "./VolPanTouchPadUI";
 
+//For Edge Support:
+//https://github.com/babel/babel/issues/4075
+import "core-js/fn/symbol/iterator.js";
+
 //Import assets
 import '../assets/favicons/favicons';
 import '../assets/sounds/sounds';

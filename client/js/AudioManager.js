@@ -70,42 +70,45 @@ export default class AudioManager extends EventDispatcher {
     }
 
     init() {
+        l.debug('AM Init');
         return new Promise((resolve, reject) => {
             //Set up context
             try {
                 this.audioContext = AudioUtils.getContext();
-
-                //Create Nodes
-                this.scriptProcessorNode = this.audioContext.createScriptProcessor(2048,0,2);
-                this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
-                this.fftDataObject.fftAnalyzer = this.audioContext.createAnalyser();
-                this.gainNode = this.audioContext.createGain();
-
-                //BiQuad Filter
-                this.biQuadDataObject.filter =  this.biQuadFilterNode = this.audioContext.createBiquadFilter();
-                this.biQuadDataObject.audioContext = this.audioContext;
-                this.biQuadDataObject.setup(40, this.audioContext.sampleRate/2, 45);
-
-                //Setup FFT Analyzer
-                this.fftDataObject.fftAnalyzer.fftSize = 2048;
-                this.fftDataObject.fftBufferLength = this.fftDataObject.fftAnalyzer.frequencyBinCount;
-                this.fftDataObject.fftDataArray = new Uint8Array(this.fftDataObject.fftBufferLength);
-
-                //Set up Gain Node
-                this.gainNode.gain.setTargetAtTime(0.0, this.audioContext.currentTime, 0);
-
-                //force pan change for initial setup
-                this.handlePanChange(null);
-
             } catch($err) {
                 l.error('Failed to create audio context: ', $err);
                 reject($err);
             }
 
+
+            //Create Nodes
+            this.scriptProcessorNode = this.audioContext.createScriptProcessor(2048,0,2);
+            this.scriptProcessorNode.addEventListener('audioprocess', this.audioProcessDelegate);
+            this.fftDataObject.fftAnalyzer = this.audioContext.createAnalyser();
+            this.gainNode = this.audioContext.createGain();
+
+            //BiQuad Filter
+            this.biQuadDataObject.filter =  this.biQuadFilterNode = this.audioContext.createBiquadFilter();
+            this.biQuadDataObject.audioContext = this.audioContext;
+            this.biQuadDataObject.setup(40, this.audioContext.sampleRate/2, 45);
+
+            //Setup FFT Analyzer
+            this.fftDataObject.fftAnalyzer.fftSize = 2048;
+            this.fftDataObject.fftBufferLength = this.fftDataObject.fftAnalyzer.frequencyBinCount;
+            this.fftDataObject.fftDataArray = new Uint8Array(this.fftDataObject.fftBufferLength);
+
+            //Set up Gain Node
+            this.gainNode.gain.setTargetAtTime(0.0, 0, 0.01);
+
+            //force pan change for initial setup
+            this.handlePanChange(null);
+
             //Set up source
             try {
+                l.debug('IE HERE');
                 this.audioSource = AudioUtils.createSoundSourceWithBuffer(this.audioContext);
             } catch ($err) {
+                l.debug('IE HERE1');
                 l.error('Failed to create audio source: ', $err);
                 reject($err);
             }
@@ -117,6 +120,7 @@ export default class AudioManager extends EventDispatcher {
     }
 
     loadSound($url) {
+        l.debug('Loading sound');
         return new Promise((resolve, reject) => {
            return fetch($url, {
                 method: 'GET',
@@ -134,8 +138,11 @@ export default class AudioManager extends EventDispatcher {
                         this.audioSource.loop = true;
 
                         this.audioSource.buffer = $decodedData;
-                        this.sourceLChannelData = this.audioSource.buffer.getChannelData(0);
-                        this.sourceRChannelData = this.audioSource.buffer.getChannelData(1);
+
+                        //Make full copy of buffers as the audiosource buffer gets detached after decoding
+                        //in Edge
+                        this.sourceLChannelData = this.audioSource.buffer.getChannelData(0).slice(0);
+                        this.sourceRChannelData = this.audioSource.buffer.getChannelData(1).slice(0);
 
                         this.audioSource.connect(this.scriptProcessorNode);
                         this.scriptProcessorNode.connect(this.biQuadFilterNode);
@@ -153,7 +160,8 @@ export default class AudioManager extends EventDispatcher {
                         l.debug('Num Channels: ', this.audioSource.buffer.numberOfChannels);
                         l.debug('Num Samples: ', this.audioSource.buffer.length);
                         l.debug('Duration: ', this.audioSource.buffer.duration);
-
+                        l.debug('Left Channel Length: ', this.sourceLChannelData.byteLength);
+                        l.debug('Right Channel Length: ', this.sourceRChannelData.byteLength);
                         this.geb.dispatchEvent(new JacEvent('soundLoaded',
                             {
                                 audioManager:this,
@@ -161,6 +169,8 @@ export default class AudioManager extends EventDispatcher {
                                 audioContext:this.audioContext
                             })
                         );
+
+                        l.debug('***** ByteLength: ', this.sourceLChannelData.byteLength);
                         resolve();
                     });
                 });
@@ -212,11 +222,10 @@ export default class AudioManager extends EventDispatcher {
     handleVolChange($evt) {
         let vol = ($evt.data / 100);
         l.debug('caught vol change: ', vol);
-        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0);
+        this.gainNode.gain.setTargetAtTime(vol, this.audioContext.currentTime, 0.01);
     }
 
     handlePanChange($evt) {
-
         //Update BiQuad filter
         let padVal = null;
         if(this.biQuadDataObject.filter) {
@@ -274,10 +283,8 @@ export default class AudioManager extends EventDispatcher {
                         this.currentSampleIndex = this.startSampleIndex;
                     }
                 }
-
                 lOutputBuffer[i] = this.sourceLChannelData[this.currentSampleIndex];
                 rOutputBuffer[i] = this.sourceRChannelData[this.currentSampleIndex];
-
             }
         } else {
             for(let i = 0; i < lOutputBuffer.length; i++) {

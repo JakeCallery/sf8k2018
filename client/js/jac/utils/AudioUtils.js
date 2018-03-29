@@ -23,9 +23,8 @@ export default {
 		return soundSource;
 	},
 
-	createSoundSourceWithBuffer: ($audioContext, $buffer) => {
+	createSoundSourceWithBuffer: ($audioContext) => {
 		let soundSource = $audioContext.createBufferSource();
-		soundSource.buffer = $buffer;
 		return soundSource;
 	}
 

@@ -97,7 +97,6 @@ export default class LayoutManager extends EventDispatcher {
     }
 
     adjustLayout() {
-
         l.debug('Current Zoom/Scale: ', this.doc.body.clientWidth / window.innerWidth);
 
         let viewportWidth = verge.viewportW();
@@ -214,7 +213,5 @@ export default class LayoutManager extends EventDispatcher {
 
         //Final Vertical Centering:
         this.mainContainerDiv.style['padding-top'] = Math.round((viewportHeight - canvasHeight) /2) + 'px';
-
-
     }
 }

@@ -31,11 +31,11 @@ export default class BiQuadDataObject extends EventDispatcher {
     setFreqByVal($val) {
         //zero to one value
         let mult = Math.pow(2, this.numOctaves * ($val - 1.0));
-        this.filter.frequency.setTargetAtTime(this.maxValue * mult, this.audioContext.currentTime, 0);
+        this.filter.frequency.setTargetAtTime(this.maxValue * mult, this.audioContext.currentTime, 0.01);
     }
 
     setQByVal($val) {
         //zero to one value
-        this.filter.Q.setTargetAtTime($val * this.qMult, this.audioContext.currentTime, 0);
+        this.filter.Q.setTargetAtTime($val * this.qMult, this.audioContext.currentTime, 0.01);
     }
 }
