@@ -1,16 +1,11 @@
 ##Up Next
+* create proper favicon
+* enable/disable debug views with url query
+
 * styling
  * clean up edges on blurred canvas (black backing canvas maybe?)
  * maybe style preloader? (just hides things at the moment)
- 
-* create proper favicon
- 
-* Bug fixes
-  * fix thumb canvas rendering issue on ios
-  * fix touch pad being to long on initial load on ios
- 
-* enable/disable debug views with url query
-
+   
 ##Future Features
 * warn if width is too narrow
 * passive event listeners?
@@ -60,3 +55,5 @@
 * on ipad, full 180 rotate doesn't always redraw the page
 * Mute button un muting doesn't respect touch pad volume 
 * Preloader
+* fix thumb canvas rendering issue on ios
+* fix touch pad being to long on initial load on ios
