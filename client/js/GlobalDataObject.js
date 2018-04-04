@@ -11,6 +11,7 @@ export default class GlobalDataObject extends EventDispatcher {
         }
 
         this.geb = new GlobalEventBus();
+        this.isDebugging = true;
         this.lowerAreaY = null;
         this._hasTouchedOnce = false;
 

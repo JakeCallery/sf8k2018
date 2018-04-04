@@ -37,11 +37,14 @@ export default class VizManager extends EventDispatcher {
         let self = this;
 
         //Stats
-        this.stats = new Stats();
-        this.stats.showPanel(0);
-        this.doc.body.appendChild(this.stats.dom);
-        this.stats.dom.style.top = null;
-        this.stats.dom.style.bottom = '0';
+        this.stats = null;
+        if(this.globalDO.isDebugging === true) {
+            this.stats = new Stats();
+            this.stats.showPanel(0);
+            this.doc.body.appendChild(this.stats.dom);
+            this.stats.dom.style.top = null;
+            this.stats.dom.style.bottom = '0';
+        }
 
         //Elements
         this.waveCanvas = this.doc.getElementById('waveCanvas');
@@ -223,7 +226,7 @@ export default class VizManager extends EventDispatcher {
     }
 
     handleRequestAnimationFrame($evt) {
-        this.stats.begin();
+        if(this.stats) this.stats.begin();
 
         //Clear Canvas
         this.clearSoundCanvas();
@@ -253,7 +256,8 @@ export default class VizManager extends EventDispatcher {
         this.soundCanvasContext.fillRect(sampleMarkerX, 0, 1, this.soundCanvas.height);
 
         //Request next frame
-        this.stats.end();
+        if(this.stats) this.stats.end();
+
         this.rafId = requestAnimationFrame(this.requestAnimationFrameDelegate);
     }
 

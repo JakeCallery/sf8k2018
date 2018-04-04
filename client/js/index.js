@@ -12,7 +12,6 @@ import InputManager from 'InputManager';
 import PresetManager from 'PresetManager';
 import LayoutManager from "./LayoutManager";
 import VolPanTouchPadUI from "./VolPanTouchPadUI";
-import JacEvent from 'jac/events/JacEvent';
 
 //For Edge Support:
 //https://github.com/babel/babel/issues/4075
@@ -27,11 +26,24 @@ import '../assets/sounds/sounds';
 import '../css/normalize.css';
 import '../css/main.css';
 import BasicPreloader from "./BasicPreloader";
-
+import GlobalDataObject from "./GlobalDataObject";
 
 l.addLogTarget(new ConsoleTarget());
 l.verboseFilter = (VerboseLevel.NORMAL | VerboseLevel.TIME | VerboseLevel.LEVEL);
 l.levelFilter = (LogLevel.DEBUG | LogLevel.INFO | LogLevel.WARNING | LogLevel.ERROR);
+
+let globalDataObject = new GlobalDataObject();
+
+let q = BrowserUtils.getURLParams(window);
+let isDebugging = null;
+
+if('debug' in q) {
+    l.levelFilter = (LogLevel.DEBUG | LogLevel.INFO | LogLevel.WARNING | LogLevel.ERROR);
+    globalDataObject.isDebugging = true;
+} else {
+    l.levelFilter = (LogLevel.INFO | LogLevel.WARNING | LogLevel.ERROR);
+    globalDataObject.isDebugging = false;
+}
 
 //Set Debugging Via URL Query
 let urlParams = BrowserUtils.getURLParams(window);

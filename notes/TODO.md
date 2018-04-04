@@ -1,5 +1,4 @@
 ##Up Next
-* create proper favicon
 * enable/disable debug views with url query
 
 * styling
@@ -57,3 +56,4 @@
 * Preloader
 * fix thumb canvas rendering issue on ios
 * fix touch pad being to long on initial load on ios
+* create proper favicon
