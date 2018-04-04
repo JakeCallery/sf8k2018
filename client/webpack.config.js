@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const WebpackAutoInject = require('./forWebPack/webpack-auto-inject-version');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 console.log('DIRNAME: ' + __dirname);
 const distDir = 'dist';
@@ -69,6 +70,9 @@ module.exports = {
     },
 
     plugins: [
+        new UglifyJsPlugin({
+            sourceMap: true
+        }),
         new CleanWebpackPlugin([distDir], {
             root: distDirRoot,
             verbose: true,

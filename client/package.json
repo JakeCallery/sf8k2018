@@ -28,6 +28,7 @@
         "style-loader": "0.19.1",
         "svg-loader": "0.0.2",
         "typings": "2.1.1",
+        "uglifyjs-webpack-plugin": "1.2.4",
         "url-loader": "0.6.2",
         "webpack": "2.3.3"
     },
