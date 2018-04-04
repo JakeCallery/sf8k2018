@@ -1,6 +1,4 @@
 ##Up Next
-* enable/disable debug views with url query
-
 * styling
  * clean up edges on blurred canvas (black backing canvas maybe?)
  * maybe style preloader? (just hides things at the moment)
@@ -57,3 +55,4 @@
 * fix thumb canvas rendering issue on ios
 * fix touch pad being to long on initial load on ios
 * create proper favicon
+* enable/disable debug views with url query
