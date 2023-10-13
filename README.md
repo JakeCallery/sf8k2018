@@ -9,9 +9,9 @@ web app that could pass as a legitimate multi touch mobile application on a tabl
 live performance.
 
 # Tech Features:
-ES6 JS/CSS/HTML front end with as much browser compatibility as I could build in
-Multi-touch support on mobile devices
-Makes use of much of the new at the time browser sound functionality
-Interaction rules change based on input from mouse or input from touch
-Focus on application performance
-Very modular and event driven
+- ES6 JS/CSS/HTML front end with as much browser compatibility as I could build in
+- Multi-touch support on mobile devices
+- Makes use of much of the new at the time browser sound functionality
+- Interaction rules change based on input from mouse or input from touch
+- Focus on application performance
+- Very modular and event driven
